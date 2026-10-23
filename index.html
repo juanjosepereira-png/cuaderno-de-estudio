@@ -24,7 +24,7 @@
   --paper:#f7f9fd; --grid:#e2e9f4; --card:#ffffff; --ink:#1c2640; --muted:#5a6684; --line:#cfd9e8;
   --mates:#2b63c9; --lengua:#c23f2e; --ingles:#21804a; --marker:#ffd94a;
   --ok:#1d8048; --bad:#c23f2e; --on-accent:#ffffff; --on-marker:#2a2100;
-  --t-violeta:#6d45cf; --t-rosa:#cc3a7f; --t-turquesa:#0c8580; --t-naranja:#cc5f17;
+  --t-violeta:#6d45cf; --t-rosa:#cc3a7f; --t-turquesa:#0c8580; --t-naranja:#cc5f17; --t-fresa:#d81b60; --t-menta:#0e8a6d; --t-cielo:#1c6fc9; --t-oro:#a86f0c; --t-lila:#8e44c9; --t-coral:#d4472f;
   --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Andika","Verdana",system-ui,sans-serif;
   --f-num:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
@@ -32,11 +32,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#16211e; --grid:#21302c; --card:#1e2b27; --ink:#eef3ef; --muted:#a5b7b0; --line:#34463f;
   --mates:#8bb1ff; --lengua:#ff9482; --ingles:#72d49c; --marker:#e7c33c;
-  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; color-scheme:dark }}
+  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; --t-fresa:#ff8fb6; --t-menta:#6fe3c4; --t-cielo:#8cc4ff; --t-oro:#ffd36e; --t-lila:#d7a6ff; --t-coral:#ff9c87; color-scheme:dark }}
 :root[data-theme="dark"]{
   --paper:#16211e; --grid:#21302c; --card:#1e2b27; --ink:#eef3ef; --muted:#a5b7b0; --line:#34463f;
   --mates:#8bb1ff; --lengua:#ff9482; --ingles:#72d49c; --marker:#e7c33c;
-  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; color-scheme:dark }
+  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; --t-fresa:#ff8fb6; --t-menta:#6fe3c4; --t-cielo:#8cc4ff; --t-oro:#ffd36e; --t-lila:#d7a6ff; --t-coral:#ff9c87; color-scheme:dark }
 
 *{box-sizing:border-box}
 html{background:var(--paper)}
@@ -48,7 +48,7 @@ body{
   color:var(--ink);font-family:var(--f-body);font-size:18px;line-height:1.5;min-height:100%;
 }
 body{--fav:var(--t-violeta)}
-body[data-fav="rosa"]{--fav:var(--t-rosa)}body[data-fav="turquesa"]{--fav:var(--t-turquesa)}body[data-fav="naranja"]{--fav:var(--t-naranja)}
+body[data-fav="rosa"]{--fav:var(--t-rosa)}body[data-fav="turquesa"]{--fav:var(--t-turquesa)}body[data-fav="naranja"]{--fav:var(--t-naranja)}body[data-fav="fresa"]{--fav:var(--t-fresa)}body[data-fav="menta"]{--fav:var(--t-menta)}body[data-fav="cielo"]{--fav:var(--t-cielo)}body[data-fav="oro"]{--fav:var(--t-oro)}body[data-fav="lila"]{--fav:var(--t-lila)}body[data-fav="coral"]{--fav:var(--t-coral)}
 body[data-sub=""],body[data-sub="reto"]{--accent:var(--fav)}
 body[data-sub="mates"]{--accent:var(--mates)}
 body[data-sub="lengua"]{--accent:var(--lengua)}
@@ -123,7 +123,7 @@ button{font:inherit;color:inherit}
 .sec{font-family:var(--f-display);font-weight:800;font-size:1.6rem;margin:4px 0 -8px}
 .subj:hover{transform:translateY(-3px) rotate(-1deg)}
 .subj-ic{position:absolute;right:16px;bottom:14px;width:46px;height:46px;opacity:.9}
-.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px}
+.extras{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
 .extra{display:flex;align-items:center;gap:14px;text-align:left;color:var(--ink);background:var(--card);border:2px solid var(--line);border-radius:20px;padding:14px 18px;cursor:pointer;min-height:90px;transition:border-color .15s}
 .extra:hover{border-color:var(--accent)}
 .extra .ei{width:60px;height:60px;flex:none}
@@ -412,6 +412,46 @@ button{font:inherit;color:inherit}
 .gendbox b{font-family:var(--f-display);font-weight:800;font-size:1.6rem;line-height:1.2}
 .gendbox span{color:var(--muted);font-weight:700}
 .gendbox .actions{width:100%}
+
+.examban{display:flex;align-items:center;gap:14px;width:100%;max-width:560px;text-align:left;border:0;border-radius:20px;padding:14px 18px;cursor:pointer;background:var(--marker);color:var(--on-marker);box-shadow:0 5px 0 color-mix(in srgb,var(--marker) 55%,#000);animation:pop .5s both}
+.examban svg{width:56px;height:56px;flex:none;animation:wig 2s ease-in-out infinite}
+.examban b{display:block;font-family:var(--f-display);font-weight:800;font-size:1.4rem;line-height:1.1}
+.diploma{position:relative;display:flex;flex-direction:column;align-items:center;gap:4px;background:#fffaf0;color:#3a2a10;border:6px double #c9a24a;border-radius:16px;padding:34px 28px 24px;width:100%;max-width:460px;box-shadow:0 8px 0 rgba(0,0,0,.12);animation:pop .6s both}
+.diploma .dk{font-family:var(--f-display);font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:#a07a24;font-size:.9rem}
+.diploma b{font-family:var(--f-display);font-weight:800;font-size:2rem;line-height:1.1}
+.diploma .dsub{color:#6d45cf}
+.diploma .dnota{font-family:var(--f-display);font-weight:800;font-size:1.3rem;margin-top:6px}
+.diploma .small{color:#7a6a4a}
+.dstamp{position:absolute;top:-18px;right:-12px;transform:rotate(12deg);background:#1d8048;color:#fff;font-family:var(--f-display);font-weight:800;font-size:1.5rem;padding:6px 16px;border-radius:12px;border:3px solid #fff;box-shadow:0 4px 0 rgba(0,0,0,.18);animation:stamp .5s .5s both}
+@keyframes stamp{from{transform:rotate(12deg) scale(1.8);opacity:0}to{transform:rotate(12deg) scale(1);opacity:1}}
+.lost.ok{color:var(--ok)}
+.swatch{display:block;width:64px;height:64px;border-radius:50%;background:var(--c);box-shadow:inset 0 0 0 5px color-mix(in srgb,var(--card) 35%,transparent)}
+.bgprev{display:block;width:64px;height:64px;border-radius:14px;border:2px solid var(--line);background-color:var(--paper);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:13px 13px}
+.prz.locked .swatch,.prz.locked .bgprev{filter:grayscale(.85);opacity:.5}
+.prz.can .swatch,.prz.can .bgprev{filter:none;opacity:1}
+.prz.t-real{background:linear-gradient(color-mix(in srgb,var(--marker) 16%,var(--card)),var(--card))}
+.prz.t-real.locked .pi{filter:none;opacity:.85}
+.fav.locked{opacity:.6}.fav small{font-weight:700;color:var(--muted)}
+.bggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;width:100%}
+.bgopt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;cursor:pointer}
+.bgopt .bgprev{width:100%;height:70px}
+.bgopt.on{border-color:var(--accent)}.bgopt.locked{opacity:.6}.bgopt small{color:var(--muted)}
+.bg-estrellas,body[data-bg="estrellas"]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M15 6l2.6 5.5 6 .8-4.4 4.2 1.1 6-5.3-2.9-5.3 2.9 1.1-6-4.4-4.2 6-.8z' fill='%23ffc83d' fill-opacity='.5'/%3E%3Ccircle cx='45' cy='42' r='2.5' fill='%23ffc83d' fill-opacity='.55'/%3E%3Ccircle cx='38' cy='14' r='1.6' fill='%23b79bff' fill-opacity='.6'/%3E%3C/svg%3E");background-size:60px 60px}
+.bg-corazones,body[data-bg="corazones"]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M16 26C6 19 4 14 4 10a6 6 0 0 1 12-3 6 6 0 0 1 12 3c0 4-2 9-12 16z' fill='%23ff5d8f' fill-opacity='.32'/%3E%3Cpath d='M42 50c-6-4-7-7-7-9a3.5 3.5 0 0 1 7-2 3.5 3.5 0 0 1 7 2c0 2-1 5-7 9z' fill='%23ff8fc1' fill-opacity='.4'/%3E%3C/svg%3E");background-size:56px 56px}
+.bg-lunares,body[data-bg="lunares"]{background-image:radial-gradient(color-mix(in srgb,var(--fav) 24%,transparent) 5px,transparent 6px),radial-gradient(color-mix(in srgb,var(--marker) 40%,transparent) 4px,transparent 5px);background-size:30px 30px;background-position:0 0,15px 15px}
+.bg-arcoiris,body[data-bg="arcoiris"]{background-image:repeating-linear-gradient(135deg,rgba(255,93,93,.14) 0 22px,rgba(255,178,63,.14) 22px 44px,rgba(255,214,63,.14) 44px 66px,rgba(95,207,114,.14) 66px 88px,rgba(79,168,255,.14) 88px 110px,rgba(183,155,255,.14) 110px 132px);background-size:auto}
+.bg-oceano,body[data-bg="oceano"]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Cpath d='M0 20q10-10 20 0t20 0 20 0 20 0' fill='none' stroke='%234fa8ff' stroke-opacity='.35' stroke-width='3'/%3E%3C/svg%3E");background-size:80px 40px}
+.bg-flores,body[data-bg="flores"]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='70' height='70'%3E%3Cg fill='%23ff9bd2' fill-opacity='.45'%3E%3Ccircle cx='18' cy='12' r='5'/%3E%3Ccircle cx='25' cy='18' r='5'/%3E%3Ccircle cx='18' cy='24' r='5'/%3E%3Ccircle cx='11' cy='18' r='5'/%3E%3C/g%3E%3Ccircle cx='18' cy='18' r='3.5' fill='%23ffd23f' fill-opacity='.7'/%3E%3Cg fill='%23b79bff' fill-opacity='.4'%3E%3Ccircle cx='52' cy='47' r='4'/%3E%3Ccircle cx='57' cy='52' r='4'/%3E%3Ccircle cx='52' cy='57' r='4'/%3E%3Ccircle cx='47' cy='52' r='4'/%3E%3C/g%3E%3C/svg%3E");background-size:70px 70px}
+.bg-dulces,body[data-bg="dulces"]{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Ccircle cx='18' cy='18' r='7' fill='%23ff5d8f' fill-opacity='.4'/%3E%3Cpath d='M11 18l-6-4v8zM25 18l6-4v8z' fill='%23ff5d8f' fill-opacity='.4'/%3E%3Ccircle cx='52' cy='50' r='7' fill='%235fc9f8' fill-opacity='.4'/%3E%3Cpath d='M45 50l-6-4v8zM59 50l6-4v8z' fill='%235fc9f8' fill-opacity='.4'/%3E%3Ccircle cx='54' cy='16' r='4' fill='%23ffd23f' fill-opacity='.55'/%3E%3C/svg%3E");background-size:72px 72px}
+.vales{display:flex;flex-direction:column;gap:14px}
+.vale{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:color-mix(in srgb,var(--marker) 22%,var(--card));border:3px dashed color-mix(in srgb,var(--marker) 70%,var(--ink));border-radius:18px;padding:14px 18px}
+.vale .vi{width:60px;height:60px;flex:none}.vale .vi svg{width:100%;height:100%}
+.vale .vt{flex:1;min-width:180px;display:flex;flex-direction:column;gap:2px}
+.vale .vk{font-weight:800;letter-spacing:.2em;font-size:.8rem;color:var(--muted)}
+.vale b{font-family:var(--f-display);font-weight:800;font-size:1.35rem;line-height:1.15}
+.vale .vt span:last-child{color:var(--muted);font-size:.95rem}
+.vales.old .vale{opacity:.55;border-style:solid;background:var(--card)}
+.valesbtn{max-width:520px}
 
 /* tarjetas */
 .flip{display:block;width:100%;max-width:600px;margin:0 auto;height:clamp(240px,42vw,340px);border:0;background:none;padding:0;perspective:1400px;cursor:pointer}
@@ -1253,7 +1293,11 @@ function avatarSVG(k){
  eyes=`<circle cx="37" cy="${k==='buho'?54:56}" r="${er}" fill="${k==='panda'?dk:ec}"/><circle cx="63" cy="${k==='buho'?54:56}" r="${er}" fill="${k==='panda'?dk:ec}"/>${k==='panda'?'<circle cx="37" cy="56" r="4.5" fill="#2b2b2b"/><circle cx="63" cy="56" r="4.5" fill="#2b2b2b"/>':''}<circle cx="38.6" cy="${k==='buho'?52:54}" r="1.8" fill="#fff"/><circle cx="64.6" cy="${k==='buho'?52:54}" r="1.8" fill="#fff"/>`;
  return `<svg viewBox="0 0 100 100" aria-hidden="true">${ears}<circle cx="50" cy="58" r="34" fill="${f}" stroke="rgba(0,0,0,.12)" stroke-width="1.5"/>${extra}${eyes}<circle cx="27" cy="68" r="5" fill="#ff8fab" opacity=".55"/><circle cx="73" cy="68" r="5" fill="#ff8fab" opacity=".55"/>${nose}<path d="M44 74 Q50 79 56 74" stroke="#5a3434" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`;
 }
-const FAVS={violeta:'Violeta',rosa:'Rosa',turquesa:'Turquesa',naranja:'Naranja'};
+const FAVS={violeta:'Violeta',rosa:'Rosa',turquesa:'Turquesa',naranja:'Naranja',fresa:'Fresa',menta:'Menta',cielo:'Cielo',oro:'Oro',lila:'Lila',coral:'Coral'};
+const FAVP={fresa:10,menta:10,cielo:10,oro:15,lila:15,coral:15};
+const ownFav=k=>!FAVP[k]||D.unlocked.includes('col_'+k);
+const BGS={estrellas:['Estrellas',12],corazones:['Corazones',12],lunares:['Lunares',10],arcoiris:['Arcoíris',18],oceano:['Olas del mar',15],flores:['Flores',15],dulces:['Caramelos',18]};
+const ownBg=k=>!k||D.unlocked.includes('bg_'+k);
 const LEVELS=[[0,'Aprendiz'],[20,'Exploradora'],[50,'Detective'],[100,'Sabia'],[200,'Genio'],[400,'Leyenda']];
 const ST_EVERY=10;
 const STICKERS=[
@@ -1278,7 +1322,7 @@ const ICON_SUBJ={
 };
 function levelInfo(t){let i=0;while(i+1<LEVELS.length&&t>=LEVELS[i+1][0])i++;const cur=LEVELS[i],nx=LEVELS[i+1];return {name:cur[1],next:nx&&nx[0],nextName:nx&&nx[1],pct:nx?Math.round((t-cur[0])/(nx[0]-cur[0])*100):100}}
 const today=()=>new Date().toDateString();
-function applyFav(){document.body.dataset.fav=D.fav||'violeta'}
+function applyFav(){document.body.dataset.fav=ownFav(D.fav)?D.fav||'violeta':'violeta';document.body.dataset.bg=ownBg(D.bg)?D.bg||'':''}
 function startReto(){
  D.sess=(D.sess||0)+1;pruneSeen();
  lives=MAXL;V.locked=false;
@@ -1292,6 +1336,7 @@ function confettiHTML(){
 }
 
 /* ---------- caritas ---------- */
+const ICON_EXAM='<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 8 4 22l28 14 28-14z" fill="#2c2550"/><path d="M14 28v12c0 6 8 10 18 10s18-4 18-10V28L32 37z" fill="#5b4bd1"/><path d="M56 23v16" stroke="#ffc83d" stroke-width="3"/><circle cx="56" cy="42" r="4" fill="#ffc83d"/></svg>';
 const FACE_HAPPY=`<svg viewBox="0 0 140 150"><g class="spk"><path d="M16 30l3 8 8 3-8 3-3 8-3-8-8-3 8-3z" fill="#ffc83d"/><path d="M122 18l2.5 6.5 6.5 2.5-6.5 2.5-2.5 6.5-2.5-6.5-6.5-2.5 6.5-2.5z" fill="#ff8fc1"/><path d="M126 96l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#5fc9f8"/></g>
 <g class="fc"><circle cx="70" cy="70" r="54" fill="#ffd23f" stroke="#e0a000" stroke-width="4"/><path d="M42 58q9-12 18 0M80 58q9-12 18 0" stroke="#4a3000" stroke-width="6" fill="none" stroke-linecap="round"/>
 <circle cx="38" cy="78" r="8" fill="#ff8fab" opacity=".7"/><circle cx="102" cy="78" r="8" fill="#ff8fab" opacity=".7"/><path d="M42 80q28 34 56 0z" fill="#7a2a1a"/><ellipse cx="70" cy="98" rx="14" ry="7" fill="#ff6f86"/></g>
@@ -1303,7 +1348,7 @@ const FACE_ANGRY=`<svg viewBox="0 0 140 150"><g class="stm"><circle cx="30" cy="
 const MAXL=5,PENALTY=5;let lives=MAXL;
 const HEART='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21C5 16 2 12.5 2 8.8A5 5 0 0 1 12 6a5 5 0 0 1 10 2.8C22 12.5 19 16 12 21z" fill="currentColor"/></svg>';
 const hearts=(lostNow,gainNow)=>Array.from({length:MAXL},(_,i)=>`<span class="h ${i<lives?'':'gone'} ${lostNow&&i===lives?'lost':''} ${gainNow&&i===lives-1?'gained':''}">${HEART}</span>`).join('');
-const noLives=()=>['cards','game','video','prizes'].includes(V.view)||V.locked;
+const noLives=()=>['cards','game','video','prizes'].includes(V.view)||V.locked||!!V.exam;
 function gain(){
  if(noLives()||lives>=MAXL)return;lives++;
  const el=$('#lives');if(el){el.innerHTML=hearts(false,true);el.setAttribute('aria-label',`Te quedan ${lives} vidas`)}
@@ -1322,7 +1367,7 @@ function sfx(type){
  }catch(e){}
 }
 function fail(){
- if(['cards','game','video','prizes'].includes(V.view)||V.locked)return;
+ if(noLives())return;
  lives=Math.max(0,lives-1);
  const el=$('#lives');if(el){el.innerHTML=hearts(true);el.setAttribute('aria-label',`Te quedan ${lives} vidas`)}
  if(lives<=0){V.locked=true;setTimeout(gameOver,1300)}
@@ -1342,9 +1387,32 @@ function renderOver(){
  <p class="small">${isR?'Puedes volver a intentar el reto.':'Repasa con las tarjetas y vuelve a intentarlo. ¡Tú puedes!'}</p>
  <div class="actions two">${isR?'<button class="btn ghost" data-act="home">Volver al menú</button><button class="btn primary" data-act="reto">Intentar otra vez</button>':'<button class="btn ghost" data-act="mode" data-m="cards">Repasar tarjetas</button><button class="btn primary" data-act="repeat">Intentar otra vez</button>'}</div></main>`;
 }
+/* examen: aparece cuando la media de aciertos es muy alta */
+const EXAM_WIN=30,EXAM_MIN=25,EXAM_AVG=.85,EXAM_PASS=.8,EXAM_PRIZE=50;
+function track(ok){if(V.exam||noLives()||!['mates','lengua','ingles'].includes(V.sub))return;D.acc=D.acc||{};const a=D.acc[V.sub]=D.acc[V.sub]||[];a.push(ok?1:0);if(a.length>EXAM_WIN)a.shift()}
+function accOf(sub){const a=(D.acc||{})[sub]||[];return {n:a.length,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:0}}
+const examReady=sub=>{const r=accOf(sub);return r.n>=EXAM_MIN&&r.avg>=EXAM_AVG};
+function examAsk(){const r=accOf(V.sub);modal(`<div class="mpic">${ICON_EXAM}</div><b>¡Estás lista para el examen de ${SUBJ[V.sub].name}!</b><span>Tu media de aciertos es del ${Math.round(r.avg*100)} %. El examen tiene 10 preguntas y 5 ejercicios, sin vidas. Si aciertas ${Math.ceil(15*EXAM_PASS)} o más, apruebas y ganas ${EXAM_PRIZE} estrellas.</span><div class="actions two"><button class="btn ghost" data-act="mclose">Ahora no</button><button class="btn primary" data-act="examgo">¡Hacer el examen!</button></div>`)}
+function startExam(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.exam={part:1,s:0,n:0,sub:V.sub};V.mode='exam';lives=MAXL;V.locked=false;T={qs:buildTest().slice(0,10),i:0,score:0,done:false};go('test')}
+function examStep(score,total){
+ const E=V.exam;E.s+=score;E.n+=total;
+ if(E.part===1){E.part=2;startWrite();return}
+ const pass=E.s/E.n>=EXAM_PASS;D.acc[E.sub]=[];
+ if(pass){D.stars[E.sub]=(D.stars[E.sub]||0)+EXAM_PRIZE;D.exams=D.exams||{};D.exams[E.sub]=(D.exams[E.sub]||0)+1}
+ V.examRes={s:E.s,n:E.n,pass};V.exam=null;save();go('examres');
+}
+function renderExamRes(){
+ const {s,n,pass}=V.examRes,nota=(s/n*10).toFixed(1).replace('.',',');
+ if(pass)setTimeout(()=>sfx('win'),200);else sfx('over');
+ app.innerHTML=header(SUBJ[V.sub].name,'subject')+(pass?confettiHTML():'')+`<main class="wrap result">
+ ${pass?`<div class="diploma"><span class="dstamp">¡APROBADO!</span><span class="dk">Diploma</span><b>${esc(D.name.trim())}</b><span>ha aprobado el examen de</span><b class="dsub">${SUBJ[V.sub].name}</b><span class="dnota">Nota: ${nota}</span><span class="small">${new Date().toLocaleDateString('es-ES')}</span></div>
+ <p class="lost ok">+${EXAM_PRIZE} estrellas</p>`
+ :`<div class="overface">${FACE_ANGRY.replace('¡GRRR!','¡CASI!')}</div><h1 class="msg">¡Casi lo consigues!</h1><p class="small">Has acertado ${s} de ${n}. Para aprobar necesitas ${Math.ceil(n*EXAM_PASS)}. Sigue practicando: cuando vuelvas a tener una media muy alta, el examen aparecerá otra vez.</p>`}
+ <div class="actions"><button class="btn primary" data-act="subject">Seguir</button></div></main>`;
+}
 let reactT;
 function react(ok){
- if(!ok)fail();else gain();
+ track(ok);if(!ok)fail();else gain();
  sfx(ok?'ok':'bad');
  document.querySelectorAll('.react').forEach(e=>e.remove());clearTimeout(reactT);
  const d=document.createElement('div');d.className='react '+(ok?'happy':'angry');d.setAttribute('aria-hidden','true');d.innerHTML=ok?FACE_HAPPY:FACE_ANGRY;
@@ -1363,40 +1431,68 @@ const PRIZES=[
  {id:'v4',type:'video',name:'Bigger and taller',desc:'Los comparativos con -er',need:12}
 ];
 for(const k in XCH)PRIZES.push({id:'c_'+k,type:'char',k,name:XCH[k].n,desc:'Personaje animado para tu perfil',need:XCH[k].need});
+for(const k in FAVP)PRIZES.push({id:'col_'+k,type:'color',k,name:'Color '+FAVS[k],desc:'Cambia el color de toda la app',need:FAVP[k]});
+for(const k in BGS)PRIZES.push({id:'bg_'+k,type:'bg',k,name:'Fondo '+BGS[k][0],desc:'Un fondo nuevo para la app',need:BGS[k][1]});
+const REAL=[['r_tablet','30 minutos más de tablet','Un rato extra de juego',40],['r_helado','Un helado','Para tomarlo con papá o mamá',50],['r_cena','Elegir la cena','Tú decides qué se cena un día',60],['r_tarde','Acostarse 30 minutos más tarde','Un viernes o un sábado',60],['r_parque','Tarde de parque o playa','Con papá y mamá',70],['r_pelis','Noche de pelis con palomitas','En casa, en familia',80],['r_plan','Elegir el plan del sábado','Tú decides qué hacemos',120],['r_cine','Ir al cine con papá y mamá','¡Con palomitas!',150],['r_excursion','Excursión especial','Un día de aventura en familia',200]];
+for(const [id,name,desc,need] of REAL)PRIZES.push({id,type:'real',name,desc,need});
 PRIZES.sort((a,b)=>a.need-b.need);
+const prizeIcon=p=>p.type==='char'?avatarSVG(p.k):p.type==='color'?`<span class="swatch" style="--c:var(--t-${p.k})"></span>`:p.type==='bg'?`<span class="bgprev bg-${p.k}"></span>`:PICON[p.type];
+const PTYPE={video:'Minivídeo',game:'Minijuego',char:'Personaje',color:'Color',bg:'Fondo',real:'Premio de verdad'};
 function checkUnlocks(){const n=[];for(const p of PRIZES)if(p.need===0&&!D.unlocked.includes(p.id)){D.unlocked.push(p.id);n.push(p)}if(n.length)save();return []}
 const lifetime=()=>totalStars()+(D.spent||0);
 function spendStars(n){let need=n;for(const k of Object.keys(D.stars).sort((a,b)=>(D.stars[b]||0)-(D.stars[a]||0))){const t=Math.min(need,D.stars[k]||0);D.stars[k]-=t;need-=t;if(!need)break}D.spent=(D.spent||0)+n}
 function modal(html){const m=$('#mdl');if(m)m.remove();app.insertAdjacentHTML('beforeend',`<div class="modal" id="mdl" role="dialog" aria-modal="true"><div class="gendbox">${html}</div></div>`)}
-const pName=p=>`${p.type==='video'?'el minivídeo':p.type==='char'?'el personaje':'el minijuego'} «${esc(p.name)}»`;
+const pName=p=>`${({video:'el minivídeo',char:'el personaje',game:'el minijuego',color:'el',bg:'el',real:'el premio'})[p.type]} «${esc(p.name)}»`;
 function askBuy(id){
- const p=PRIZES.find(x=>x.id===id);if(!p||D.unlocked.includes(id))return;const t=totalStars();
- const pic=p.type==='char'?`<div class="mpic">${avatarSVG(p.k)}</div>`:`<div class="mpic">${PICON[p.type]}</div>`;
+ const p=PRIZES.find(x=>x.id===id);if(!p||(p.type!=='real'&&D.unlocked.includes(id)))return;const t=totalStars();
+ const pic=`<div class="mpic">${prizeIcon(p)}</div>`;
  if(t<p.need)modal(`${pic}<b>Te faltan ${p.need-t} estrellas</b><span>${esc(p.name)} cuesta ${p.need} estrellas y tienes ${t}. ¡Sigue estudiando!</span><div class="actions"><button class="btn primary" data-act="mclose">Vale</button></div>`);
- else modal(`${pic}<b>¿Canjear ${pName(p)}?</b><span>Cuesta ${p.need} estrellas. Tienes ${t} y te quedarán ${t-p.need}. Tu nivel no baja.</span><div class="actions two"><button class="btn ghost" data-act="mclose">No, gracias</button><button class="btn primary" data-act="buyok" data-id="${p.id}">Sí, canjear</button></div>`);
+ else modal(`${pic}<b>¿Canjear ${pName(p)}?</b><span>Cuesta ${p.need} estrellas. Tienes ${t} y te quedarán ${t-p.need}. Tu nivel no baja.${p.type==='real'?' Te daremos un vale para enseñárselo a papá o mamá.':''}</span><div class="actions two"><button class="btn ghost" data-act="mclose">No, gracias</button><button class="btn primary" data-act="buyok" data-id="${p.id}">Sí, canjear</button></div>`);
 }
 function doBuy(id){
- const p=PRIZES.find(x=>x.id===id);if(!p||D.unlocked.includes(id)||totalStars()<p.need)return;
+ const p=PRIZES.find(x=>x.id===id);if(!p||totalStars()<p.need)return;
+ if(p.type==='real'){spendStars(p.need);D.coupons=D.coupons||[];D.coupons.push({id:p.id,name:p.name,at:new Date().toLocaleDateString('es-ES'),used:false});save();render();react(true);
+  modal(`<div class="mpic">${PICON.real}</div><b>¡Vale conseguido: ${esc(p.name)}!</b><span>Enséñaselo a papá o mamá para disfrutarlo.</span><div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="vales">Ver mis vales</button></div>`);return}
+ if(D.unlocked.includes(id))return;
  spendStars(p.need);D.unlocked.push(id);save();render();react(true);
- modal(`<div class="mpic">${p.type==='char'?avatarSVG(p.k):PICON[p.type]}</div><b>¡Ya tienes ${pName(p)}!</b><div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="prize" data-id="${p.id}">${p.type==='char'?'Usarlo ahora':p.type==='video'?'Verlo ahora':'Jugar ahora'}</button></div>`);
+ modal(`<div class="mpic">${prizeIcon(p)}</div><b>¡Ya tienes ${pName(p)}!</b><div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="prize" data-id="${p.id}">${p.type==='char'||p.type==='color'?'Usarlo ahora':p.type==='bg'?'Ponerlo ahora':p.type==='video'?'Verlo ahora':'Jugar ahora'}</button></div>`);
 }
 const PICON={
  video:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="12" width="52" height="36" rx="8" fill="#5b4bd1"/><rect x="11" y="17" width="42" height="26" rx="4" fill="#cfe9ff"/><path d="M27 23 L40 30 L27 37Z" fill="#ff5d8f"/><path d="M24 56 L32 48 L40 56" stroke="#5b4bd1" stroke-width="4" fill="none" stroke-linecap="round"/></svg>',
  game:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 20h32a12 12 0 0 1 12 12v4a10 10 0 0 1-18 6l-2-3H24l-2 3a10 10 0 0 1-18-6v-4a12 12 0 0 1 12-12z" fill="#ff7a4d"/><path d="M18 27v10M13 32h10" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="44" cy="29" r="3.5" fill="#ffd23f"/><circle cx="50" cy="35" r="3.5" fill="#5fc9f8"/></svg>',
+ real:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 18h52v10a6 6 0 0 0 0 12v10H6V40a6 6 0 0 0 0-12z" fill="#ffd23f" stroke="#e09a00" stroke-width="2.5" stroke-linejoin="round"/><path d="M22 18v32" stroke="#e09a00" stroke-width="2" stroke-dasharray="4 3"/><path d="M38 25l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z" fill="#ff5d8f"/></svg>',
  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
  gift:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="26" width="48" height="32" rx="5" fill="#ff5d8f"/><rect x="5" y="18" width="54" height="12" rx="4" fill="#ff8fb3"/><rect x="28" y="18" width="8" height="40" fill="#ffd23f"/><path d="M32 18c-6-12-20-10-14-2 3 3 10 2 14 2zm0 0c6-12 20-10 14-2-3 3-10 2-14 2z" fill="#ffd23f"/></svg>'
 };
 let CLEAN=null;
-function renderPrizes(){
- const t=totalStars();checkUnlocks();
- app.innerHTML=header('Premios','home')+`<main class="wrap">
- <h1 class="ptitle">Premios</h1><p class="small">Canjea tus estrellas por minijuegos, minivídeos y personajes. Tienes <b>${t} estrellas</b>. Lo que canjeas se queda para siempre y tu nivel no baja.</p>
- <section class="przgrid">${PRIZES.map(p=>{const on=D.unlocked.includes(p.id),best=D.best[p.id],can=t>=p.need;return `<button class="prz ${on?'':'locked'} ${!on&&can?'can':''}" data-act="${on?'prize':'buy'}" data-id="${p.id}">
-  <span class="pi">${p.type==='char'?avatarSVG(p.k):PICON[p.type]}</span><span class="pt">${p.type==='video'?'Minivídeo':p.type==='char'?'Personaje':'Minijuego'}</span><b>${esc(p.name)}</b><span class="pd">${esc(p.desc)}</span>
-  ${on?(p.type==='char'?(D.avatar===p.k?'<span class="pb">¡Es tu personaje!</span>':'<span class="pb new">Toca para usarlo</span>'):best!=null?`<span class="pb">Récord: ${best}</span>`:'<span class="pb new">¡Ya es tuyo!</span>')
-   :`<span class="pneed">${PICON.lock}Cuesta ${p.need} ★</span>${can?'<span class="pb buy">Toca para canjear</span>':`<span class="pd">Te faltan ${p.need-t}</span><span class="bar"><i style="width:${Math.min(100,Math.round(t/p.need*100))}%"></i></span>`}`}</button>`}).join('')}</section></main>`;
+function prizeCard(p,t){
+ const real=p.type==='real',on=!real&&D.unlocked.includes(p.id),best=D.best[p.id],can=t>=p.need;
+ const pend=real?(D.coupons||[]).filter(c=>c.id===p.id&&!c.used).length:0;
+ let st;
+ if(on){if(p.type==='char')st=D.avatar===p.k?'<span class="pb">¡Es tu personaje!</span>':'<span class="pb new">Toca para usarlo</span>';
+  else if(p.type==='color')st=D.fav===p.k?'<span class="pb">¡Es tu color!</span>':'<span class="pb new">Toca para usarlo</span>';
+  else if(p.type==='bg')st=D.bg===p.k?'<span class="pb">¡Es tu fondo!</span>':'<span class="pb new">Toca para ponerlo</span>';
+  else st=best!=null?`<span class="pb">Récord: ${best}</span>`:'<span class="pb new">¡Ya es tuyo!</span>'}
+ else st=`<span class="pneed">${PICON.lock}Cuesta ${p.need} ★</span>${can?'<span class="pb buy">Toca para canjear</span>':`<span class="pd">Te faltan ${p.need-t}</span><span class="bar"><i style="width:${Math.min(100,Math.round(t/p.need*100))}%"></i></span>`}${pend?`<span class="pb">Tienes ${pend} ${pend===1?'vale':'vales'}</span>`:''}`;
+ return `<button class="prz ${on?'':'locked'} ${!on&&can?'can':''} t-${p.type}" data-act="${on?'prize':'buy'}" data-id="${p.id}"><span class="pi">${prizeIcon(p)}</span><span class="pt">${PTYPE[p.type]}</span><b>${esc(p.name)}</b><span class="pd">${esc(p.desc)}</span>${st}</button>`;
 }
-function openPrize(id){const p=PRIZES.find(x=>x.id===id);if(!p)return;if(p.type==='char'){D.avatar=p.k;save();go('home');return}if(p.type==='video'){P={id,i:0,playing:false,tok:0,timers:[]};go('video')}else{startGame(id)}}
+function renderPrizes(){
+ const t=totalStars();checkUnlocks();const pend=(D.coupons||[]).filter(c=>!c.used).length;
+ const groups=[['Premios con papá y mamá',['real'],'Se canjean por un vale. Puedes conseguir cada uno todas las veces que quieras.'],['Minijuegos y minivídeos',['game','video'],''],['Personajes',['char'],''],['Colores',['color'],''],['Fondos',['bg'],'']];
+ app.innerHTML=header('Premios','home')+`<main class="wrap">
+ <h1 class="ptitle">Premios</h1><p class="small">Canjea tus estrellas. Tienes <b>${t} estrellas</b>. Tu nivel no baja al canjear.</p>
+ ${pend?`<button class="extra valesbtn" data-act="vales"><span class="ei">${PICON.real}</span><span><b>Mis vales</b><span>Tienes ${pend} ${pend===1?'vale':'vales'} para disfrutar con papá y mamá.</span></span></button>`:''}
+ ${groups.map(([title,types,note])=>`<h2 class="sec">${title}</h2>${note?`<p class="small">${note}</p>`:''}<section class="przgrid">${PRIZES.filter(p=>types.includes(p.type)).map(p=>prizeCard(p,t)).join('')}</section>`).join('')}</main>`;
+}
+function renderVales(){
+ const cs=D.coupons||[],pend=cs.filter(c=>!c.used),used=cs.filter(c=>c.used).slice(-8).reverse();
+ app.innerHTML=header('Mis vales','prizes')+`<main class="wrap">
+ <h1 class="ptitle">Mis vales</h1><p class="small">Enseña el vale a papá o mamá. Cuando lo hayáis disfrutado, pulsad «¡Ya lo hemos disfrutado!».</p>
+ ${pend.length?`<section class="vales">${pend.map(c=>`<div class="vale"><span class="vi">${PICON.real}</span><div class="vt"><span class="vk">VALE</span><b>${esc(c.name)}</b><span>Conseguido el ${esc(c.at)} por ${esc(D.name.trim())}</span></div><button class="btn small primary" data-act="valeuse" data-i="${cs.indexOf(c)}">¡Ya lo hemos disfrutado!</button></div>`).join('')}</section>`:'<p class="small">No tienes vales pendientes. ¡Consigue estrellas y canjéalas en Premios!</p>'}
+ ${used.length?`<h2 class="sec">Ya disfrutados</h2><section class="vales old">${used.map(c=>`<div class="vale"><span class="vi">${PICON.real}</span><div class="vt"><b>${esc(c.name)}</b><span>Conseguido el ${esc(c.at)}</span></div></div>`).join('')}</section>`:''}
+ <div class="actions"><button class="btn primary" data-act="prizes">Ir a Premios</button></div></main>`;
+}
+function openPrize(id){const p=PRIZES.find(x=>x.id===id);if(!p)return;if(p.type==='color'){D.fav=p.k;save();render();return}if(p.type==='bg'){D.bg=p.k;save();render();return}if(p.type==='char'){D.avatar=p.k;save();go('home');return}if(p.type==='video'){P={id,i:0,playing:false,tok:0,timers:[]};go('video')}else{startGame(id)}}
 
 /* minivídeos */
 const PROP={
@@ -1618,8 +1714,8 @@ function renderWho(){
 let V={view:'intro',sub:null,mode:null,res:null},T,C,W;
 function go(view,sub){if(CLEAN){try{CLEAN()}catch(e){}CLEAN=null}V.view=view;if(sub)V.sub=sub;render();window.scrollTo(0,0)}
 function render(){
- document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who'].includes(V.view)?'':V.sub;applyFav();
- ({intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
+ document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who','vales'].includes(V.view)?'':V.sub;applyFav();
+ ({vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
 }
 function header(title,back){
  const tot=totalStars();
@@ -1627,7 +1723,7 @@ function header(title,back){
 }
 const sayBtn=(t,label)=>('speechSynthesis' in window)?`<button class="say" data-act="say" data-t="${esc(t)}">${ICON.sound}<span>${label||'Escuchar'}</span></button>`:'';
 function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
-const metaBar=(label,done,total)=>`<div class="meta"><div class="metarow"><p class="qnum">${label}</p>${V.view!=='cards'?`<span class="lives" id="lives" role="img" aria-label="Te quedan ${lives} vidas">${hearts()}</span>`:''}</div><div class="bar"><i style="width:${Math.round(done/total*100)}%"></i></div></div>`;
+const metaBar=(label,done,total)=>`<div class="meta"><div class="metarow"><p class="qnum">${label}</p>${V.view!=='cards'&&!V.exam?`<span class="lives" id="lives" role="img" aria-label="Te quedan ${lives} vidas">${hearts()}</span>`:''}</div><div class="bar"><i style="width:${Math.round(done/total*100)}%"></i></div></div>`;
 
 /* ---------- portada ---------- */
 function renderHome(){
@@ -1645,7 +1741,7 @@ function renderHome(){
  <section class="subjects">${['mates','lengua','ingles'].map(k=>`<button class="subj s-${k}" data-act="subj" data-s="${k}"><span class="subj-ic">${ICON_SUBJ[k]}</span><span class="subj-name">${SUBJ[k].name}</span><span class="subj-topics">${SUBJ[k].topics}</span><span class="subj-stars">${ICON.star} ${D.stars[k]} ${D.stars[k]===1?'estrella':'estrellas'}</span></button>`).join('')}</section>
  <section class="extras">
   <button class="extra" data-act="stickers"><span class="ei">${stSVG(got?got-1:0)}</span><span><b>Mis pegatinas</b><span>${got} de ${STICKERS.length}. Ganas una cada ${ST_EVERY} estrellas.</span></span></button>
-  <button class="extra" data-act="prizes"><span class="ei">${PICON.gift}</span><span><b>Premios</b><span>${D.unlocked.length} de ${PRIZES.length} desbloqueados. Minijuegos y minivídeos de inglés.</span></span></button>
+  <button class="extra" data-act="prizes"><span class="ei">${PICON.gift}</span><span><b>Premios</b><span>Minijuegos, personajes, colores, fondos y planes con papá y mamá.${(D.coupons||[]).some(c=>!c.used)?' ¡Tienes vales!':''}</span></span></button>
   <button class="extra" data-act="who"><span class="ei">${avatarSVG(peek(PID==='idaira'?'mama':'idaira').avatar||PEOPLE[PID==='idaira'?'mama':'idaira'].avatar)}</span><span><b>Cambiar de persona</b><span>Ahora estudia ${esc(D.name.trim()||PEOPLE[PID].name)}. Toca para elegir otra.</span></span></button>
   <button class="extra" data-act="profile"><span class="ei">${avatarSVG(D.avatar)}</span><span><b>Mi perfil</b><span>Nombre, curso, avatar y color</span></span></button>
  </section></main>`;
@@ -1658,7 +1754,8 @@ function renderProfile(){
  <section class="pcard"><h2>Mi avatar</h2><div class="avgrid">${Object.keys(AVATARS).map(k=>`<button class="avopt ${D.avatar===k?'on':''}" data-act="av" data-k="${k}" aria-label="${AVATARS[k][0]}" aria-pressed="${D.avatar===k}">${avatarSVG(k)}</button>`).join('')}</div>
  <h2>Personajes especiales</h2><p class="small">Canjéalos con tus estrellas.</p><div class="avgrid">${Object.keys(XCH).map(k=>{const on=isUnlockedChar(k);return `<button class="avopt ${D.avatar===k?'on':''} ${on?'':'locked'}" data-act="${on?'av':'buy'}" data-id="c_${k}" data-k="${k}" aria-label="${XCH[k].n}${on?'':' (bloqueado)'}" aria-pressed="${D.avatar===k}">${avatarSVG(k)}${on?'':`<span class="need">${XCH[k].need} ★</span>`}</button>`}).join('')}</div></section>
  <section class="pcard"><h2>Sonidos</h2><div class="seg"><button data-act="snd" data-v="1" class="${D.sound!==false?'on':''}" aria-pressed="${D.sound!==false}">Sí</button><button data-act="snd" data-v="0" class="${D.sound===false?'on':''}" aria-pressed="${D.sound===false}">No</button></div><p class="small">Sonido de acierto y de fallo.</p></section>
- <section class="pcard"><h2>Mi color favorito</h2><div class="favgrid">${Object.keys(FAVS).map(k=>`<button class="fav ${D.fav===k?'on':''}" style="--c:var(--t-${k})" data-act="fav" data-k="${k}" aria-pressed="${D.fav===k}"><i></i>${FAVS[k]}</button>`).join('')}</div></section>
+ <section class="pcard"><h2>Mi color favorito</h2><div class="favgrid">${Object.keys(FAVS).map(k=>{const own=ownFav(k);return `<button class="fav ${D.fav===k?'on':''} ${own?'':'locked'}" style="--c:var(--t-${k})" data-act="${own?'fav':'buy'}" data-id="col_${k}" data-k="${k}" aria-pressed="${D.fav===k}"><i></i>${FAVS[k]}${own?'':` <small>${FAVP[k]} ★</small>`}</button>`}).join('')}</div></section>
+ <section class="pcard"><h2>Mi fondo</h2><div class="bggrid"><button class="bgopt ${!D.bg?'on':''}" data-act="bgset" data-k=""><span class="bgprev"></span>Cuadros</button>${Object.keys(BGS).map(k=>{const own=ownBg(k);return `<button class="bgopt ${D.bg===k?'on':''} ${own?'':'locked'}" data-act="${own?'bgset':'buy'}" data-id="bg_${k}" data-k="${k}"><span class="bgprev bg-${k}"></span>${BGS[k][0]}${own?'':` <small>${BGS[k][1]} ★</small>`}</button>`}).join('')}</div></section>
  <div class="actions"><button class="btn primary" data-act="home">Listo</button></div></main>`;
  const nm=$('#nm');nm.addEventListener('input',()=>{D.name=nm.value;save()});
 }
@@ -1674,6 +1771,7 @@ function renderSubject(){
  const S=SUBJ[V.sub];
  app.innerHTML=header(S.name,'home')+`<main class="wrap">
  <section class="subj-head"><h1>${S.name}</h1><p>${D.lv}º de Primaria · ${D.stars[V.sub]} ${D.stars[V.sub]===1?'estrella':'estrellas'} conseguidas</p>${V.sub==='ingles'&&Date.now()<Date.parse('2026-10-27')?'<p class="exam">Examen el lunes 26 de octubre: Unit 1, vocabulario de adjetivos.</p>':''}</section>
+ ${(()=>{const r=accOf(V.sub),ok=examReady(V.sub);return ok?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Tu media es del ${Math.round(r.avg*100)} %. Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:`<p class="small">${r.n?`Media de aciertos: <b>${Math.round(r.avg*100)} %</b> en tus últimas ${r.n} respuestas. `:''}El examen aparece cuando aciertas el ${Math.round(EXAM_AVG*100)} % o más en al menos ${EXAM_MIN} respuestas.${(D.exams||{})[V.sub]?` Exámenes aprobados: ${D.exams[V.sub]}.`:''}</p>`})()}
  ${TOPICS[V.sub]?`<section class="topics"><h2>Temas que estoy estudiando</h2><div class="chips">${Object.keys(TOPICS[V.sub]).map(k=>{const on=D.tp[V.sub].includes(k);return `<button class="chip ${on?'on':''}" data-act="topic" data-k="${k}" aria-pressed="${on}">${TOPICS[V.sub][k]}</button>`}).join('')}</div><p class="hint">Las preguntas, tarjetas y ejercicios salen de los temas marcados.</p></section>`:''}
  <section class="modes">
   <button class="mode" data-act="mode" data-m="test"><span class="ic">${ICON.test}</span><b>Test</b><span>10 preguntas con cuatro respuestas. Elige la correcta.</span></button>
@@ -1713,7 +1811,7 @@ function buildTest(){
 }
 function renderTest(){
  const q=T.qs[T.i];T.done=false;if(q.autoSay)setTimeout(()=>speak(q.say),450);
- app.innerHTML=header(SUBJ[V.sub].name+' · Test','quit')+`<main class="wrap">
+ app.innerHTML=header(SUBJ[V.sub].name+(V.exam?' · Examen (1/2)':' · Test'),'quit')+`<main class="wrap">
  ${metaBar(`Pregunta ${T.i+1} de ${T.qs.length}`,T.i,T.qs.length)}
  <section class="qcard"><h2 class="q ${q.q.length>70?'long':''}">${esc(q.q)}</h2>${q.say&&!q.sayAfter?sayBtn(q.say,q.autoSay?'Escuchar otra vez':undefined):''}</section>
  <section class="opts">${q.opts.map((o,i)=>`<button class="opt" data-act="opt" data-i="${i}"><span class="letter">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</section>
@@ -1898,7 +1996,7 @@ function startWrite(){
    const v=vq.pop();return {p:`¿Cómo se dice «${v[1]}» en inglés?`,ans:v[2].split('/'),say:en1(v)};
   })};
  }
- W.i=0;W.score=0;resetW();go('write');
+ if(V.exam){W.items=W.items.slice(0,5);W.title='Examen (2/2)'}W.i=0;W.score=0;resetW();go('write');
 }
 function resetW(){W.tries=0;W.inp='';W.c='';W.r='';W.field='c';W.state='ask'}
 const cellRow=(str,w,cls)=>[...str.padStart(w,' ')].map(ch=>`<span class="c">${ch===' '?'':esc(ch)}</span>`).join('');
@@ -1924,7 +2022,7 @@ function renderWrite(){
  const it=W.items[W.i],n=W.items.length;
  if(W.kind==='op'){
   const keys=['7','8','9','4','5','6','1','2','3',',','0','del'];
-  app.innerHTML=header('Matemáticas · Ejercicios','quit')+`<main class="wrap">
+  app.innerHTML=header('Matemáticas · '+(V.exam?'Examen (2/2)':'Ejercicios'),'quit')+`<main class="wrap">
   ${metaBar(`Ejercicio ${W.i+1} de ${n}`,W.i,n)}
   <div class="opgrid">
    <section class="opbox">
@@ -2016,9 +2114,10 @@ function initCanvas(){
 }
 
 /* ---------- resultado ---------- */
-function finish(score,total){const before=lifetime(),earn=V.sub==='reto'?score*2:score;D.stars[V.sub]=(D.stars[V.sub]||0)+earn;if(V.sub==='reto')D.daily=today();const after=lifetime();const nb=Math.min(STICKERS.length,Math.floor(after/ST_EVERY));V.res={score,total,earn,newPr:checkUnlocks(),newSt:nb>Math.min(STICKERS.length,Math.floor(before/ST_EVERY))?nb-1:-1};save();go('result')}
+function finish(score,total){if(V.exam){examStep(score,total);return}const before=lifetime(),earn=V.sub==='reto'?score*2:score;D.stars[V.sub]=(D.stars[V.sub]||0)+earn;if(V.sub==='reto')D.daily=today();const after=lifetime();const nb=Math.min(STICKERS.length,Math.floor(after/ST_EVERY));V.res={score,total,earn,newPr:checkUnlocks(),newSt:nb>Math.min(STICKERS.length,Math.floor(before/ST_EVERY))?nb-1:-1};save();go('result')}
 function renderResult(){
  const {score,total,earn,newSt}=V.res,r=score/total,isR=V.sub==='reto';
+ if(!isR&&examReady(V.sub))setTimeout(()=>{if(V.view==='result')examAsk()},1600);
  const msg=r===1?'¡Perfecto! Te lo sabes todo.':r>=.8?'¡Muy bien hecho!':r>=.5?'¡Bien! Con un poco más de práctica lo bordas.':'Sigue practicando. Cada vez te saldrá mejor.';
  if(r>=.7)setTimeout(()=>sfx('win'),200);
  app.innerHTML=header(SUBJ[V.sub].name,isR?'home':'subject')+(r>=.7?confettiHTML():'')+`<main class="wrap result">
@@ -2028,6 +2127,7 @@ function renderResult(){
  <p class="small">Has ganado ${earn} ${earn===1?'estrella':'estrellas'}${isR?' (¡dobles por el reto!)':''}.</p>
  ${(V.res.newPr||[]).map(p=>`<div class="newst">${PICON[p.type]}<span>¡Has desbloqueado ${p.type==='video'?'el minivídeo':p.type==='char'?'el personaje':'el minijuego'} «${esc(p.name)}»!</span><button class="btn small primary" data-act="prizes">Ver</button></div>`).join('')}
  ${newSt>=0?`<div class="newst">${stSVG(newSt)}<span>¡Nueva pegatina: ${STICKERS[newSt][0]}!</span></div>`:''}
+ ${!isR&&examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  <div class="actions two">${isR?'<button class="btn primary" data-act="home">Volver al menú</button>':'<button class="btn ghost" data-act="subject">Otra actividad</button><button class="btn primary" data-act="repeat">Repetir</button>'}</div></main>`;
 }
 
@@ -2036,10 +2136,11 @@ const ACT={
  home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>go('who'),
  pick:el=>{loadProfile(el.dataset.p);sfx('ok');lives=MAXL;go('home');const n=D.name.trim();if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`¡Hola, ${n}!`);u.lang='es-ES';speechSynthesis.speak(u)}catch(e){}},
  who:()=>go('who'),
- quit:()=>{stopRec();try{speechSynthesis.cancel()}catch(e){}go(V.sub==='reto'?'home':'subject')},
+ quit:()=>{V.exam=null;stopRec();try{speechSynthesis.cancel()}catch(e){}go(V.sub==='reto'?'home':'subject')},
  lv:el=>{D.lv=+el.dataset.lv;save();render()},
  profile:()=>go('profile'), stickers:()=>go('stickers'), reto:()=>startReto(),
- av:el=>{if(!isUnlockedChar(el.dataset.k))return;D.avatar=el.dataset.k;save();render()}, fav:el=>{D.fav=el.dataset.k;save();render()},
+ av:el=>{if(!isUnlockedChar(el.dataset.k))return;D.avatar=el.dataset.k;save();render()}, fav:el=>{if(!ownFav(el.dataset.k))return;D.fav=el.dataset.k;save();render()}, bgset:el=>{if(!ownBg(el.dataset.k))return;D.bg=el.dataset.k;save();render()},
+ vales:()=>{const m=$('#mdl');if(m)m.remove();go('vales')}, valeuse:el=>modal(`<div class="mpic">${PICON.real}</div><b>¿Ya lo habéis disfrutado?</b><span>Pulsa «Sí» solo cuando el premio ya se haya hecho.</span><div class="actions two"><button class="btn ghost" data-act="mclose">Todavía no</button><button class="btn primary" data-act="valeok" data-i="${el.dataset.i}">Sí</button></div>`), valeok:el=>{const c=(D.coupons||[])[+el.dataset.i];if(c){c.used=true;save()}render();sfx('win')},
  subj:el=>go('subject',el.dataset.s),
  mode:el=>start(el.dataset.m),
  topic:el=>{const a=D.tp[V.sub],k=el.dataset.k,i=a.indexOf(k);if(i>=0){if(a.length>1)a.splice(i,1)}else a.push(k);save();renderSubject()}, repeat:()=>start(V.mode),
@@ -2055,7 +2156,7 @@ const ACT={
  flip:el=>{C.flipped=!C.flipped;el.classList.toggle('is-flipped',C.flipped);if(C.flipped){document.querySelectorAll('[data-act=again],[data-act=know]').forEach(b=>b.disabled=false);const s=$('#sayrow');if(s)s.hidden=false}},
  know:()=>{const c=C.deck.shift();mark(c.w,!C.missed.has(c.id));if(!C.missed.has(c.id))C.score++;C.flipped=false;if(!C.deck.length)finish(C.score,C.total);else renderCards()},
  again:()=>{const c=C.deck.shift();if(!C.missed.has(c.id))mark(c.w,false);C.missed.add(c.id);C.deck.push(c);C.flipped=false;renderCards()},
- mt:el=>tapMatch(el),
+ mt:el=>tapMatch(el), examgo:()=>startExam(), examask:()=>examAsk(),
  prizes:()=>go('prizes'), prize:el=>{const m=$('#mdl');if(m)m.remove();openPrize(el.dataset.id)},
  buy:el=>askBuy(el.dataset.id), buyok:el=>doBuy(el.dataset.id), mclose:()=>{const m=$('#mdl');if(m)m.remove()},
  nolock:el=>{el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake')},
