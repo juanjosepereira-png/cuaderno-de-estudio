@@ -1351,7 +1351,26 @@ function avatarSVG(k){
 const FAVS={violeta:'Violeta',rosa:'Rosa',turquesa:'Turquesa',naranja:'Naranja',fresa:'Fresa',menta:'Menta',cielo:'Cielo',oro:'Oro',lila:'Lila',coral:'Coral'};
 const FAVP={fresa:10,menta:10,cielo:10,oro:15,lila:15,coral:15};
 const ownFav=k=>!FAVP[k]||D.unlocked.includes('col_'+k);
-const BGS={estrellas:['Estrellas',12],corazones:['Corazones',12],lunares:['Lunares',10],arcoiris:['Arcoíris',18],oceano:['Olas del mar',15],flores:['Flores',15],dulces:['Caramelos',18]};
+const BGS={estrellas:['Estrellas',12],corazones:['Corazones',12],lunares:['Lunares',10],arcoiris:['Arcoíris',18],oceano:['Olas del mar',15],flores:['Flores',15],dulces:['Caramelos',18],
+ gatitos:['Gatitos',15],pandas:['Pandas',15],conejitas:['Conejitas',16],musica:['Música',16],helados:['Helados',18],buhos:['Búhos',18],mariposas:['Mariposas',20],unicornios:['Unicornios',20],
+ espacio:['Espacio',22],dinos:['Dinosaurios',22],lunapop:['Concierto de Luna Pop',25],hadas:['Bosque de Hada Brisa',25],sirenas:['Mar de Sirena Coral',25],
+ astronautas:['Viaje de Astronauta Nova',28],heroinas:['Capitana Cometa',28],dragones:['Dragona Chispa',30],ninjas:['Ninja Kiwi',30],princesas:['Princesa Volcán',32]};
+const BGCHAR={gatitos:'gata',pandas:'panda',conejitas:'conejita',buhos:'buho',unicornios:'unicornio',lunapop:'luna',hadas:'brisa',sirenas:'coral',astronautas:'nova',heroinas:'cometa',dragones:'chispa',ninjas:'kiwi',princesas:'volcan'};
+const BGMOTIF={
+ musica:`<text x='14' y='40' font-size='34' fill='%235b4bd1' fill-opacity='.3'>♪</text><text x='70' y='96' font-size='30' fill='%23ff5d8f' fill-opacity='.3'>♫</text><text x='84' y='34' font-size='20' fill='%23ffb23f' fill-opacity='.4'>♩</text>`,
+ helados:`<g fill-opacity='.35'><path d='M22 40l10 26 10-26z' fill='%23e8a65d'/><circle cx='32' cy='32' r='11' fill='%23ff9bd2'/><path d='M76 86l8 20 8-20z' fill='%23e8a65d'/><circle cx='84' cy='80' r='9' fill='%239fe3c9'/></g>`,
+ mariposas:`<g fill-opacity='.35'><ellipse cx='22' cy='28' rx='9' ry='7' fill='%235fc9f8'/><ellipse cx='38' cy='28' rx='9' ry='7' fill='%235fc9f8'/><ellipse cx='24' cy='40' rx='6' ry='5' fill='%23ff9bd2'/><ellipse cx='36' cy='40' rx='6' ry='5' fill='%23ff9bd2'/><ellipse cx='82' cy='84' rx='7' ry='6' fill='%23ffd23f'/><ellipse cx='96' cy='84' rx='7' ry='6' fill='%23ffd23f'/></g>`,
+ espacio:`<g fill-opacity='.35'><circle cx='26' cy='28' r='12' fill='%23ffb23f'/><ellipse cx='26' cy='28' rx='20' ry='5' fill='none' stroke='%235b4bd1' stroke-opacity='.4' stroke-width='3'/><path d='M84 62c6 5 8 14 5 24h-10c-3-10-1-19 5-24z' fill='%23ff5d5d'/><circle cx='84' cy='74' r='3' fill='%235fc9f8'/><circle cx='60' cy='20' r='2' fill='%23b79bff'/><circle cx='100' cy='30' r='2.5' fill='%23ffd23f'/><circle cx='20' cy='100' r='2' fill='%23ffd23f'/></g>`,
+ dinos:`<g fill-opacity='.32'><path d='M10 52c0-14 14-20 24-14l10-8 4 6-6 8c4 6 4 14 0 20H34l-2 8h-6l-2-8h-4l-2 8h-6l-2-10z' fill='%235fcf72'/><path d='M66 104c0-12 12-17 20-12l8-7 4 5-5 7c3 5 3 12 0 17H85l-2 7h-5l-2-7h-3l-2 7h-5l-1-8z' fill='%23ff9f6b'/></g>`
+};
+function bgDataURI(k){
+ let inner='';
+ if(BGCHAR[k]){const raw=avatarSVG(BGCHAR[k]).replace(/^<svg[^>]*>/,'').replace(/<\/svg>$/,'').replace(/class="[^"]*"/g,'');inner=`<g opacity="0.3" transform="translate(6 6) scale(.5)">${raw}</g><g opacity="0.22" transform="translate(66 64) scale(.4)">${raw}</g>`}
+ else if(BGMOTIF[k])inner=decodeURIComponent(BGMOTIF[k].replace(/%23/g,'%2523')).replace(/%23/g,'#');
+ else return '';
+ return 'url("data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">${inner}</svg>`)+'")';
+}
+(function(){try{const css=Object.keys(BGS).map(k=>{const u=bgDataURI(k);return u?`.bg-${k},body[data-bg="${k}"]{background-image:${u};background-size:120px 120px}`:''}).join('\n');const st=document.createElement('style');st.textContent=css;document.head.appendChild(st)}catch(e){}})();
 const ownBg=k=>!k||D.unlocked.includes('bg_'+k);
 const LEVELS=[[0,'Aprendiz'],[20,'Exploradora'],[50,'Detective'],[100,'Sabia'],[200,'Genio'],[400,'Leyenda']];
 const ST_EVERY=10;
