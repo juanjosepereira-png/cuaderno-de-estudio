@@ -450,6 +450,13 @@ button{font:inherit;color:inherit}
 .gendbox span{color:var(--muted);font-weight:700}
 .gendbox .actions{width:100%}
 
+.lvst{display:inline-flex;gap:2px;font-size:1.2rem;line-height:1}
+.lvst .ds{color:var(--line)}.lvst .ds.on{color:#e0a800}
+.lvline{margin:6px 0 0!important;display:flex;align-items:center;gap:6px;color:var(--ink)!important}
+.levelup{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;background:color-mix(in srgb,var(--accent) 12%,var(--card));border:3px solid var(--accent);border-radius:20px;padding:16px 20px;max-width:460px;animation:pop .6s .6s both}
+.levelup b{font-family:var(--f-display);font-weight:800;font-size:1.6rem;color:var(--accent)}
+.levelup .lvst{font-size:2rem}
+.levelup span:last-child{color:var(--muted)}
 .examban{display:flex;align-items:center;gap:14px;width:100%;max-width:560px;text-align:left;border:0;border-radius:20px;padding:14px 18px;cursor:pointer;background:var(--marker);color:var(--on-marker);box-shadow:0 5px 0 color-mix(in srgb,var(--marker) 55%,#000);animation:pop .5s both}
 .examban svg{width:56px;height:56px;flex:none;animation:wig 2s ease-in-out infinite}
 .examban b{display:block;font-family:var(--f-display);font-weight:800;font-size:1.4rem;line-height:1.1}
@@ -1014,12 +1021,13 @@ const hasTTS=()=>'speechSynthesis' in window;
 const subj=()=>{const f=Math.random()<.5;return f?["She's",'She','she']:["He's",'He','he']};
 function u1MC(){
  const r=Math.random(),out=o=>Object.assign(o,{opts:o.opts,a:o.opts.indexOf(o.right)});
- if(r<.32){const g=SQ(),opts=shuffle([g[0],g[2],g[3],g[4]]);return {q:g[1],opts,a:opts.indexOf(g[0]),w:g[0],say:g[1].replace('___',g[0]),sayAfter:true}}
+ const dv=DIF();
+ if(r<.32+dv*.08){const g=SQ(),opts=shuffle([g[0],g[2],g[3],g[4]]);return {q:g[1],opts,a:opts.indexOf(g[0]),w:g[0],say:g[1].replace('___',g[0]),sayAfter:true}}
  const w=UQ(),oth=shuffle(U1.filter(x=>x!==w)).slice(0,3);
  if(r<.44){const opts=shuffle([w,...oth]).map(x=>x.en);return {q:`¿Cómo se dice «${w.es}» en inglés?`,opts,a:opts.indexOf(w.en),w:w.en}}
  if(r<.54){const opts=shuffle([w,...oth]).map(x=>x.es);return {q:`¿Qué significa «${w.en}»?`,opts,a:opts.indexOf(w.es),say:w.en,w:w.en}}
  if(r<.64&&hasTTS()){const opts=shuffle([w,...oth]).map(x=>x.en);return {q:'Escucha la palabra y elige cuál es',opts,a:opts.indexOf(w.en),say:w.en,autoSay:true,w:w.en}}
- if(r<.76){const opts=shuffle([w.en,...shuffle(w.bad).slice(0,3)]);return {q:`¿Cuál está bien escrita? (significa «${w.es}»)`,opts,a:opts.indexOf(w.en),w:w.en}}
+ if(r<.76){const close=dv>=2?[w.en.slice(0,-1),w.en+w.en.slice(-1),w.en.replace(/([aeiou])/,'$1$1')].filter(x=>x!==w.en):[];const opts=shuffle([w.en,...[...new Set([...close,...shuffle(w.bad)])].filter(x=>x!==w.en).slice(0,3)]);return {q:`¿Cuál está bien escrita? (significa «${w.es}»)`,opts,a:opts.indexOf(w.en),w:w.en}}
  if(r<.86){const [P,Pn]=subj(),right=`${P} ${w.en}.`,opts=shuffle([right,`${Pn} ${w.en}.`,`${Pn} are ${w.en}.`,`${P} ${w.en}s.`]);return {q:`¿Qué frase está bien? («${Pn==='She'?'Ella':'Él'} está/es ${w.es.split(',')[0]}»)`,opts,a:opts.indexOf(right),w:w.en}}
  if(w.opp&&r<.94){const opts=shuffle([w.opp,...shuffle(U1.filter(x=>x.en!==w.opp&&x.en!==w.en)).slice(0,3).map(x=>x.en)]);return {q:`What is the opposite of «${w.en}»?`,opts,a:opts.indexOf(w.opp),say:w.en,w:w.en}}
  const hole=w.en.split('').map((ch,i)=>i&&i<w.en.length-1&&Math.random()<.45?'_':ch).join(' ');const opts=shuffle([w,...oth]).map(x=>x.en);
@@ -1027,15 +1035,16 @@ function u1MC(){
 }
 function u1Write(){
  const r=Math.random();
- if(r<.3){const g=SQ(),w=U1by(g[0]),blank=g[0][0]+' _'.repeat(g[0].length-1);
-  return {p:'Completa: '+g[1].replace('___',blank),ans:[g[0]],rest:g[0].slice(1),say:g[1].replace('___',g[0]),hint:`Pista: significa «${w.es}».`,w:g[0]}}
+ const dv=DIF();
+ if(r<.3+dv*.05){const g=SQ(),w=U1by(g[0]),blank=dv>=1?'_____':g[0][0]+' _'.repeat(g[0].length-1);
+  return {p:'Completa: '+g[1].replace('___',blank),ans:[g[0]],rest:dv>=1?undefined:g[0].slice(1),say:g[1].replace('___',g[0]),hint:`Pista: significa «${w.es}».`,w:g[0]}}
  const w=UQ();
  if(r<.45){let m;do{m=shuffle(w.en.split('')).join('')}while(m===w.en);
   return {p:`Ordena las letras y escribe la palabra: ${m.split('').join(' ')}`,ans:[w.en],say:w.en,hint:`Pista: significa «${w.es}» y empieza por «${w.en[0]}».`,w:w.en}}
  if(r<.6){let h;do{h=w.en.split('').map((ch,i)=>i&&Math.random()<.5?'_':ch).join(' ')}while(!h.includes('_'));
   return {p:`Completa las letras que faltan: ${h}  («${w.es}»)`,ans:[w.en],say:w.en,hint:`Pista: tiene ${w.en.length} letras.`,w:w.en}}
  if(r<.78&&hasTTS())return {p:'Escucha y escribe la palabra en inglés',sayFirst:true,ans:[w.en],say:w.en,hint:`Pista: significa «${w.es}».`,w:w.en};
- if(r<.9){const [P,Pn]=subj();return {p:`Traduce la frase: «${Pn==='She'?'Ella':'Él'} está/es ${w.es.split(',')[0]}». Escribe: ${P} ___`,ans:[w.en,`${P.toLowerCase()} ${w.en}`,`${Pn.toLowerCase()} is ${w.en}`],say:`${P} ${w.en}.`,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
+ if(r<.9){const [P,Pn]=subj();return {p:dv>=2?`Traduce la frase entera: «${Pn==='She'?'Ella':'Él'} está/es ${w.es.split(',')[0]}»`:`Traduce la frase: «${Pn==='She'?'Ella':'Él'} está/es ${w.es.split(',')[0]}». Escribe: ${P} ___`,ans:dv>=2?[`${P.toLowerCase()} ${w.en}`,`${Pn.toLowerCase()} is ${w.en}`]:[w.en,`${P.toLowerCase()} ${w.en}`,`${Pn.toLowerCase()} is ${w.en}`],say:`${P} ${w.en}.`,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
  return {p:`Escribe en inglés: «${w.es}»`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en};
 }
 function u1Card(){
@@ -1054,7 +1063,7 @@ function lev(a,b){const d=Array.from({length:a.length+1},(_,i)=>[i]);for(let j=1
 
 /* ---------- selección por curso ---------- */
 function pool(items,n){
- const L=D.lv;
+ const L=LV();
  return items.filter(i=>i[0]<=L)
   .map(i=>({i,s:Math.random()*freshW('q:'+i[1])+(i[0]===L?.7:i[0]===L-1?.35:0)*freshW('q:'+i[1])}))
   .sort((a,b)=>b.s-a.s).slice(0,n).map(x=>{markSeen('q:'+x.i[1]);return x.i});
@@ -1091,7 +1100,7 @@ function genOp(L,exact,sym){
 }
 const resStr=o=>o.res.toFixed(o.rd).replace('.',',');
 function opMC(sym){
- const o=genOp(D.lv,true,sym),u=10**-o.rd;
+ const o=genOp(LV(),true,sym),u=10**-o.rd;
  const right=o.res.toFixed(o.rd),set=new Set([right]);
  for(const k of shuffle([10,-10,1,-1,100,-100,2,-2,20])){
   const c=o.res+k*u*(o.rd?pick([1,10]):1);
@@ -1121,7 +1130,7 @@ function genRound(L){
  return {s:'txt',V,q,sc,rd,res:r/sc,show:nf(r/sc,rd),plain:`Redondea ${num} a ${place}`,prompt:`Redondea <b>${num}</b> a <b>${place}</b>`,hint};
 }
 function roundMC(){
- const o=genRound(D.lv),V=o.V,q=o.q,r=Math.round(V/q)*q;
+ const o=genRound(LV()),V=o.V,q=o.q,r=Math.round(V/q)*q;
  const c=[Math.floor(V/q)*q,Math.ceil(V/q)*q,r+q,r-q,Math.round(V/(q*10))*q*10];
  if(o.sc===1&&q>=10)c.push(Math.round(V/(q/10))*(q/10));
  const set=new Set();for(const x of shuffle(c)){if(x>0&&x!==r)set.add(x);if(set.size===3)break}
@@ -1148,7 +1157,7 @@ function mutate(ts){
 }
 function wrongs(ts,f){const right=f(ts),set=new Set();let g=0;while(set.size<3&&g++<80){let m=mutate(ts);if(Math.random()<.4)m=mutate(m);const x=f(m);if(x!==right)set.add(x)}return [...set]}
 function desMC(type){
- const L=D.lv,n=genNum(L),ts=terms(n);type=type||pick(['a','b','c']);
+ const L=LV(),n=genNum(L),ts=terms(n);type=type||pick(['a','b','c']);
  if(type==='b'){
   const dg=digitsOf(n),ok=dg.map((d,i)=>i).filter(i=>dg[i]&&dg.filter(x=>x===dg[i]).length===1);
   if(!ok.length)return desMC('a');
@@ -1221,14 +1230,14 @@ function genProblem(L){
  return {s:'txt',kind:'pro',prompt:esc(text),plain:text,res,rd:0,unit,show:`${nf(res)} ${unit}`,hint,alts};
 }
 function proMC(){
- const o=genProblem(D.lv),set=new Set();
+ const o=genProblem(LV()),set=new Set();
  for(const x of shuffle(o.alts)){if(x>0&&x!==o.res&&Number.isInteger(x))set.add(x);if(set.size===3)break}
  let k=1;while(set.size<3){const x=o.res+k*(k%2?1:-1)*(1+(k>>1));if(x>0&&x!==o.res)set.add(x);k++}
  const opts=shuffle([o.res,...set].map(x=>`${nf(x)} ${o.unit}`));
  return {q:o.plain,opts,a:opts.indexOf(o.show)};
 }
 function mathCards(t,n){
- const L=D.lv,rows=shuffle(FC_MATES.filter(r=>r[3]===t&&r[0]<=L)),out=[],seen=new Set();
+ const L=LV(),rows=shuffle(FC_MATES.filter(r=>r[3]===t&&r[0]<=L)),out=[],seen=new Set();
  const add=c=>{if(c&&!seen.has(c.f)){seen.add(c.f);out.push(c)}};
  rows.slice(0,t==='geo'?n:Math.ceil(n/2)).forEach(r=>add({f:r[1],b:r[2]}));
  let g=0;
@@ -1424,26 +1433,31 @@ function renderOver(){
  <p class="small">${isR?'Puedes volver a intentar el reto.':'Repasa con las tarjetas y vuelve a intentarlo. ¡Tú puedes!'}</p>
  <div class="actions two">${isR?'<button class="btn ghost" data-act="home">Volver al menú</button><button class="btn primary" data-act="reto">Intentar otra vez</button>':'<button class="btn ghost" data-act="mode" data-m="cards">Repasar tarjetas</button><button class="btn primary" data-act="repeat">Intentar otra vez</button>'}</div></main>`;
 }
+/* dificultad por materia: sube al aprobar el examen con más de un 8 */
+const MAXDIF=3,DIFNAME=['Nivel 1','Nivel 2','Nivel 3','Nivel 4'];
+const DIF=(sub)=>Math.min(MAXDIF,((D.dif||{})[sub||V.sub])||0);
+function LV(){return Math.max(3,Math.min(6,(D.lv||4)+DIF()))}
+const difStars=n=>Array.from({length:MAXDIF+1},(_,i)=>`<span class="ds ${i<=n?'on':''}">★</span>`).join('');
 /* examen: aparece cuando la media de aciertos es muy alta */
 const EXAM_WIN=30,EXAM_MIN=25,EXAM_AVG=.85,EXAM_PASS=.8,EXAM_PRIZE=50;
 function track(ok){if(V.exam||noLives()||!['mates','lengua','ingles'].includes(V.sub))return;D.acc=D.acc||{};const a=D.acc[V.sub]=D.acc[V.sub]||[];a.push(ok?1:0);if(a.length>EXAM_WIN)a.shift()}
 function accOf(sub){const a=(D.acc||{})[sub]||[];return {n:a.length,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:0}}
 const examReady=sub=>{const r=accOf(sub);return r.n>=EXAM_MIN&&r.avg>=EXAM_AVG};
-function examAsk(){const r=accOf(V.sub);modal(`<div class="mpic">${ICON_EXAM}</div><b>¡Estás lista para el examen de ${SUBJ[V.sub].name}!</b><span>Tu media de aciertos es del ${Math.round(r.avg*100)} %. El examen tiene 10 preguntas y 5 ejercicios, sin vidas. Si aciertas ${Math.ceil(15*EXAM_PASS)} o más, apruebas y ganas ${EXAM_PRIZE} estrellas.</span><div class="actions two"><button class="btn ghost" data-act="mclose">Ahora no</button><button class="btn primary" data-act="examgo">¡Hacer el examen!</button></div>`)}
+function examAsk(){const r=accOf(V.sub);modal(`<div class="mpic">${ICON_EXAM}</div><b>¡Estás lista para el examen de ${SUBJ[V.sub].name}!</b><span class="lvst">${difStars(DIF())}</span><span>Tu media de aciertos es del ${Math.round(r.avg*100)} %. Examen del ${DIFNAME[DIF()]}: 10 preguntas y 5 ejercicios, sin vidas. Si aciertas ${Math.ceil(15*EXAM_PASS)} o más, apruebas y ganas ${EXAM_PRIZE} estrellas.${DIF()<MAXDIF?' Si sacas más de un 8, ¡subes de nivel!':''}</span><div class="actions two"><button class="btn ghost" data-act="mclose">Ahora no</button><button class="btn primary" data-act="examgo">¡Hacer el examen!</button></div>`)}
 function startExam(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.exam={part:1,s:0,n:0,sub:V.sub};V.mode='exam';lives=MAXL;V.locked=false;T={qs:buildTest().slice(0,10),i:0,score:0,done:false};go('test')}
 function examStep(score,total){
  const E=V.exam;E.s+=score;E.n+=total;
  if(E.part===1){E.part=2;startWrite();return}
  const pass=E.s/E.n>=EXAM_PASS;D.acc[E.sub]=[];
- if(pass){D.stars[E.sub]=(D.stars[E.sub]||0)+EXAM_PRIZE;D.exams=D.exams||{};D.exams[E.sub]=(D.exams[E.sub]||0)+1}
- V.examRes={s:E.s,n:E.n,pass};V.exam=null;save();go('examres');
+ let up=false;if(pass){D.stars[E.sub]=(D.stars[E.sub]||0)+EXAM_PRIZE;D.exams=D.exams||{};D.exams[E.sub]=(D.exams[E.sub]||0)+1;if(E.s/E.n*10>8&&DIF(E.sub)<MAXDIF){D.dif=D.dif||{};D.dif[E.sub]=DIF(E.sub)+1;up=true}}
+ V.examRes={s:E.s,n:E.n,pass,up,lvl:DIF(E.sub)};V.exam=null;save();go('examres');
 }
 function renderExamRes(){
- const {s,n,pass}=V.examRes,nota=(s/n*10).toFixed(1).replace('.',',');
+ const {s,n,pass,up,lvl}=V.examRes,nota=(s/n*10).toFixed(1).replace('.',',');
  if(pass)setTimeout(()=>sfx('win'),200);else sfx('over');
  app.innerHTML=header(SUBJ[V.sub].name,'subject')+(pass?confettiHTML():'')+`<main class="wrap result">
  ${pass?`<div class="diploma"><span class="dstamp">¡APROBADO!</span><span class="dk">Diploma</span><b>${esc(D.name.trim())}</b><span>ha aprobado el examen de</span><b class="dsub">${SUBJ[V.sub].name}</b><span class="dnota">Nota: ${nota}</span><span class="small">${new Date().toLocaleDateString('es-ES')}</span></div>
- <p class="lost ok">+${EXAM_PRIZE} estrellas</p>`
+ <p class="lost ok">+${EXAM_PRIZE} estrellas</p>${up?`<div class="levelup"><span class="lvst">${difStars(lvl)}</span><b>¡Subes al ${DIFNAME[lvl]}!</b><span>Los ejercicios de ${SUBJ[V.sub].name} serán más difíciles. Cuando vuelvas a tener una media muy alta, harás el examen del ${DIFNAME[lvl]}.</span></div>`:(DIF(V.sub)<MAXDIF?`<p class="small">Con una nota de más de 8 subirías de nivel. ¡La próxima vez!</p>`:'<p class="small">¡Ya estás en el nivel más alto!</p>')}`
  :`<div class="overface">${FACE_ANGRY.replace('¡GRRR!','¡CASI!')}</div><h1 class="msg">¡Casi lo consigues!</h1><p class="small">Has acertado ${s} de ${n}. Para aprobar necesitas ${Math.ceil(n*EXAM_PASS)}. Sigue practicando: cuando vuelvas a tener una media muy alta, el examen aparecerá otra vez.</p>`}
  <div class="actions"><button class="btn primary" data-act="subject">Seguir</button></div></main>`;
 }
@@ -1835,7 +1849,7 @@ function renderStickers(){
 function renderSubject(){
  const S=SUBJ[V.sub];
  app.innerHTML=header(S.name,'home')+`<main class="wrap">
- <section class="subj-head"><h1>${S.name}</h1><p>${D.lv}º de Primaria · ${D.stars[V.sub]} ${D.stars[V.sub]===1?'estrella':'estrellas'} conseguidas</p>${V.sub==='ingles'&&Date.now()<Date.parse('2026-10-27')?'<p class="exam">Examen el lunes 26 de octubre: Unit 1, vocabulario de adjetivos.</p>':''}</section>
+ <section class="subj-head"><h1>${S.name}</h1><p class="lvline"><span class="lvst">${difStars(DIF())}</span> <b>${DIFNAME[DIF()]}</b>${DIF()?` · ejercicios de ${LV()}º`:''}</p><p>${D.lv}º de Primaria · ${D.stars[V.sub]} ${D.stars[V.sub]===1?'estrella':'estrellas'} conseguidas</p>${V.sub==='ingles'&&Date.now()<Date.parse('2026-10-27')?'<p class="exam">Examen el lunes 26 de octubre: Unit 1, vocabulario de adjetivos.</p>':''}</section>
  ${(()=>{const r=accOf(V.sub),ok=examReady(V.sub);return ok?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Tu media es del ${Math.round(r.avg*100)} %. Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:`<p class="small">${r.n?`Media de aciertos: <b>${Math.round(r.avg*100)} %</b> en tus últimas ${r.n} respuestas. `:''}El examen aparece cuando aciertas el ${Math.round(EXAM_AVG*100)} % o más en al menos ${EXAM_MIN} respuestas.${(D.exams||{})[V.sub]?` Exámenes aprobados: ${D.exams[V.sub]}.`:''}</p>`})()}
  ${TOPICS[V.sub]?`<section class="topics"><h2>Temas que estoy estudiando</h2><div class="chips">${Object.keys(TOPICS[V.sub]).map(k=>{const on=D.tp[V.sub].includes(k);return `<button class="chip ${on?'on':''}" data-act="topic" data-k="${k}" aria-pressed="${on}">${TOPICS[V.sub][k]}</button>`}).join('')}</div><p class="hint">Las preguntas, tarjetas y ejercicios salen de los temas marcados.</p></section>`:''}
  <section class="modes">
@@ -2043,7 +2057,7 @@ function listen(){
 
 /* ---------- escribir / operaciones ---------- */
 function startWrite(){
- const L=D.lv;
+ const L=LV();
  if(V.sub==='mates'){
   const wt=D.tp.mates.filter(t=>t!=='geo'),tp=wt.length?wt:['mul','div'];
   W={kind:'op',items:rr(tp,8).map(t=>t==='mul'?genOp(L,false,'×'):t==='div'?genOp(L,false,':'):t==='sum'?genOp(L,false,pick(['+','−'])):t==='red'?genRound(L):t==='pro'?genProblem(L):desWrite(L))};
@@ -2140,7 +2154,7 @@ function settle(ok,correct,hint){
  react(ok);
  {const it=W&&W.items&&W.items[W.i];if(it&&it.w&&(ok||W.tries===0))mark(it.w,ok)}
  if(ok){W.score++;W.state='ok';fbShow('ok',pick(PRAISE)+' Ganas una estrella.')}
- else{W.tries++;if(W.tries<2){fbShow('bad',hint);return}W.state='reveal';fbShow('bad',`La respuesta correcta es <b>${esc(correct)}</b>.`)}
+ else{W.tries++;if(W.tries<2){fbShow('bad',DIF()>=2&&!V.exam?'No es correcto. Inténtalo otra vez (en este nivel no hay pistas).':hint);return}W.state='reveal';fbShow('bad',`La respuesta correcta es <b>${esc(correct)}</b>.`)}
  if(W.kind==='op'){
   updSheet();$('#kp').classList.add('off');
   const b=$('#chk');b.textContent=W.i+1<W.items.length?'Siguiente':'Ver resultado';b.dataset.act='wnext';
