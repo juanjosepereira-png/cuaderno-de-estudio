@@ -1763,6 +1763,32 @@ function introShow(i){
  if(i===0)sfx('win');
  speakEs(sc.say,()=>{if(i+1<IN.sc.length)introShow(i+1);else go('who')});
 }
+/* música alegre de la bienvenida, hecha con el sintetizador del navegador */
+let MUS=null,MUS_BLOCKED=false;
+function introMusic(){
+ if(D.sound===false)return false;
+ try{AC=AC||new (window.AudioContext||window.webkitAudioContext)()}catch(e){return false}
+ const ac=AC;if(ac.state==='suspended')ac.resume().catch(()=>{});
+ if(ac.state!=='running')return false;
+ const M=ac.createGain();M.gain.value=.55;M.connect(ac.destination);
+ const t0=ac.currentTime+.15,E=.2,f=m=>440*Math.pow(2,(m-69)/12);
+ const tone=(m,st,len,type,vol,att)=>{const o=ac.createOscillator(),g=ac.createGain(),t=t0+st*E;o.type=type;o.frequency.value=f(m);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+(att||.01));g.gain.exponentialRampToValueAtTime(.0008,t+len*E+.05);o.connect(g);g.connect(M);o.start(t);o.stop(t+len*E+.1)};
+ const nb=ac.createBuffer(1,ac.sampleRate*.3,ac.sampleRate),d=nb.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+ const noise=(st,len,freq,vol,type)=>{const src=ac.createBufferSource(),fl=ac.createBiquadFilter(),g=ac.createGain(),t=t0+st*E;src.buffer=nb;fl.type=type;fl.frequency.value=freq;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.0008,t+len);src.connect(fl);fl.connect(g);g.connect(M);src.start(t);src.stop(t+len+.02)};
+ const kick=st=>{const o=ac.createOscillator(),g=ac.createGain(),t=t0+st*E;o.frequency.setValueAtTime(150,t);o.frequency.exponentialRampToValueAtTime(45,t+.12);g.gain.setValueAtTime(.5,t);g.gain.exponentialRampToValueAtTime(.001,t+.16);o.connect(g);g.connect(M);o.start(t);o.stop(t+.2)};
+ // melodía (nota MIDI, inicio en corcheas, duración)
+ [[76,0,1],[79,1,1],[84,2,2],[83,4,1],[81,5,1],[79,6,2],[77,8,1],[81,9,1],[84,10,2],[86,12,1],[84,13,1],[81,14,2],[79,16,1],[84,17,1],[88,18,2],[86,20,1],[84,21,1],[83,22,1],[86,23,1],[84,24,5]]
+  .forEach(([m,st,l])=>{tone(m,st,l,'square',.07);tone(m+12,st,l*.6,'triangle',.05)});
+ // acordes y bajo
+ [[[60,64,67],48,0],[[65,69,72],53,8],[[67,71,74],55,16],[[72,76,79],48,24]].forEach(([ch,b,st])=>{ch.forEach(m=>tone(m,st,st===24?6:8,'triangle',.045,.04));for(let k=0;k<(st===24?1:4);k++)tone(b-12+(k%2?12:0),st+k*2,st===24?5:1.6,'sine',.22)});
+ // batería: bombo, palmas y platillos
+ for(let e=0;e<24;e++){noise(e,.05,7000,.05,'highpass');if(e%2===0)kick(e);if(e%8===2||e%8===6)noise(e,.12,1800,.16,'bandpass')}
+ kick(24);noise(24,.6,6000,.08,'highpass');
+ // brillo final
+ [88,91,96,100].forEach((m,i)=>tone(m,25+i*.5,1.5,'sine',.06));
+ MUS={M,stop(){try{M.gain.setTargetAtTime(0,ac.currentTime,.12)}catch(e){}}};
+ return true;
+}
 function renderIntro(){
  const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
  app.innerHTML=`<main class="intro2" data-act="iskip" aria-label="Bienvenida. Toca para saltar.">
@@ -1775,11 +1801,11 @@ function renderIntro(){
   <div class="nbcover"><div class="cfront"><div class="spiral"></div><div class="clabel"><b>Cuaderno</b><span>de Estudio</span></div><div class="cstar">${ICON.star}</div></div><div class="cback"></div></div>
  </div></div>
  <p class="tapskip">Toca para saltar</p></main>`;
- const T=[];CLEAN=()=>{T.forEach(clearTimeout);try{speechSynthesis.cancel()}catch(e){}};
+ const T=[];CLEAN=()=>{T.forEach(clearTimeout);try{speechSynthesis.cancel()}catch(e){}if(MUS){MUS.stop();MUS=null}};
+ const playing=introMusic();MUS_BLOCKED=!playing&&D.sound!==false;
+ const hint=$('.tapskip');if(hint&&MUS_BLOCKED)hint.textContent='Toca la pantalla para oír la música';
  if(reduce){T.push(setTimeout(()=>go('who'),1500));return}
- T.push(setTimeout(()=>sfx('ok'),1000));
  T.push(setTimeout(()=>{if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('¡Hola! Bienvenida al Cuaderno de Estudio');u.lang='es-ES';u.rate=1;u.pitch=1.15;speechSynthesis.speak(u)}catch(e){}},2200));
- T.push(setTimeout(()=>sfx('win'),4300));
  T.push(setTimeout(()=>go('who'),6100));
 }
 function renderWho(){
@@ -2212,7 +2238,7 @@ function renderResult(){
 
 /* ---------- acciones ---------- */
 const ACT={
- home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>{if(V.view==='intro')go('who')},
+ home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>{if(V.view!=='intro')return;if(MUS_BLOCKED){MUS_BLOCKED=false;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume().then(()=>{if(V.view==='intro'){if(CLEAN){CLEAN();CLEAN=null}renderIntro()}}).catch(()=>go('who'))}catch(e){go('who')}return}go('who')},
  pick:el=>{loadProfile(el.dataset.p);sfx('ok');lives=MAXL;go('home');const n=D.name.trim();if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`¡Hola, ${n}!`);u.lang='es-ES';speechSynthesis.speak(u)}catch(e){}},
  who:()=>go('who'),
  quit:()=>{V.exam=null;stopRec();try{speechSynthesis.cancel()}catch(e){}go(V.sub==='reto'?'home':'subject')},
