@@ -805,6 +805,28 @@ const WR_LENGUA=[
  [6,'Escribe en pretérito perfecto simple: yo (tener)','tuve'],
  [6,'Escribe con tilde si hace falta: «examen»','examen']
 ];
+const LSENT=[
+ ['Escribe la frase en plural: «El perro ladra.»','los perros ladran'],
+ ['Escribe la frase en plural: «El pez nada en el mar.»','los peces nadan en el mar'],
+ ['Escribe la frase en plural: «El lápiz es azul.»','los lápices son azules'],
+ ['Escribe la frase en plural: «La niña canta.»','las niñas cantan'],
+ ['Escribe la frase en singular: «Los árboles son altos.»','el árbol es alto'],
+ ['Escribe la frase en singular: «Las flores son bonitas.»','la flor es bonita'],
+ ['Escribe la frase en pasado (ayer): «Hoy como pizza.»','ayer comí pizza'],
+ ['Escribe la frase en pasado: «Mi hermano juega al fútbol.»','mi hermano jugó al fútbol'],
+ ['Escribe la frase en pasado (ayer): «Hoy hace sol.»','ayer hizo sol'],
+ ['Escribe la frase en futuro (mañana): «Hoy voy al cine.»','mañana iré al cine'],
+ ['Escribe la frase en futuro (mañana): «Hoy estudio inglés.»','mañana estudiaré inglés'],
+ ['Ordena la frase: parque / al / vamos / mañana','mañana vamos al parque|vamos al parque mañana'],
+ ['Ordena la frase: un / tiene / Lucía / gato / negro','lucía tiene un gato negro'],
+ ['Ordena la frase: los / sábados / playa / vamos / a / la','los sábados vamos a la playa|vamos a la playa los sábados'],
+ ['Ordena la frase: mi / come / zanahorias / conejo','mi conejo come zanahorias'],
+ ['Escribe la frase en femenino: «El niño es muy listo.»','la niña es muy lista'],
+ ['Escribe la frase en masculino: «La gata blanca duerme.»','el gato blanco duerme'],
+ ['Escribe lo contrario: «El libro es aburrido.»','el libro es divertido|el libro es interesante|el libro es emocionante'],
+ ['Escribe lo contrario: «La sopa está fría.»','la sopa está caliente'],
+ ['Termina la frase con un adjetivo: «El elefante es muy …»','el elefante es muy grande|el elefante es muy enorme|el elefante es muy pesado|grande|enorme|pesado|gris|el elefante es muy gris']
+];
 const FC_LENGUA=[
  [3,'Sustantivo','Nombra personas, animales, cosas o lugares: niña, gato, mesa'],
  [3,'Adjetivo','Dice cómo es el sustantivo: alto, rojo, simpático'],
@@ -1025,6 +1047,44 @@ const CTX=[
  ['quiet',"Shh! Be ___. The baby's sleeping.",[]],['quiet',"{N} doesn't talk much in class. {P} very ___.",[]],['quiet',"The library is a ___ place.",[]],
  ['tired',"{N} went to bed very late. Now {p}'s ___.",[]],['tired',"After the long walk, everybody is ___.",['hungry','thirsty']],['tired',"{N} is yawning. {P} very ___.",['bored']]
 ];
+// frases enteras para los niveles altos: [español, inglés]
+const SENT={
+ busy:[["{N} está muy ocupad{a}.","{N} is very busy."],["Mi madre está ocupada.","My mum is busy."]],
+ exciting:[["El partido es emocionante.","The match is exciting."],["Este libro es muy emocionante.","This book is very exciting."]],
+ boring:[["La película es aburrida.","The film is boring."],["Este juego es muy aburrido.","This game is very boring."]],
+ careful:[["{N} es muy cuidados{a}.","{N} is very careful."],["¡Ten cuidado!","Be careful!"]],
+ difficult:[["El examen es difícil.","The test is difficult."],["Este ejercicio es muy difícil.","This exercise is very difficult."]],
+ brave:[["{N} es muy valiente.","{N} is very brave."],["La bombera es valiente.","The firefighter is brave."]],
+ slow:[["El caracol es lento.","The snail is slow."],["{N} es muy lent{a}.","{N} is very slow."]],
+ quick:[["La moto es muy rápida.","The motorbike is very quick."],["{N} es rápid{a}.","{N} is quick."]],
+ terrible:[["El tiempo es horrible.","The weather is terrible."],["¡Qué día tan horrible!","What a terrible day!"]],
+ easy:[["Los deberes son fáciles.","The homework is easy."],["Esto es muy fácil.","This is very easy."]],
+ cold:[["{N} tiene frío.","{N} is cold."],["Tengo mucho frío.","I'm very cold."]],
+ naughty:[["El perro es travieso.","The dog is naughty."],["{N} es muy travies{a}.","{N} is very naughty."]],
+ hungry:[["{N} tiene hambre.","{N} is hungry."],["Tengo mucha hambre.","I'm very hungry."]],
+ loud:[["La música está muy alta.","The music is very loud."],["{N} es muy ruidos{a}.","{N} is very loud."]],
+ thirsty:[["{N} tiene sed.","{N} is thirsty."],["Tenemos sed.","We're thirsty."]],
+ clever:[["{N} es muy list{a}.","{N} is very clever."],["Mi perro es listo.","My dog is clever."]],
+ quiet:[["La biblioteca es tranquila.","The library is quiet."],["{N} está callad{a}.","{N} is quiet."]],
+ tired:[["{N} está cansad{a}.","{N} is tired."],["Estamos muy cansados.","We're very tired."]]
+};
+function sentAlts(en){
+ const set=new Set([en.replace(/[.!]+$/,'')]);
+ const sw=[[/\bI'm\b/,'I am'],[/\bI am\b/,"I'm"],[/\bWe're\b/,'We are'],[/\bWe are\b/,"We're"],[/\bThey're\b/,'They are'],[/\bShe's\b/,'She is'],[/\bShe is\b/,"She's"],[/\bHe's\b/,'He is'],[/\bHe is\b/,"He's"],[/\bIt's\b/,'It is'],[/\bmum\b/,'mom'],[/\bfilm\b/,'movie'],[/\btest\b/,'exam'],[/\bmotorbike\b/,'motorcycle'],[/\bfirefighter\b/,'fireman']];
+ for(let k=0;k<2;k++)for(const x of [...set])for(const [re,r] of sw)if(re.test(x))set.add(x.replace(re,r));
+ for(const x of [...set]){const m=x.match(/^([A-Z][a-záéíóú]+) is /);if(m&&!['This','The','It','She','He','What','My'].includes(m[1]))set.add(x.replace(/^([A-Z][a-záéíóú]+) is /,"$1's "))}
+ return [...set];
+}
+function genSent(en){const [n,g]=pick(KIDS),f=g==='f',pr=pick(SENT[en]),fill=t=>t.replace(/\{N\}/g,n).replace(/\{a\}/g,f?'a':'o');return {es:fill(pr[0]),en:fill(pr[1])}}
+const optVery=arr=>{const o=new Set(arr);for(const a of arr){o.add(a.replace(/\b(very|so|really) /,''))}return [...o]};
+function genFinish(w){
+ const cs=CTX.filter(c=>c[0]===w.en&&/\{P\}|I'm|It's|They're|She's|He's/.test(c[1]));if(!cs.length)return null;
+ const c=pick(cs),[n,g]=pick(KIDS),f=g==='f',fill=t=>t.replace(/\{N\}/g,n).replace(/\{P\}/g,f?"She's":"He's").replace(/\{Pn\}/g,f?'She':'He').replace(/\{p\}/g,f?'she':'he').replace(/\{his\}/g,f?'her':'his');
+ const full=fill(c[1]),m=full.match(/(?:^|[.!?]\s+|,\s*)((?:I'm|It's|They're|She's|He's|Now \w+'s)[^.!?]*___[^.!?]*[.!?])\s*$/)||full.match(/((?:I'm|It's|They're|She's|He's)[^.!?]*___[^.!?]*[.!?])/);
+ if(!m)return null;const tail=m[1],pre=full.slice(0,full.lastIndexOf(tail)).trim(),start=tail.split(' ')[0];
+ const ans=optVery(sentAlts(tail.replace('___',w.en)));
+ return {p:`Termina la frase: ${pre} ${start} …`,ans,say:full.replace('___',w.en),hint:`Pista: empieza por «${start}» y usa un adjetivo de la unidad.`,w:w.en,show:tail.replace('___',w.en)};
+}
 function fillKid(t){const [n,g]=pick(KIDS),f=g==='f';return t.replace(/\{N\}/g,n).replace(/\{P\}/g,f?"She's":"He's").replace(/\{Pn\}/g,f?'She':'He').replace(/\{p\}/g,f?'she':'he').replace(/\{his\}/g,f?'her':'his')}
 function genGap(en){
  const opts=CTX.filter(c=>c[0]===en);let c=wshuffle(opts,c=>freshW('c:'+c[1]))[0];markSeen('c:'+c[1]);
@@ -1053,6 +1113,14 @@ function u1MC(){
 function u1Write(){
  const r=Math.random();
  const dv=DIF();
+ if(dv>=1&&Math.random()<[0,.45,.6,.75][dv]){
+  const w=UQ(),k=Math.random(),sn=genSent(w.en);
+  if(dv>=3&&k<.3&&hasTTS())return {p:'Escucha y escribe la frase entera en inglés',sayFirst:true,ans:sentAlts(sn.en),show:sn.en,say:sn.en,hint:`Pista: significa «${sn.es}».`,w:w.en};
+  if(dv>=2&&k<.65)return {p:`Escribe la frase entera en inglés: «${sn.es}»`,ans:sentAlts(sn.en),show:sn.en,say:sn.en,hint:`Pista: empieza por «${sn.en.split(' ')[0]}».`,w:w.en};
+  if(k<.5){const fin=genFinish(w);if(fin)return fin}
+  const words=sn.en.replace(/[.!]$/,'').split(' ');let sh;do{sh=shuffle(words)}while(words.length>1&&sh.join(' ')===words.join(' '));
+  return {p:`Ordena las palabras y escribe la frase: ${sh.join('  /  ')}`,ans:sentAlts(sn.en),show:sn.en,say:sn.en,hint:`Pista: empieza por «${words[0]}».`,w:w.en};
+ }
  if(r<.3+dv*.05){const g=SQ(),w=U1by(g[0]),blank=dv>=1?'_____':g[0][0]+' _'.repeat(g[0].length-1);
   return {p:'Completa: '+g[1].replace('___',blank),ans:[g[0]],rest:dv>=1?undefined:g[0].slice(1),say:g[1].replace('___',g[0]),hint:`Pista: significa «${w.es}».`,w:g[0]}}
  const w=UQ();
@@ -1061,11 +1129,12 @@ function u1Write(){
  if(r<.6){let h;do{h=w.en.split('').map((ch,i)=>i&&Math.random()<.5?'_':ch).join(' ')}while(!h.includes('_'));
   return {p:`Completa las letras que faltan: ${h}  («${w.es}»)`,ans:[w.en],say:w.en,hint:`Pista: tiene ${w.en.length} letras.`,w:w.en}}
  if(r<.78&&hasTTS())return {p:'Escucha y escribe la palabra en inglés',sayFirst:true,ans:[w.en],say:w.en,hint:`Pista: significa «${w.es}».`,w:w.en};
- if(r<.9){const [P,Pn]=subj();return {p:dv>=2?`Traduce la frase entera: «${Pn==='She'?'Ella':'Él'} está/es ${w.es.split(',')[0]}»`:`Traduce la frase: «${Pn==='She'?'Ella':'Él'} está/es ${w.es.split(',')[0]}». Escribe: ${P} ___`,ans:dv>=2?[`${P.toLowerCase()} ${w.en}`,`${Pn.toLowerCase()} is ${w.en}`]:[w.en,`${P.toLowerCase()} ${w.en}`,`${Pn.toLowerCase()} is ${w.en}`],say:`${P} ${w.en}.`,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
+ if(r<.9){const sn=genSent(w.en),pre=sn.en.slice(0,sn.en.toLowerCase().lastIndexOf(w.en)).trim();return {p:`Traduce: «${sn.es}». Escribe: ${pre} ___`,ans:[w.en,...sentAlts(sn.en)],say:sn.en,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
  return {p:`Escribe en inglés: «${w.es}»`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en};
 }
 function u1Card(){
  const r=Math.random();
+ if(DIF()>=2&&r<.45){const w=UQ(),sn=genSent(w.en);return {f:sn.es,b:sn.en,say:sn.en,lf:'Frase en español',lb:'In English',w:w.en}}
  if(r<.3){const g=SQ();return {f:g[1],b:g[0],say:g[1].replace('___',g[0]),lf:'Completa la frase',lb:'Answer',w:g[0]}}
  const w=UQ();
  if(r<.75)return {f:w.es,b:w.en,say:w.en,w:w.en};
@@ -1198,7 +1267,7 @@ const HINT={'+':'Pista: si juntamos o añadimos cantidades, sumamos.','−':'Pis
 function genProblem(L){
  const N=pick(NAMES),N2=pick(NAMES.filter(x=>x!==N)),R=L===3?[100,999]:L===4?[1000,9999]:[10000,99999];
  const dq=()=>L===3?[rnd(2,9),rnd(5,30)]:L===4?[rnd(2,9),rnd(12,150)]:[rnd(11,40),rnd(12,300)];
- const kind=pick(L>=4?['+','−','×',':',':r','2']:['+','−','×',':','2']);
+ const kind=pick([...(L>=4?['+','−','×',':',':r','2']:['+','−','×',':','2']),...Array(DIF()*2).fill('2')]);
  let text,unit,res,hint,alts;
  if(kind==='+'){
   const a=r2(R),b=r2(R);res=a+b;alts=[Math.abs(a-b),a+b+10,a+b-10,a+b+100];
@@ -1516,7 +1585,7 @@ function renderExamRes(){
  if(pass)setTimeout(()=>sfx('win'),200);else sfx('over');
  app.innerHTML=header(SUBJ[V.sub].name,'subject')+(pass?confettiHTML():'')+`<main class="wrap result">
  ${pass?`<div class="diploma"><span class="dstamp">¡APROBADO!</span><span class="dk">Diploma</span><b>${esc(D.name.trim())}</b><span>ha aprobado el examen de</span><b class="dsub">${SUBJ[V.sub].name}</b><span class="dnota">Nota: ${nota}</span><span class="small">${new Date().toLocaleDateString('es-ES')}</span></div>
- <p class="lost ok">+${EXAM_PRIZE} estrellas</p>${up?`<div class="levelup"><span class="lvst">${difStars(lvl)}</span><b>¡Subes al ${DIFNAME[lvl]}!</b><span>Los ejercicios de ${SUBJ[V.sub].name} serán más difíciles. Cuando vuelvas a tener una media muy alta, harás el examen del ${DIFNAME[lvl]}.</span></div>`:(DIF(V.sub)<MAXDIF?`<p class="small">Con una nota de más de 8 subirías de nivel. ¡La próxima vez!</p>`:'<p class="small">¡Ya estás en el nivel más alto!</p>')}`
+ <p class="lost ok">+${EXAM_PRIZE} estrellas</p>${up?`<div class="levelup"><span class="lvst">${difStars(lvl)}</span><b>¡Subes al ${DIFNAME[lvl]}!</b><span>${V.sub==='ingles'?['','Ahora tendrás que terminar frases y ordenar frases.','Ahora tendrás que traducir frases enteras al inglés.','Ahora tendrás que escribir frases enteras al dictado, sin pistas.'][lvl]:V.sub==='lengua'?'Ahora tendrás que escribir frases enteras: en plural, en pasado, ordenarlas…':'Los ejercicios serán más difíciles, con más problemas de dos pasos.'} Cuando vuelvas a tener una media muy alta, harás el examen del ${DIFNAME[lvl]}.</span></div>`:(DIF(V.sub)<MAXDIF?`<p class="small">Con una nota de más de 8 subirías de nivel. ¡La próxima vez!</p>`:'<p class="small">¡Ya estás en el nivel más alto!</p>')}`
  :`<div class="overface">${FACE_ANGRY.replace('¡GRRR!','¡CASI!')}</div><h1 class="msg">¡Casi lo consigues!</h1><p class="small">Has acertado ${s} de ${n}. Para aprobar necesitas ${Math.ceil(n*EXAM_PASS)}. Sigue practicando: cuando vuelvas a tener una media muy alta, el examen aparecerá otra vez.</p>`}
  <div class="actions"><button class="btn primary" data-act="subject">Seguir</button></div></main>`;
 }
@@ -2043,7 +2112,8 @@ function startTrad(){
  const pickW=wshuffle(words,w=>missW(w.en)*freshW('t:'+w.en)).slice(0,12);pickW.forEach(w=>markSeen('t:'+w.en));let flip=Math.random()<.5;
  const items=pickW.map((w,i)=>(Math.random()<.5)
   ?{w:w.en,p:pick([`¿Qué significa «${w.en}»? Escríbelo en español.`,`Escribe en español: «${w.en}»`,`«${w.en}» en español es…`]),ans:w.ok,show:w.es,lax:true,say:w.en,sayFirst:hasTTS(),hint:'Piensa en la frase del libro donde sale esta palabra. ¡Inténtalo otra vez!'}
-  :{w:w.en,p:pick([`Escribe en inglés: «${w.es}»`,`¿Cómo se dice «${w.es}» en inglés?`,`«${w.es}» in English is…`]),ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`});
+  :(DIF()>=2&&SENT[w.en]?(sn=>({w:w.en,p:`Traduce la frase al inglés: «${sn.es}»`,ans:sentAlts(sn.en),show:sn.en,say:sn.en,hint:`Pista: empieza por «${sn.en.split(' ')[0]}».`}))(genSent(w.en))
+   :{w:w.en,p:pick([`Escribe en inglés: «${w.es}»`,`¿Cómo se dice «${w.es}» en inglés?`,`«${w.es}» in English is…`]),ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`}));
  W={kind:'txt',title:'Traducir',items:shuffle(items),i:0,score:0};resetW();go('write');
 }
 
@@ -2163,7 +2233,7 @@ function startWrite(){
   const wt=D.tp.mates.filter(t=>t!=='geo'),tp=wt.length?wt:['mul','div'];
   W={kind:'op',items:rr(tp,8).map(t=>t==='mul'?genOp(L,false,'×'):t==='div'?genOp(L,false,':'):t==='sum'?genOp(L,false,pick(['+','−'])):t==='red'?genRound(L):t==='pro'?genProblem(L):desWrite(L))};
  }
- else if(V.sub==='lengua')W={kind:'txt',items:pool(WR_LENGUA,8).map(r=>({p:r[1],ans:r[2].split('|')}))};
+ else if(V.sub==='lengua'){const dv=DIF(),ns=Math.round(8*[0,.5,.65,.8][dv]),sq=shuffle(LSENT.filter(x=>freshW('ls:'+x[0])>.3).concat(LSENT)).filter((x,i,a)=>a.indexOf(x)===i).slice(0,ns);sq.forEach(x=>markSeen('ls:'+x[0]));W={kind:'txt',items:shuffle([...sq.map(x=>({p:x[0],ans:x[1].split('|'),show:x[1].split('|')[0]})),...pool(WR_LENGUA,8-ns).map(r=>({p:r[1],ans:r[2].split('|')}))])}}
  else{
   const wt=D.tp.ingles.filter(t=>t!=='gram'),tp=wt.length?wt:['voc'];
   const aq=shuffle(ADJ),pq=shuffle(PC_WR),vq=pool(VOCAB,8);
