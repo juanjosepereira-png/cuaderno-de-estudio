@@ -129,6 +129,43 @@ button{font:inherit;color:inherit}
 .extra .ei{width:60px;height:60px;flex:none}
 .extra b{display:block;font-family:var(--f-display);font-weight:800;font-size:1.35rem;line-height:1.1}
 .extra span{color:var(--muted);font-size:.98rem}
+.intro2{position:fixed;inset:0;z-index:40;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;overflow:hidden;cursor:pointer;background:radial-gradient(circle at 50% 40%,#8a63e8,#6d45cf 45%,#3c2a85);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));animation:introbg 6.1s linear forwards}
+@keyframes introbg{0%,72%{background-color:transparent}100%{filter:brightness(1.6)}}
+.intro2::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.35) 1.5px,transparent 2px);background-size:34px 34px;animation:drift 14s linear infinite}
+.nbwrap{position:relative;animation:nbin .8s cubic-bezier(.2,1.3,.4,1) both,nbzoom 1.2s cubic-bezier(.6,0,.4,1) 4.7s forwards}
+@keyframes nbin{from{transform:translateY(40px) scale(.6) rotate(-8deg);opacity:0}to{transform:none;opacity:1}}
+@keyframes nbzoom{0%{transform:scale(1)}100%{transform:scale(4.5) translate(-6%,4%);opacity:0}}
+.nb{position:relative;width:min(70vw,380px,52vh);aspect-ratio:3/4;perspective:1800px;animation:nbslide 1.4s cubic-bezier(.6,0,.3,1) 1s both}
+@keyframes nbslide{from{transform:none}to{transform:translateX(42%)}}
+@media (max-width:640px){@keyframes nbslide{from{transform:none}to{transform:translateX(30%)}}}
+.nbpage{position:absolute;inset:0;border-radius:6px 16px 16px 6px;background-color:#fffdf7;background-image:repeating-linear-gradient(transparent 0 31px,#cfe0f5 31px 33px);background-position:0 46px;box-shadow:0 18px 40px rgba(0,0,0,.35);overflow:hidden;padding:56px 22px 20px 54px;color:#1c2640}
+.nbmargin{position:absolute;left:40px;top:0;bottom:0;width:2px;background:#ff8f8f}
+.nbl{margin:0 0 2px;font-family:var(--f-display);font-weight:800;line-height:33px;clip-path:inset(0 100% 0 0);animation:write .7s steps(14) forwards}
+.l1{font-size:clamp(1.6rem,6vw,2.4rem);color:#cc3a7f;line-height:66px;animation-delay:2.1s}
+.l2{font-size:clamp(1rem,3.6vw,1.35rem);animation-delay:2.9s}
+.l3{font-size:clamp(1.1rem,4.2vw,1.6rem);color:#2b63c9;animation-delay:3.5s}
+@keyframes write{to{clip-path:inset(0 0 0 0)}}
+.nbdoodles .dd{position:absolute;font-size:1.6rem;opacity:0;animation:pop .4s forwards}
+.d1{right:18px;top:58px;color:#ffb23f;animation-delay:2.6s!important}.d2{right:34px;bottom:64px;color:#ffc83d;animation-delay:3.9s!important}.d3{left:58px;bottom:70px;color:#ff5d8f;animation-delay:4.1s!important}
+.nbtabs{position:absolute;right:-2px;top:34%;display:flex;flex-direction:column;gap:6px}
+.tb{font-family:var(--f-display);font-weight:800;font-size:.78rem;color:#fff;padding:4px 10px 4px 12px;border-radius:8px 0 0 8px;transform:translateX(100%);animation:tabin .4s ease forwards}
+.t1{background:#2b63c9;animation-delay:3.9s}.t2{background:#c23f2e;animation-delay:4.05s}.t3{background:#21804a;animation-delay:4.2s}
+@keyframes tabin{to{transform:none}}
+.nbcover{position:absolute;inset:0;transform-origin:left center;transform-style:preserve-3d;animation:open 1.4s cubic-bezier(.6,0,.3,1) 1s forwards;z-index:2}
+@keyframes open{from{transform:rotateY(0)}to{transform:rotateY(-168deg)}}
+.cfront,.cback{position:absolute;inset:0;border-radius:6px 16px 16px 6px;-webkit-backface-visibility:hidden;backface-visibility:hidden}
+.cfront{background:linear-gradient(135deg,#3d7be0,#2b63c9);box-shadow:inset -10px 0 0 rgba(0,0,0,.08),0 18px 40px rgba(0,0,0,.35);display:flex;align-items:center;justify-content:center}
+.cback{transform:rotateY(180deg);background:#e8eefb;background-image:radial-gradient(#c8d5ef 2px,transparent 2.5px);background-size:18px 18px;border-radius:16px 6px 6px 16px}
+.spiral{position:absolute;left:10px;top:16px;bottom:16px;width:16px;background:radial-gradient(circle at 8px 8px,#f7f9fd 5px,transparent 6px) 0 0/16px 26px repeat-y}
+.clabel{background:#fff;border-radius:12px;padding:12px 22px;text-align:center;color:#1c2640;box-shadow:0 4px 0 rgba(0,0,0,.12);transform:rotate(-3deg)}
+.clabel b{display:block;font-family:var(--f-display);font-weight:800;font-size:clamp(1.5rem,5vw,2.2rem);line-height:1}
+.clabel span{font-family:var(--f-display);font-weight:700;color:#c23f2e;font-size:1.1rem}
+.cstar{position:absolute;right:22px;bottom:26px;width:54px;height:54px;color:#ffd23f;animation:wig 1.2s ease-in-out infinite}
+.cstar svg{width:100%;height:100%}
+.tapskip{position:relative;margin:0;color:rgba(255,255,255,.8);font-weight:700;animation:pop .4s 1.2s both}
+.pnew{position:absolute;top:10px;right:10px;background:#ff5d8f;color:#fff;font-weight:800;font-size:.78rem;padding:3px 10px;border-radius:99px;animation:pop .5s both}
+.prz.mystery{cursor:default;border-style:dashed;background:color-mix(in srgb,var(--accent) 6%,var(--card))}
+.prz.mystery .pi{animation:wig 2s ease-in-out infinite}
 .intro{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));position:relative;max-width:980px;margin:0 auto}
 .iskip{align-self:flex-end}
 .iscr{position:relative;width:100%;aspect-ratio:4/3;max-height:78vh;border-radius:28px;overflow:hidden;background:linear-gradient(160deg,#6d45cf,#cc3a7f 60%,#ffb23f);box-shadow:0 10px 0 rgba(0,0,0,.15);color:#fff}
@@ -1433,10 +1470,22 @@ const PRIZES=[
 for(const k in XCH)PRIZES.push({id:'c_'+k,type:'char',k,name:XCH[k].n,desc:'Personaje animado para tu perfil',need:XCH[k].need});
 for(const k in FAVP)PRIZES.push({id:'col_'+k,type:'color',k,name:'Color '+FAVS[k],desc:'Cambia el color de toda la app',need:FAVP[k]});
 for(const k in BGS)PRIZES.push({id:'bg_'+k,type:'bg',k,name:'Fondo '+BGS[k][0],desc:'Un fondo nuevo para la app',need:BGS[k][1]});
-const REAL=[['r_tablet','30 minutos más de tablet','Un rato extra de juego',40],['r_helado','Un helado','Para tomarlo con papá o mamá',50],['r_cena','Elegir la cena','Tú decides qué se cena un día',60],['r_tarde','Acostarse 30 minutos más tarde','Un viernes o un sábado',60],['r_parque','Tarde de parque o playa','Con papá y mamá',70],['r_pelis','Noche de pelis con palomitas','En casa, en familia',80],['r_plan','Elegir el plan del sábado','Tú decides qué hacemos',120],['r_cine','Ir al cine con papá y mamá','¡Con palomitas!',150],['r_excursion','Excursión especial','Un día de aventura en familia',200]];
+const REAL=[['r_tablet','30 minutos más de tablet','Un rato extra de juego',40],['r_helado','Un helado','Para tomarlo con papá o mamá',50],['r_cena','Elegir la cena','Tú decides qué se cena un día',60],['r_tarde','Acostarse 30 minutos más tarde','Un viernes o un sábado',60],['r_parque','Tarde de parque o playa','Con papá y mamá',70],['r_pelis','Noche de pelis con palomitas','En casa, en familia',80],['r_plan','Elegir el plan del sábado','Tú decides qué hacemos',120],['r_cine','Ir al cine con papá y mamá','¡Con palomitas!',150],['r_excursion','Excursión especial','Un día de aventura en familia',200],['r_musica','Elegir la música en el coche','Un viaje con tu música',30],['r_galletas','Hacer galletas en casa','Con mamá o papá',70],['r_desayuno','Desayuno especial','Tortitas o lo que tú elijas',90],['r_piscina','Día de piscina','Con papá y mamá',100],['r_amiga','Invitar a una amiga a casa','Una tarde de juegos',110],['r_pijamada','Pijamada con una amiga','Con cena y peli',220],['r_zoo','Visitar el zoo','Un día con animales',250]];
 for(const [id,name,desc,need] of REAL)PRIZES.push({id,type:'real',name,desc,need});
 PRIZES.sort((a,b)=>a.need-b.need);
 const prizeIcon=p=>p.type==='char'?avatarSVG(p.k):p.type==='color'?`<span class="swatch" style="--c:var(--t-${p.k})"></span>`:p.type==='bg'?`<span class="bgprev bg-${p.k}"></span>`:PICON[p.type];
+const PGROUPS=[['Premios con papá y mamá',['real'],'Se canjean por un vale. Puedes conseguir cada uno todas las veces que quieras.'],['Minijuegos y minivídeos',['game','video'],''],['Personajes',['char'],''],['Colores',['color'],''],['Fondos',['bg'],'']];
+function visibleIds(){
+ const v=new Set();
+ for(const [,types] of PGROUPS){
+  const its=PRIZES.filter(p=>types.includes(p.type));
+  if(types[0]==='real'){its.slice(0,3+Math.min(30,(D.coupons||[]).length)).forEach(p=>v.add(p.id));continue}
+  its.filter(p=>D.unlocked.includes(p.id)).forEach(p=>v.add(p.id));
+  its.filter(p=>!D.unlocked.includes(p.id)).slice(0,2).forEach(p=>v.add(p.id));
+ }
+ return v;
+}
+const isShown=id=>visibleIds().has(id);
 const PTYPE={video:'Minivídeo',game:'Minijuego',char:'Personaje',color:'Color',bg:'Fondo',real:'Premio de verdad'};
 function checkUnlocks(){const n=[];for(const p of PRIZES)if(p.need===0&&!D.unlocked.includes(p.id)){D.unlocked.push(p.id);n.push(p)}if(n.length)save();return []}
 const lifetime=()=>totalStars()+(D.spent||0);
@@ -1451,16 +1500,18 @@ function askBuy(id){
 }
 function doBuy(id){
  const p=PRIZES.find(x=>x.id===id);if(!p||totalStars()<p.need)return;
+ const before=visibleIds();const newMsg=()=>{const n=[...visibleIds()].filter(x=>!before.has(x)).length;return n?`<span class="pb new">¡Ha aparecido ${n===1?'un premio nuevo':n+' premios nuevos'} en Premios!</span>`:''};
  if(p.type==='real'){spendStars(p.need);D.coupons=D.coupons||[];D.coupons.push({id:p.id,name:p.name,at:new Date().toLocaleDateString('es-ES'),used:false});save();render();react(true);
-  modal(`<div class="mpic">${PICON.real}</div><b>¡Vale conseguido: ${esc(p.name)}!</b><span>Enséñaselo a papá o mamá para disfrutarlo.</span><div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="vales">Ver mis vales</button></div>`);return}
+  modal(`<div class="mpic">${PICON.real}</div><b>¡Vale conseguido: ${esc(p.name)}!</b><span>Enséñaselo a papá o mamá para disfrutarlo.</span>${newMsg()}<div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="vales">Ver mis vales</button></div>`);return}
  if(D.unlocked.includes(id))return;
  spendStars(p.need);D.unlocked.push(id);save();render();react(true);
- modal(`<div class="mpic">${prizeIcon(p)}</div><b>¡Ya tienes ${pName(p)}!</b><div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="prize" data-id="${p.id}">${p.type==='char'||p.type==='color'?'Usarlo ahora':p.type==='bg'?'Ponerlo ahora':p.type==='video'?'Verlo ahora':'Jugar ahora'}</button></div>`);
+ modal(`<div class="mpic">${prizeIcon(p)}</div><b>¡Ya tienes ${pName(p)}!</b>${newMsg()}<div class="actions two"><button class="btn ghost" data-act="mclose">Luego</button><button class="btn primary" data-act="prize" data-id="${p.id}">${p.type==='char'||p.type==='color'?'Usarlo ahora':p.type==='bg'?'Ponerlo ahora':p.type==='video'?'Verlo ahora':'Jugar ahora'}</button></div>`);
 }
 const PICON={
  video:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="6" y="12" width="52" height="36" rx="8" fill="#5b4bd1"/><rect x="11" y="17" width="42" height="26" rx="4" fill="#cfe9ff"/><path d="M27 23 L40 30 L27 37Z" fill="#ff5d8f"/><path d="M24 56 L32 48 L40 56" stroke="#5b4bd1" stroke-width="4" fill="none" stroke-linecap="round"/></svg>',
  game:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M16 20h32a12 12 0 0 1 12 12v4a10 10 0 0 1-18 6l-2-3H24l-2 3a10 10 0 0 1-18-6v-4a12 12 0 0 1 12-12z" fill="#ff7a4d"/><path d="M18 27v10M13 32h10" stroke="#fff" stroke-width="4" stroke-linecap="round"/><circle cx="44" cy="29" r="3.5" fill="#ffd23f"/><circle cx="50" cy="35" r="3.5" fill="#5fc9f8"/></svg>',
  real:'<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M6 18h52v10a6 6 0 0 0 0 12v10H6V40a6 6 0 0 0 0-12z" fill="#ffd23f" stroke="#e09a00" stroke-width="2.5" stroke-linejoin="round"/><path d="M22 18v32" stroke="#e09a00" stroke-width="2" stroke-dasharray="4 3"/><path d="M38 25l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8-4.3-4.1 5.9-.8z" fill="#ff5d8f"/></svg>',
+ mystery:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="22" width="48" height="36" rx="6" fill="#b79bff"/><rect x="4" y="14" width="56" height="12" rx="4" fill="#d2c4ff"/><rect x="28" y="14" width="8" height="44" fill="#6d45cf"/><text x="32" y="50" text-anchor="middle" font-family="Baloo 2,sans-serif" font-weight="800" font-size="22" fill="#fff">?</text></svg>',
  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="3"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>',
  gift:'<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="26" width="48" height="32" rx="5" fill="#ff5d8f"/><rect x="5" y="18" width="54" height="12" rx="4" fill="#ff8fb3"/><rect x="28" y="18" width="8" height="40" fill="#ffd23f"/><path d="M32 18c-6-12-20-10-14-2 3 3 10 2 14 2zm0 0c6-12 20-10 14-2-3 3-10 2-14 2z" fill="#ffd23f"/></svg>'
 };
@@ -1477,12 +1528,14 @@ function prizeCard(p,t){
  return `<button class="prz ${on?'':'locked'} ${!on&&can?'can':''} t-${p.type}" data-act="${on?'prize':'buy'}" data-id="${p.id}"><span class="pi">${prizeIcon(p)}</span><span class="pt">${PTYPE[p.type]}</span><b>${esc(p.name)}</b><span class="pd">${esc(p.desc)}</span>${st}</button>`;
 }
 function renderPrizes(){
- const t=totalStars();checkUnlocks();const pend=(D.coupons||[]).filter(c=>!c.used).length;
- const groups=[['Premios con papá y mamá',['real'],'Se canjean por un vale. Puedes conseguir cada uno todas las veces que quieras.'],['Minijuegos y minivídeos',['game','video'],''],['Personajes',['char'],''],['Colores',['color'],''],['Fondos',['bg'],'']];
+ const t=totalStars();checkUnlocks();const pend=(D.coupons||[]).filter(c=>!c.used).length;const vis=visibleIds();
+ const first=!Array.isArray(D.seenP);if(first)D.seenP=[...vis];const seen=new Set(D.seenP);
  app.innerHTML=header('Premios','home')+`<main class="wrap">
- <h1 class="ptitle">Premios</h1><p class="small">Canjea tus estrellas. Tienes <b>${t} estrellas</b>. Tu nivel no baja al canjear.</p>
+ <h1 class="ptitle">Premios</h1><p class="small">Canjea tus estrellas. Tienes <b>${t} estrellas</b>. Cada vez que canjeas un premio, aparece uno nuevo. ¡Hay muchas sorpresas escondidas!</p>
  ${pend?`<button class="extra valesbtn" data-act="vales"><span class="ei">${PICON.real}</span><span><b>Mis vales</b><span>Tienes ${pend} ${pend===1?'vale':'vales'} para disfrutar con papá y mamá.</span></span></button>`:''}
- ${groups.map(([title,types,note])=>`<h2 class="sec">${title}</h2>${note?`<p class="small">${note}</p>`:''}<section class="przgrid">${PRIZES.filter(p=>types.includes(p.type)).map(p=>prizeCard(p,t)).join('')}</section>`).join('')}</main>`;
+ ${PGROUPS.map(([title,types,note])=>{const its=PRIZES.filter(p=>types.includes(p.type)),sh=its.filter(p=>vis.has(p.id)),hid=its.length-sh.length;
+  return `<h2 class="sec">${title}</h2>${note?`<p class="small">${note}</p>`:''}<section class="przgrid">${sh.map(p=>prizeCard(p,t).replace('<span class="pi">',seen.has(p.id)?'<span class="pi">':'<span class="pnew">¡Nuevo!</span><span class="pi">')).join('')}${hid?`<div class="prz mystery"><span class="pi">${PICON.mystery}</span><span class="pt">Sorpresa</span><b>${hid} ${hid===1?'premio escondido':'premios escondidos'}</b><span class="pd">${types[0]==='real'?'Canjea un vale':'Canjea un premio de aquí'} para descubrir el siguiente.</span></div>`:''}</section>`}).join('')}</main>`;
+ CLEAN=()=>{const sv=new Set(D.seenP||[]);visibleIds().forEach(id=>sv.add(id));D.seenP=[...sv];save()};
 }
 function renderVales(){
  const cs=D.coupons||[],pend=cs.filter(c=>!c.used),used=cs.filter(c=>c.used).slice(-8).reverse();
@@ -1697,11 +1750,23 @@ function introShow(i){
  speakEs(sc.say,()=>{if(i+1<IN.sc.length)introShow(i+1);else go('who')});
 }
 function renderIntro(){
- IN={sc:introScenes(),i:0,tok:0,timers:[]};
- app.innerHTML=`<main class="intro"><button class="btn ghost small iskip" data-act="iskip">Saltar</button>
-  <div class="iscr" id="iscr"><div class="iscene">${IN.sc[0].html}</div><button class="vstart istart" data-act="istart"><span>▶</span>Empezar</button></div>
-  <div class="vdots idots">${IN.sc.map((_,j)=>`<i class="${j?'':'on'}"></i>`).join('')}</div></main>`;
- CLEAN=()=>{if(IN){IN.tok++;IN.timers.forEach(clearTimeout);IN.timers=[]}try{speechSynthesis.cancel()}catch(e){}};
+ const reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+ app.innerHTML=`<main class="intro2" data-act="iskip" aria-label="Bienvenida. Toca para saltar.">
+ <div class="nbwrap"><div class="nb">
+  <div class="nbpage"><div class="nbmargin"></div>
+   <p class="nbl l1">¡Hola!</p><p class="nbl l2">Bienvenida al</p><p class="nbl l3">Cuaderno de Estudio</p>
+   <div class="nbdoodles"><span class="dd d1">✦</span><span class="dd d2">★</span><span class="dd d3">♥</span></div>
+   <div class="nbtabs"><span class="tb t1">Mates</span><span class="tb t2">Lengua</span><span class="tb t3">Inglés</span></div>
+  </div>
+  <div class="nbcover"><div class="cfront"><div class="spiral"></div><div class="clabel"><b>Cuaderno</b><span>de Estudio</span></div><div class="cstar">${ICON.star}</div></div><div class="cback"></div></div>
+ </div></div>
+ <p class="tapskip">Toca para saltar</p></main>`;
+ const T=[];CLEAN=()=>{T.forEach(clearTimeout);try{speechSynthesis.cancel()}catch(e){}};
+ if(reduce){T.push(setTimeout(()=>go('who'),1500));return}
+ T.push(setTimeout(()=>sfx('ok'),1000));
+ T.push(setTimeout(()=>{if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('¡Hola! Bienvenida al Cuaderno de Estudio');u.lang='es-ES';u.rate=1;u.pitch=1.15;speechSynthesis.speak(u)}catch(e){}},2200));
+ T.push(setTimeout(()=>sfx('win'),4300));
+ T.push(setTimeout(()=>go('who'),6100));
 }
 function renderWho(){
  app.innerHTML=`<main class="wrap who"><h1 class="ptitle">¿Quién va a estudiar hoy?</h1>
@@ -1741,7 +1806,7 @@ function renderHome(){
  <section class="subjects">${['mates','lengua','ingles'].map(k=>`<button class="subj s-${k}" data-act="subj" data-s="${k}"><span class="subj-ic">${ICON_SUBJ[k]}</span><span class="subj-name">${SUBJ[k].name}</span><span class="subj-topics">${SUBJ[k].topics}</span><span class="subj-stars">${ICON.star} ${D.stars[k]} ${D.stars[k]===1?'estrella':'estrellas'}</span></button>`).join('')}</section>
  <section class="extras">
   <button class="extra" data-act="stickers"><span class="ei">${stSVG(got?got-1:0)}</span><span><b>Mis pegatinas</b><span>${got} de ${STICKERS.length}. Ganas una cada ${ST_EVERY} estrellas.</span></span></button>
-  <button class="extra" data-act="prizes"><span class="ei">${PICON.gift}</span><span><b>Premios</b><span>Minijuegos, personajes, colores, fondos y planes con papá y mamá.${(D.coupons||[]).some(c=>!c.used)?' ¡Tienes vales!':''}</span></span></button>
+  <button class="extra" data-act="prizes"><span class="ei">${PICON.gift}</span><span><b>Premios</b><span>Minijuegos, personajes, colores, fondos y planes con papá y mamá. ¡Cada canje descubre uno nuevo!${(D.coupons||[]).some(c=>!c.used)?' ¡Tienes vales!':''}</span></span></button>
   <button class="extra" data-act="who"><span class="ei">${avatarSVG(peek(PID==='idaira'?'mama':'idaira').avatar||PEOPLE[PID==='idaira'?'mama':'idaira'].avatar)}</span><span><b>Cambiar de persona</b><span>Ahora estudia ${esc(D.name.trim()||PEOPLE[PID].name)}. Toca para elegir otra.</span></span></button>
   <button class="extra" data-act="profile"><span class="ei">${avatarSVG(D.avatar)}</span><span><b>Mi perfil</b><span>Nombre, curso, avatar y color</span></span></button>
  </section></main>`;
@@ -1752,10 +1817,10 @@ function renderProfile(){
  <section class="pcard"><label for="nm">Mi nombre</label><input id="nm" type="text" maxlength="20" placeholder="Escribe tu nombre" value="${esc(D.name)}" autocomplete="off"></section>
  <section class="pcard"><h2>Mi curso</h2><div class="seg">${[3,4,5,6].map(l=>`<button data-act="lv" data-lv="${l}" class="${D.lv===l?'on':''}" aria-pressed="${D.lv===l}">${l}º</button>`).join('')}</div><p class="small">de Primaria. Las preguntas se adaptan al curso.</p></section>
  <section class="pcard"><h2>Mi avatar</h2><div class="avgrid">${Object.keys(AVATARS).map(k=>`<button class="avopt ${D.avatar===k?'on':''}" data-act="av" data-k="${k}" aria-label="${AVATARS[k][0]}" aria-pressed="${D.avatar===k}">${avatarSVG(k)}</button>`).join('')}</div>
- <h2>Personajes especiales</h2><p class="small">Canjéalos con tus estrellas.</p><div class="avgrid">${Object.keys(XCH).map(k=>{const on=isUnlockedChar(k);return `<button class="avopt ${D.avatar===k?'on':''} ${on?'':'locked'}" data-act="${on?'av':'buy'}" data-id="c_${k}" data-k="${k}" aria-label="${XCH[k].n}${on?'':' (bloqueado)'}" aria-pressed="${D.avatar===k}">${avatarSVG(k)}${on?'':`<span class="need">${XCH[k].need} ★</span>`}</button>`}).join('')}</div></section>
+ <h2>Personajes especiales</h2><p class="small">Canjéalos con tus estrellas.</p><div class="avgrid">${Object.keys(XCH).filter(k=>isUnlockedChar(k)||isShown('c_'+k)).map(k=>{const on=isUnlockedChar(k);return `<button class="avopt ${D.avatar===k?'on':''} ${on?'':'locked'}" data-act="${on?'av':'buy'}" data-id="c_${k}" data-k="${k}" aria-label="${XCH[k].n}${on?'':' (bloqueado)'}" aria-pressed="${D.avatar===k}">${avatarSVG(k)}${on?'':`<span class="need">${XCH[k].need} ★</span>`}</button>`}).join('')}</div></section>
  <section class="pcard"><h2>Sonidos</h2><div class="seg"><button data-act="snd" data-v="1" class="${D.sound!==false?'on':''}" aria-pressed="${D.sound!==false}">Sí</button><button data-act="snd" data-v="0" class="${D.sound===false?'on':''}" aria-pressed="${D.sound===false}">No</button></div><p class="small">Sonido de acierto y de fallo.</p></section>
- <section class="pcard"><h2>Mi color favorito</h2><div class="favgrid">${Object.keys(FAVS).map(k=>{const own=ownFav(k);return `<button class="fav ${D.fav===k?'on':''} ${own?'':'locked'}" style="--c:var(--t-${k})" data-act="${own?'fav':'buy'}" data-id="col_${k}" data-k="${k}" aria-pressed="${D.fav===k}"><i></i>${FAVS[k]}${own?'':` <small>${FAVP[k]} ★</small>`}</button>`}).join('')}</div></section>
- <section class="pcard"><h2>Mi fondo</h2><div class="bggrid"><button class="bgopt ${!D.bg?'on':''}" data-act="bgset" data-k=""><span class="bgprev"></span>Cuadros</button>${Object.keys(BGS).map(k=>{const own=ownBg(k);return `<button class="bgopt ${D.bg===k?'on':''} ${own?'':'locked'}" data-act="${own?'bgset':'buy'}" data-id="bg_${k}" data-k="${k}"><span class="bgprev bg-${k}"></span>${BGS[k][0]}${own?'':` <small>${BGS[k][1]} ★</small>`}</button>`}).join('')}</div></section>
+ <section class="pcard"><h2>Mi color favorito</h2><div class="favgrid">${Object.keys(FAVS).filter(k=>ownFav(k)||isShown('col_'+k)).map(k=>{const own=ownFav(k);return `<button class="fav ${D.fav===k?'on':''} ${own?'':'locked'}" style="--c:var(--t-${k})" data-act="${own?'fav':'buy'}" data-id="col_${k}" data-k="${k}" aria-pressed="${D.fav===k}"><i></i>${FAVS[k]}${own?'':` <small>${FAVP[k]} ★</small>`}</button>`}).join('')}</div></section>
+ <section class="pcard"><h2>Mi fondo</h2><div class="bggrid"><button class="bgopt ${!D.bg?'on':''}" data-act="bgset" data-k=""><span class="bgprev"></span>Cuadros</button>${Object.keys(BGS).filter(k=>ownBg(k)||isShown('bg_'+k)).map(k=>{const own=ownBg(k);return `<button class="bgopt ${D.bg===k?'on':''} ${own?'':'locked'}" data-act="${own?'bgset':'buy'}" data-id="bg_${k}" data-k="${k}"><span class="bgprev bg-${k}"></span>${BGS[k][0]}${own?'':` <small>${BGS[k][1]} ★</small>`}</button>`}).join('')}</div></section>
  <div class="actions"><button class="btn primary" data-act="home">Listo</button></div></main>`;
  const nm=$('#nm');nm.addEventListener('input',()=>{D.name=nm.value;save()});
 }
@@ -2133,7 +2198,7 @@ function renderResult(){
 
 /* ---------- acciones ---------- */
 const ACT={
- home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>go('who'),
+ home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>{if(V.view==='intro')go('who')},
  pick:el=>{loadProfile(el.dataset.p);sfx('ok');lives=MAXL;go('home');const n=D.name.trim();if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`¡Hola, ${n}!`);u.lang='es-ES';speechSynthesis.speak(u)}catch(e){}},
  who:()=>go('who'),
  quit:()=>{V.exam=null;stopRec();try{speechSynthesis.cancel()}catch(e){}go(V.sub==='reto'?'home':'subject')},
