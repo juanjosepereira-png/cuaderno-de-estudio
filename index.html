@@ -191,6 +191,15 @@ button{font:inherit;color:inherit}
 .i-q{font-family:var(--f-display);font-weight:800;font-size:clamp(3rem,10vw,6rem);animation:hop 1s ease-in-out infinite}
 .istart{background:rgba(28,22,60,.35)}
 .idots i{background:rgba(255,255,255,.4)}
+.whochip{display:flex;align-items:center;gap:6px;min-height:48px;padding:3px 10px 3px 3px;border-radius:99px;border:2px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;flex:none;max-width:42vw}
+.whochip:hover{border-color:var(--accent)}
+.wcav{width:40px;height:40px;border-radius:50%;background:color-mix(in srgb,var(--accent) 12%,var(--card));flex:none}
+.wcav svg{width:100%;height:100%;display:block}
+.wcn{font-weight:700;font-size:.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.wcsw{width:18px;height:18px;flex:none;color:var(--muted)}
+@media (max-width:520px){.wcn{display:none}.whochip{padding-right:6px}}
+.whob{position:relative}.whob.cur{border-color:var(--accent)}
+.whonow{position:absolute;top:12px;right:14px;background:var(--accent);color:var(--on-accent);font-weight:800;font-size:.8rem;padding:3px 10px;border-radius:99px}
 .who .ptitle{text-align:center;text-wrap:balance}
 .whogrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px}
 .whob{display:flex;flex-direction:column;align-items:center;gap:10px;background:var(--card);color:var(--ink);border:3px solid var(--line);border-radius:28px;padding:26px 18px;cursor:pointer;transition:transform .15s,border-color .15s}
@@ -1763,6 +1772,16 @@ function introShow(i){
  if(i===0)sfx('win');
  speakEs(sc.say,()=>{if(i+1<IN.sc.length)introShow(i+1);else go('who')});
 }
+/* frase de bienvenida: voz en español; si la tablet la bloquea, se dice al primer toque */
+const WELCOME='¡Hola! Bienvenida al Cuaderno de Estudio';let WELCOME_DONE=false;
+function esVoice(){try{const vs=speechSynthesis.getVoices();return vs.find(v=>/^es[-_]ES/i.test(v.lang))||vs.find(v=>/^es/i.test(v.lang))||null}catch(e){return null}}
+function sayWelcome(){
+ if(!hasTTS()||D.sound===false){WELCOME_DONE=true;return}
+ try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(WELCOME);u.lang='es-ES';const v=esVoice();if(v)u.voice=v;u.rate=1;u.pitch=1.15;
+  u.onstart=()=>{WELCOME_DONE=true};u.onend=()=>{WELCOME_DONE=true};speechSynthesis.speak(u)}catch(e){}
+}
+try{if(hasTTS())speechSynthesis.getVoices();if(hasTTS()&&'onvoiceschanged' in speechSynthesis)speechSynthesis.onvoiceschanged=()=>{}}catch(e){}
+document.addEventListener('pointerdown',()=>{if(!WELCOME_DONE&&(V.view==='who'||V.view==='intro')&&!MUS_BLOCKED){WELCOME_DONE=true;sayWelcome()}},{capture:true});
 /* música alegre de la bienvenida, hecha con el sintetizador del navegador */
 let MUS=null,MUS_BLOCKED=false;
 function introMusic(){
@@ -1801,17 +1820,18 @@ function renderIntro(){
   <div class="nbcover"><div class="cfront"><div class="spiral"></div><div class="clabel"><b>Cuaderno</b><span>de Estudio</span></div><div class="cstar">${ICON.star}</div></div><div class="cback"></div></div>
  </div></div>
  <p class="tapskip">Toca para saltar</p></main>`;
- const T=[];CLEAN=()=>{T.forEach(clearTimeout);try{speechSynthesis.cancel()}catch(e){}if(MUS){MUS.stop();MUS=null}};
+ const T=[];CLEAN=()=>{T.forEach(clearTimeout);if(MUS){MUS.stop();MUS=null}};
  const playing=introMusic();MUS_BLOCKED=!playing&&D.sound!==false;
  const hint=$('.tapskip');if(hint&&MUS_BLOCKED)hint.textContent='Toca la pantalla para oír la música';
  if(reduce){T.push(setTimeout(()=>go('who'),1500));return}
- T.push(setTimeout(()=>{if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance('¡Hola! Bienvenida al Cuaderno de Estudio');u.lang='es-ES';u.rate=1;u.pitch=1.15;speechSynthesis.speak(u)}catch(e){}},2200));
+ WELCOME_DONE=false;T.push(setTimeout(()=>sayWelcome(),2200));
  T.push(setTimeout(()=>go('who'),6100));
 }
 function renderWho(){
- app.innerHTML=`<main class="wrap who"><h1 class="ptitle">¿Quién va a estudiar hoy?</h1>
+ const cur=V.whoFrom?PID:null;
+ app.innerHTML=(cur?header('Cambiar de perfil','home'):'')+`<main class="wrap who"><h1 class="ptitle">${cur?'¿Quién va a estudiar ahora?':'¿Quién va a estudiar hoy?'}</h1>
  <section class="whogrid">${Object.keys(PEOPLE).map(pid=>{const d=peek(pid),p=PEOPLE[pid],st=Object.values(d.stars||{}).reduce((a,b)=>a+(+b||0),0),lt=st+(+d.spent||0);
-  return `<button class="whob" data-act="pick" data-p="${pid}"><span class="whoav">${avatarSVG(d.avatar||p.avatar)}</span><b>${esc((d.name||'').trim()||p.name)}</b><span>${ICON.star} ${st} ${st===1?'estrella':'estrellas'} · ${levelInfo(lt).name}</span></button>`}).join('')}</section>
+  return `<button class="whob ${cur===pid?'cur':''}" data-act="pick" data-p="${pid}">${cur===pid?'<span class="whonow">Ahora</span>':''}<span class="whoav">${avatarSVG(d.avatar||p.avatar)}</span><b>${esc((d.name||'').trim()||p.name)}</b><span>${ICON.star} ${st} ${st===1?'estrella':'estrellas'} · ${levelInfo(lt).name}</span></button>`}).join('')}</section>
  <p class="small">Cada persona tiene sus propias estrellas, premios y personajes.</p></main>`;
 }
 
@@ -1824,7 +1844,8 @@ function render(){
 }
 function header(title,back){
  const tot=totalStars();
- return `<header class="top"><div class="top-in">${back?`<button class="back" data-act="${back}" aria-label="Volver">${ICON.back}</button>`:''}<span class="top-title">${esc(title)}</span><span class="starcount" title="Estrellas conseguidas">${ICON.star}<b>${tot}</b></span></div></header>`;
+ const chip=['home','subject','profile','stickers','prizes','vales','result','examres','over'].includes(V.view);
+ return `<header class="top"><div class="top-in">${back?`<button class="back" data-act="${back}" aria-label="Volver">${ICON.back}</button>`:''}<span class="top-title">${esc(title)}</span><span class="starcount" title="Estrellas conseguidas">${ICON.star}<b>${tot}</b></span>${chip?`<button class="whochip" data-act="who" aria-label="Cambiar de perfil. Ahora: ${esc(D.name.trim())}"><span class="wcav">${avatarSVG(D.avatar)}</span><span class="wcn">${esc(D.name.trim())}</span><svg class="wcsw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></button>`:''}</div></header>`;
 }
 const sayBtn=(t,label)=>('speechSynthesis' in window)?`<button class="say" data-act="say" data-t="${esc(t)}">${ICON.sound}<span>${label||'Escuchar'}</span></button>`:'';
 function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='en-GB';u.rate=.85;speechSynthesis.speak(u)}catch(e){}}
@@ -1861,7 +1882,7 @@ function renderProfile(){
  <section class="pcard"><h2>Sonidos</h2><div class="seg"><button data-act="snd" data-v="1" class="${D.sound!==false?'on':''}" aria-pressed="${D.sound!==false}">Sí</button><button data-act="snd" data-v="0" class="${D.sound===false?'on':''}" aria-pressed="${D.sound===false}">No</button></div><p class="small">Sonido de acierto y de fallo.</p></section>
  <section class="pcard"><h2>Mi color favorito</h2><div class="favgrid">${Object.keys(FAVS).filter(k=>ownFav(k)||isShown('col_'+k)).map(k=>{const own=ownFav(k);return `<button class="fav ${D.fav===k?'on':''} ${own?'':'locked'}" style="--c:var(--t-${k})" data-act="${own?'fav':'buy'}" data-id="col_${k}" data-k="${k}" aria-pressed="${D.fav===k}"><i></i>${FAVS[k]}${own?'':` <small>${FAVP[k]} ★</small>`}</button>`}).join('')}</div></section>
  <section class="pcard"><h2>Mi fondo</h2><div class="bggrid"><button class="bgopt ${!D.bg?'on':''}" data-act="bgset" data-k=""><span class="bgprev"></span>Cuadros</button>${Object.keys(BGS).filter(k=>ownBg(k)||isShown('bg_'+k)).map(k=>{const own=ownBg(k);return `<button class="bgopt ${D.bg===k?'on':''} ${own?'':'locked'}" data-act="${own?'bgset':'buy'}" data-id="bg_${k}" data-k="${k}"><span class="bgprev bg-${k}"></span>${BGS[k][0]}${own?'':` <small>${BGS[k][1]} ★</small>`}</button>`}).join('')}</div></section>
- <div class="actions"><button class="btn primary" data-act="home">Listo</button></div></main>`;
+ <div class="actions two"><button class="btn ghost" data-act="who">Cambiar de perfil</button><button class="btn primary" data-act="home">Listo</button></div></main>`;
  const nm=$('#nm');nm.addEventListener('input',()=>{D.name=nm.value;save()});
 }
 function renderStickers(){
@@ -2238,9 +2259,9 @@ function renderResult(){
 
 /* ---------- acciones ---------- */
 const ACT={
- home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>{if(V.view!=='intro')return;if(MUS_BLOCKED){MUS_BLOCKED=false;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume().then(()=>{if(V.view==='intro'){if(CLEAN){CLEAN();CLEAN=null}renderIntro()}}).catch(()=>go('who'))}catch(e){go('who')}return}go('who')},
- pick:el=>{loadProfile(el.dataset.p);sfx('ok');lives=MAXL;go('home');const n=D.name.trim();if(hasTTS())try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`¡Hola, ${n}!`);u.lang='es-ES';speechSynthesis.speak(u)}catch(e){}},
- who:()=>go('who'),
+ home:()=>go('home'), subject:()=>go('subject'), istart:el=>{el.remove();introShow(0)}, iskip:()=>{if(V.view!=='intro')return;V.whoFrom=false;if(MUS_BLOCKED){MUS_BLOCKED=false;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();AC.resume().then(()=>{if(V.view==='intro'){if(CLEAN){CLEAN();CLEAN=null}renderIntro()}}).catch(()=>go('who'))}catch(e){go('who')}return}go('who')},
+ pick:el=>{V.whoFrom=false;loadProfile(el.dataset.p);sfx('ok');lives=MAXL;go('home');const n=D.name.trim();WELCOME_DONE=true;if(hasTTS()&&D.sound!==false)try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(`¡Hola, ${n}!`);u.lang='es-ES';const v=esVoice();if(v)u.voice=v;u.pitch=1.15;speechSynthesis.speak(u)}catch(e){}},
+ who:()=>{V.whoFrom=true;go('who')},
  quit:()=>{V.exam=null;stopRec();try{speechSynthesis.cancel()}catch(e){}go(V.sub==='reto'?'home':'subject')},
  lv:el=>{D.lv=+el.dataset.lv;save();render()},
  profile:()=>go('profile'), stickers:()=>go('stickers'), reto:()=>startReto(),
