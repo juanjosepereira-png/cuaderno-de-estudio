@@ -24,7 +24,7 @@
   --paper:#f7f9fd; --grid:#e2e9f4; --card:#ffffff; --ink:#1c2640; --muted:#5a6684; --line:#cfd9e8;
   --mates:#2b63c9; --lengua:#c23f2e; --ingles:#21804a; --marker:#ffd94a;
   --ok:#1d8048; --bad:#c23f2e; --on-accent:#ffffff; --on-marker:#2a2100;
-  --t-violeta:#6d45cf; --t-rosa:#cc3a7f; --t-turquesa:#0c8580; --t-naranja:#cc5f17; --t-fresa:#d81b60; --t-menta:#0e8a6d; --t-cielo:#1c6fc9; --t-oro:#a86f0c; --t-lila:#8e44c9; --t-coral:#d4472f;
+  --t-violeta:#6d45cf; --t-rosa:#cc3a7f; --t-turquesa:#0c8580; --t-naranja:#cc5f17; --veil:rgba(247,249,253,.6); --t-fresa:#d81b60; --t-menta:#0e8a6d; --t-cielo:#1c6fc9; --t-oro:#a86f0c; --t-lila:#8e44c9; --t-coral:#d4472f;
   --f-display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
   --f-body:"Andika","Verdana",system-ui,sans-serif;
   --f-num:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
@@ -32,11 +32,11 @@
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#16211e; --grid:#21302c; --card:#1e2b27; --ink:#eef3ef; --muted:#a5b7b0; --line:#34463f;
   --mates:#8bb1ff; --lengua:#ff9482; --ingles:#72d49c; --marker:#e7c33c;
-  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; --t-fresa:#ff8fb6; --t-menta:#6fe3c4; --t-cielo:#8cc4ff; --t-oro:#ffd36e; --t-lila:#d7a6ff; --t-coral:#ff9c87; color-scheme:dark }}
+  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; --veil:rgba(22,33,30,.66); --t-fresa:#ff8fb6; --t-menta:#6fe3c4; --t-cielo:#8cc4ff; --t-oro:#ffd36e; --t-lila:#d7a6ff; --t-coral:#ff9c87; color-scheme:dark }}
 :root[data-theme="dark"]{
   --paper:#16211e; --grid:#21302c; --card:#1e2b27; --ink:#eef3ef; --muted:#a5b7b0; --line:#34463f;
   --mates:#8bb1ff; --lengua:#ff9482; --ingles:#72d49c; --marker:#e7c33c;
-  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; --t-fresa:#ff8fb6; --t-menta:#6fe3c4; --t-cielo:#8cc4ff; --t-oro:#ffd36e; --t-lila:#d7a6ff; --t-coral:#ff9c87; color-scheme:dark }
+  --ok:#72d49c; --bad:#ff9482; --on-accent:#0f1c18; --t-violeta:#b79bff; --t-rosa:#ff8fc1; --t-turquesa:#5fd6cf; --t-naranja:#ffa766; --veil:rgba(22,33,30,.66); --t-fresa:#ff8fb6; --t-menta:#6fe3c4; --t-cielo:#8cc4ff; --t-oro:#ffd36e; --t-lila:#d7a6ff; --t-coral:#ff9c87; color-scheme:dark }
 
 *{box-sizing:border-box}
 html{background:var(--paper)}
@@ -485,6 +485,14 @@ button{font:inherit;color:inherit}
 .prz.t-real{background:linear-gradient(color-mix(in srgb,var(--marker) 16%,var(--card)),var(--card))}
 .prz.t-real.locked .pi{filter:none;opacity:.85}
 .fav.locked{opacity:.6}.fav small{font-weight:700;color:var(--muted)}
+.phtile{position:relative}
+.phtile .bgopt{width:100%}
+.phprev{background-size:cover!important;background-position:center!important}
+.mpic .phprev{width:110px;height:110px}
+.phdel{position:absolute;top:-8px;right:-8px;width:32px;height:32px;border-radius:50%;border:2px solid var(--card);background:var(--bad);color:var(--card);font-weight:800;cursor:pointer;display:grid;place-items:center;font-size:.9rem}
+.addph{border-style:dashed}
+.bgprev.plus{display:grid;place-items:center;font-family:var(--f-display);font-weight:800;font-size:2.4rem;color:var(--accent);background-image:none}
+body[data-bg="photo"]{background-size:cover;background-position:center;background-attachment:fixed}
 .bggrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;width:100%}
 .bgopt{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px;border-radius:16px;border:3px solid var(--line);background:var(--card);color:var(--ink);font-weight:700;cursor:pointer}
 .bgopt .bgprev{width:100%;height:70px}
@@ -1371,7 +1379,7 @@ function bgDataURI(k){
  return 'url("data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120">${inner}</svg>`)+'")';
 }
 (function(){try{const css=Object.keys(BGS).map(k=>{const u=bgDataURI(k);return u?`.bg-${k},body[data-bg="${k}"]{background-image:${u};background-size:120px 120px}`:''}).join('\n');const st=document.createElement('style');st.textContent=css;document.head.appendChild(st)}catch(e){}})();
-const ownBg=k=>!k||D.unlocked.includes('bg_'+k);
+const ownBg=k=>!k||D.unlocked.includes('bg_'+k)||(String(k).startsWith('ph_')&&(D.photosOwned||[]).includes(k));
 const LEVELS=[[0,'Aprendiz'],[20,'Exploradora'],[50,'Detective'],[100,'Sabia'],[200,'Genio'],[400,'Leyenda']];
 const ST_EVERY=10;
 const STICKERS=[
@@ -1396,7 +1404,30 @@ const ICON_SUBJ={
 };
 function levelInfo(t){let i=0;while(i+1<LEVELS.length&&t>=LEVELS[i+1][0])i++;const cur=LEVELS[i],nx=LEVELS[i+1];return {name:cur[1],next:nx&&nx[0],nextName:nx&&nx[1],pct:nx?Math.round((t-cur[0])/(nx[0]-cur[0])*100):100}}
 const today=()=>new Date().toDateString();
-function applyFav(){document.body.dataset.fav=ownFav(D.fav)?D.fav||'violeta':'violeta';document.body.dataset.bg=ownBg(D.bg)?D.bg||'':''}
+/* fotos propias de fondo: se guardan en la tablet (IndexedDB) */
+const PHOTO_PRICE=20,PHOTO_MAX=12;let PHOTOS=[];
+function idb(){return new Promise((res,rej)=>{try{const r=indexedDB.open('cuaderno-fotos',1);r.onupgradeneeded=()=>r.result.createObjectStore('p',{keyPath:'id'});r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)}catch(e){rej(e)}})}
+async function idbAll(){try{const db=await idb();return await new Promise(res=>{const q=db.transaction('p').objectStore('p').getAll();q.onsuccess=()=>res(q.result||[]);q.onerror=()=>res([])})}catch(e){return []}}
+async function idbPut(o){const db=await idb();return new Promise((res,rej)=>{const t=db.transaction('p','readwrite');t.objectStore('p').put(o);t.oncomplete=res;t.onerror=()=>rej(t.error)})}
+async function idbDel(id){try{const db=await idb();await new Promise(res=>{const t=db.transaction('p','readwrite');t.objectStore('p').delete(id);t.oncomplete=res;t.onerror=res})}catch(e){}}
+const myPhotos=()=>PHOTOS.filter(p=>p.pid===PID);
+idbAll().then(a=>{PHOTOS=a;applyFav();if(V.view==='profile')render()});
+function addPhoto(file){
+ const st=$('#phst');if(st){st.className='micst';st.textContent='Preparando la foto…'}
+ const img=new Image(),url=URL.createObjectURL(file);
+ img.onload=async()=>{try{const m=1400,k=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+   const ph={id:'ph_'+Date.now().toString(36)+Math.random().toString(36).slice(2,6),pid:PID,data:c.toDataURL('image/jpeg',.82)};
+   await idbPut(ph);PHOTOS.push(ph);render();const s2=$('#phst');if(s2){s2.className='micst ok';s2.textContent=`¡Foto añadida! Desbloquéala por ${PHOTO_PRICE} estrellas para ponerla de fondo.`}}
+  catch(e){const s2=$('#phst');if(s2){s2.className='micst bad';s2.textContent='No se ha podido guardar la foto en esta tablet.'}}};
+ img.onerror=()=>{if(st){st.className='micst bad';st.textContent='Esa foto no se puede abrir. Prueba con otra.'}};
+ img.src=url;
+}
+function applyFav(){
+ document.body.dataset.fav=ownFav(D.fav)?D.fav||'violeta':'violeta';
+ const ph=D.bg&&String(D.bg).startsWith('ph_')?PHOTOS.find(p=>p.id===D.bg&&p.pid===PID):null;
+ if(ph&&(D.photosOwned||[]).includes(ph.id)){document.body.dataset.bg='photo';document.body.style.backgroundImage=`linear-gradient(var(--veil),var(--veil)),url(${ph.data})`}
+ else{document.body.style.backgroundImage='';document.body.dataset.bg=ownBg(D.bg)&&!String(D.bg||'').startsWith('ph_')?D.bg||'':''}
+}
 function startReto(){
  D.sess=(D.sess||0)+1;pruneSeen();
  lives=MAXL;V.locked=false;
@@ -1516,7 +1547,7 @@ const REAL=[['r_tablet','30 minutos más de tablet','Un rato extra de juego',40]
 for(const [id,name,desc,need] of REAL)PRIZES.push({id,type:'real',name,desc,need});
 PRIZES.sort((a,b)=>a.need-b.need);
 const prizeIcon=p=>p.type==='char'?avatarSVG(p.k):p.type==='color'?`<span class="swatch" style="--c:var(--t-${p.k})"></span>`:p.type==='bg'?`<span class="bgprev bg-${p.k}"></span>`:PICON[p.type];
-const PGROUPS=[['Premios con papá y mamá',['real'],'Se canjean por un vale. Puedes conseguir cada uno todas las veces que quieras.'],['Minijuegos y minivídeos',['game','video'],''],['Personajes',['char'],''],['Colores',['color'],''],['Fondos',['bg'],'']];
+const PGROUPS=[['Premios con papá y mamá',['real'],'Se canjean por un vale. Puedes conseguir cada uno todas las veces que quieras.'],['Minijuegos y minivídeos',['game','video'],''],['Personajes',['char'],''],['Colores',['color'],''],['Fondos',['bg'],'También puedes poner tus propias fotos de fondo desde «Mi perfil».']];
 function visibleIds(){
  const v=new Set();
  for(const [,types] of PGROUPS){
@@ -1900,8 +1931,12 @@ function renderProfile(){
  <h2>Personajes especiales</h2><p class="small">Canjéalos con tus estrellas.</p><div class="avgrid">${Object.keys(XCH).filter(k=>isUnlockedChar(k)||isShown('c_'+k)).map(k=>{const on=isUnlockedChar(k);return `<button class="avopt ${D.avatar===k?'on':''} ${on?'':'locked'}" data-act="${on?'av':'buy'}" data-id="c_${k}" data-k="${k}" aria-label="${XCH[k].n}${on?'':' (bloqueado)'}" aria-pressed="${D.avatar===k}">${avatarSVG(k)}${on?'':`<span class="need">${XCH[k].need} ★</span>`}</button>`}).join('')}</div></section>
  <section class="pcard"><h2>Sonidos</h2><div class="seg"><button data-act="snd" data-v="1" class="${D.sound!==false?'on':''}" aria-pressed="${D.sound!==false}">Sí</button><button data-act="snd" data-v="0" class="${D.sound===false?'on':''}" aria-pressed="${D.sound===false}">No</button></div><p class="small">Sonido de acierto y de fallo.</p></section>
  <section class="pcard"><h2>Mi color favorito</h2><div class="favgrid">${Object.keys(FAVS).filter(k=>ownFav(k)||isShown('col_'+k)).map(k=>{const own=ownFav(k);return `<button class="fav ${D.fav===k?'on':''} ${own?'':'locked'}" style="--c:var(--t-${k})" data-act="${own?'fav':'buy'}" data-id="col_${k}" data-k="${k}" aria-pressed="${D.fav===k}"><i></i>${FAVS[k]}${own?'':` <small>${FAVP[k]} ★</small>`}</button>`}).join('')}</div></section>
- <section class="pcard"><h2>Mi fondo</h2><div class="bggrid"><button class="bgopt ${!D.bg?'on':''}" data-act="bgset" data-k=""><span class="bgprev"></span>Cuadros</button>${Object.keys(BGS).filter(k=>ownBg(k)||isShown('bg_'+k)).map(k=>{const own=ownBg(k);return `<button class="bgopt ${D.bg===k?'on':''} ${own?'':'locked'}" data-act="${own?'bgset':'buy'}" data-id="bg_${k}" data-k="${k}"><span class="bgprev bg-${k}"></span>${BGS[k][0]}${own?'':` <small>${BGS[k][1]} ★</small>`}</button>`}).join('')}</div></section>
+ <section class="pcard"><h2>Mi fondo</h2><div class="bggrid"><button class="bgopt ${!D.bg?'on':''}" data-act="bgset" data-k=""><span class="bgprev"></span>Cuadros</button>${Object.keys(BGS).filter(k=>ownBg(k)||isShown('bg_'+k)).map(k=>{const own=ownBg(k);return `<button class="bgopt ${D.bg===k?'on':''} ${own?'':'locked'}" data-act="${own?'bgset':'buy'}" data-id="bg_${k}" data-k="${k}"><span class="bgprev bg-${k}"></span>${BGS[k][0]}${own?'':` <small>${BGS[k][1]} ★</small>`}</button>`}).join('')}</div>
+ <h2>Fondos con mis fotos</h2><p class="small">Elige fotos de la galería de la tablet. Se guardan solo en esta tablet y no se suben a internet. Cada foto se desbloquea por ${PHOTO_PRICE} ★.</p>
+ <div class="bggrid">${myPhotos().map(ph=>{const own=(D.photosOwned||[]).includes(ph.id);return `<div class="phtile"><button class="bgopt ${D.bg===ph.id?'on':''} ${own?'':'locked'}" data-act="${own?'phset':'phbuy'}" data-id="${ph.id}"><span class="bgprev phprev" style="background-image:url(${ph.data})"></span>${own?(D.bg===ph.id?'Puesta':'Usar'):`<small>${PHOTO_PRICE} ★</small>`}</button><button class="phdel" data-act="phdel" data-id="${ph.id}" aria-label="Quitar foto">✕</button></div>`}).join('')}${myPhotos().length<PHOTO_MAX?`<label class="bgopt addph" for="phin"><span class="bgprev plus">+</span>Añadir foto</label>`:''}</div>
+ <input id="phin" type="file" accept="image/*" hidden><p class="micst" id="phst"></p></section>
  <div class="actions two"><button class="btn ghost" data-act="who">Cambiar de perfil</button><button class="btn primary" data-act="home">Listo</button></div></main>`;
+ const phin=$('#phin');if(phin)phin.addEventListener('change',()=>{const f=phin.files&&phin.files[0];if(f)addPhoto(f)});
  const nm=$('#nm');nm.addEventListener('input',()=>{D.name=nm.value;save()});
 }
 function renderStickers(){
@@ -2284,7 +2319,14 @@ const ACT={
  quit:()=>{V.exam=null;stopRec();try{speechSynthesis.cancel()}catch(e){}go(V.sub==='reto'?'home':'subject')},
  lv:el=>{D.lv=+el.dataset.lv;save();render()},
  profile:()=>go('profile'), stickers:()=>go('stickers'), reto:()=>startReto(),
- av:el=>{if(!isUnlockedChar(el.dataset.k))return;D.avatar=el.dataset.k;save();render()}, fav:el=>{if(!ownFav(el.dataset.k))return;D.fav=el.dataset.k;save();render()}, bgset:el=>{if(!ownBg(el.dataset.k))return;D.bg=el.dataset.k;save();render()},
+ av:el=>{if(!isUnlockedChar(el.dataset.k))return;D.avatar=el.dataset.k;save();render()}, fav:el=>{if(!ownFav(el.dataset.k))return;D.fav=el.dataset.k;save();render()}, phset:el=>{D.bg=el.dataset.id;save();render()},
+ phbuy:el=>{const id=el.dataset.id,ph=PHOTOS.find(p=>p.id===id),t=totalStars();if(!ph)return;
+  if(t<PHOTO_PRICE)modal(`<div class="mpic"><span class="bgprev phprev" style="background-image:url(${ph.data})"></span></div><b>Te faltan ${PHOTO_PRICE-t} estrellas</b><span>Desbloquear esta foto cuesta ${PHOTO_PRICE} estrellas y tienes ${t}.</span><div class="actions"><button class="btn primary" data-act="mclose">Vale</button></div>`);
+  else modal(`<div class="mpic"><span class="bgprev phprev" style="background-image:url(${ph.data})"></span></div><b>¿Poner esta foto de fondo?</b><span>Cuesta ${PHOTO_PRICE} estrellas. Tienes ${t} y te quedarán ${t-PHOTO_PRICE}.</span><div class="actions two"><button class="btn ghost" data-act="mclose">No, gracias</button><button class="btn primary" data-act="phok" data-id="${id}">Sí, desbloquear</button></div>`)},
+ phok:el=>{const id=el.dataset.id;if(totalStars()<PHOTO_PRICE)return;spendStars(PHOTO_PRICE);D.photosOwned=D.photosOwned||[];D.photosOwned.push(id);D.bg=id;save();const m=$('#mdl');if(m)m.remove();render();react(true)},
+ phdel:el=>modal(`<b>¿Quitar esta foto?</b><span>Se borra de la app (en la galería de la tablet sigue estando).</span><div class="actions two"><button class="btn ghost" data-act="mclose">No</button><button class="btn primary" data-act="phdelok" data-id="${el.dataset.id}">Sí, quitar</button></div>`),
+ phdelok:async el=>{const id=el.dataset.id;await idbDel(id);PHOTOS=PHOTOS.filter(p=>p.id!==id);if(D.bg===id)D.bg='';save();const m=$('#mdl');if(m)m.remove();render()},
+ bgset:el=>{if(!ownBg(el.dataset.k))return;D.bg=el.dataset.k;save();render()},
  vales:()=>{const m=$('#mdl');if(m)m.remove();go('vales')}, valeuse:el=>modal(`<div class="mpic">${PICON.real}</div><b>¿Ya lo habéis disfrutado?</b><span>Pulsa «Sí» solo cuando el premio ya se haya hecho.</span><div class="actions two"><button class="btn ghost" data-act="mclose">Todavía no</button><button class="btn primary" data-act="valeok" data-i="${el.dataset.i}">Sí</button></div>`), valeok:el=>{const c=(D.coupons||[])[+el.dataset.i];if(c){c.used=true;save()}render();sfx('win')},
  subj:el=>go('subject',el.dataset.s),
  mode:el=>start(el.dataset.m),
