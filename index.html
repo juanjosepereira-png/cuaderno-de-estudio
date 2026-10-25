@@ -568,6 +568,14 @@ body[data-bg="photo"]{background-size:cover;background-position:center;backgroun
 .pathres .bar{width:100%}.pathres span{color:var(--muted)}
 .propimg.small{width:min(26vw,110px)}
 .propimg.pscene{width:min(78vw,380px);aspect-ratio:4/3;padding:0;background:none;border-radius:16px;overflow:hidden;box-shadow:0 4px 0 var(--line)}
+.vocimg{width:100%;height:100%;object-fit:cover;display:block}
+.vocgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;width:100%}
+.vocit{display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;background:var(--paper);border:2px solid var(--line);border-radius:14px;padding:8px}
+.vocit b{font-family:var(--f-display);font-size:1.1rem}.vocit span{color:var(--muted);font-size:.85rem}
+.vocprev{width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--card)}
+.vocprev svg{width:100%;height:100%;display:block}
+.vocbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.vocbtns .btn{cursor:pointer;display:inline-flex;align-items:center}
 .propimg.pscene.small{width:min(56vw,240px)}
 .parentp{gap:14px}
 .pph{display:flex;align-items:center;gap:12px}.pph b{display:block;font-family:var(--f-display);font-size:1.4rem}.pph span{display:flex;align-items:center;gap:4px;color:var(--muted)}.pph span svg{width:16px;height:16px;color:#e0a800}
@@ -1258,7 +1266,8 @@ const SCENE={
   <text x="124" y="46" font-size="22" font-weight="800" fill="#7b6cff">Z</text><text x="144" y="30" font-size="16" font-weight="800" fill="#9f93ff">z</text><text x="158" y="18" font-size="12" font-weight="800" fill="#c2b9ff">z</text><circle cx="34" cy="26" r="12" fill="#ffd96a"/><circle cx="40" cy="22" r="11" fill="#e5e3f7"/><path d="M60 70 q-6 -2 -10 2" stroke="#7a86a8" stroke-width="2" fill="none"/>`)
 };
 
-const sceneOf=en=>SCENE[en]?SCENE[en]():PROP[PICW[en]];
+const vocPhoto=en=>{const p=(typeof PHOTOS!=='undefined'?PHOTOS:[]).find(x=>x.id==='voc_'+en);return p?p.data:null};
+const sceneOf=en=>{const ph=vocPhoto(en);return ph?`<img class="vocimg" src="${ph}" alt="">`:SCENE[en]?SCENE[en]():PROP[PICW[en]]};
 /* ===== pistas que cuestan estrellas ===== */
 const HINT_PRICE=50;
 const hintAllowed=()=>!V.exam&&!V.ptest;
@@ -2190,7 +2199,18 @@ function renderParent(){
   <div class="negdots" aria-label="${n} de ${NEG_MAX} puntos negativos">${Array.from({length:NEG_MAX},(_,i)=>`<span class="nd ${i<n?'on':''}">✕</span>`).join('')}<span class="small">${n} de ${NEG_MAX} puntos negativos</span></div>
   ${lk?`<p class="lockline">Premios bloqueados hasta el ${esc(lockDate(d))}.</p>`:''}
   <div class="actions"><button class="btn primary negbtn" data-act="negadd" data-p="${pid}">Poner punto negativo</button>${n?`<button class="btn ghost" data-act="negdel" data-p="${pid}">Quitar un punto</button>`:''}${lk?`<button class="btn ghost" data-act="unlockp" data-p="${pid}">Desbloquear premios ya</button>`:''}</div></section>`}).join('')}
+ <section class="pcard"><h2>Fotos del vocabulario</h2><p class="small">Pon una foto real en cada adjetivo: de la galería o hecha con la cámara (por ejemplo, de las fotos del libro). Saldrá en los ejercicios en vez del dibujo. Se guardan solo en esta tablet.</p>
+ <div class="vocgrid">${U1.map(w=>{const ph=vocPhoto(w.en);return `<div class="vocit"><div class="vocprev">${sceneOf(w.en)}</div><b>${w.en}</b><span>${esc(w.es.split(',')[0])}</span><div class="vocbtns"><label class="btn small ${ph?'ghost':'primary'}" for="vf_${w.en}">${ph?'Cambiar':'Añadir foto'}</label>${ph?`<button class="btn small ghost" data-act="vocdel" data-k="${w.en}">Quitar</button>`:''}</div><input id="vf_${w.en}" class="vocin" data-k="${w.en}" type="file" accept="image/*" hidden></div>`}).join('')}</div><p class="micst" id="vocst"></p></section>
  <div class="actions"><button class="btn ghost" data-act="pinreset">Cambiar el PIN</button><button class="btn primary" data-act="home">Salir</button></div></main>`;
+ document.querySelectorAll('.vocin').forEach(inp=>inp.addEventListener('change',()=>{const f=inp.files&&inp.files[0];if(f)addVocPhoto(inp.dataset.k,f)}));
+}
+function addVocPhoto(en,file){
+ const st=$('#vocst');if(st){st.className='micst';st.textContent='Guardando la foto…'}
+ const img=new Image(),url=URL.createObjectURL(file);
+ img.onload=async()=>{try{const m=1000,k=Math.min(1,m/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);
+  const ph={id:'voc_'+en,pid:'voc',data:c.toDataURL('image/jpeg',.82)};await idbPut(ph);PHOTOS=PHOTOS.filter(p=>p.id!==ph.id);PHOTOS.push(ph);render();const s2=$('#vocst');if(s2){s2.className='micst ok';s2.textContent=`¡Foto de «${en}» guardada!`}}
+  catch(e){const s2=$('#vocst');if(s2){s2.className='micst bad';s2.textContent='No se ha podido guardar la foto.'}}};
+ img.onerror=()=>{if(st){st.className='micst bad';st.textContent='Esa foto no se puede abrir. Prueba con otra.'}};img.src=url;
 }
 function penaltyNotice(){if(!D.penaltyNew)return;D.penaltyNew=false;save();setTimeout(()=>{sfx('over');modal(`<div class="overface">${FACE_ANGRY.replace('¡GRRR!','¡OH, NO!')}</div><b>Has llegado a ${NEG_MAX} puntos negativos</b><span>Papá o mamá han puesto ${NEG_MAX} puntos negativos. Pierdes ${NEG_STARS} estrellas y los premios quedan bloqueados hasta el ${esc(lockDate())}.</span><div class="actions"><button class="btn primary" data-act="mclose">Vale</button></div>`)},400)}
 
@@ -2854,6 +2874,7 @@ const ACT={
  pinreset:()=>{try{localStorage.removeItem('cuaderno-pin')}catch(e){}V.pinOk=false;render()},
  negadd:el=>{const pid=el.dataset.p;let pen=false,name='';editP(pid,d=>{name=(d.name||'').trim()||PEOPLE[pid].name;d.neg=(d.neg||0)+1;if(d.neg>=NEG_MAX){penalize(d);pen=true}});render();sfx('bad');
   if(pen){const d=pid===PID?D:peek(pid);modal(`<b>${esc(name)} ha llegado a ${NEG_MAX} puntos negativos</b><span>Se le han restado ${NEG_STARS} estrellas y sus premios están bloqueados hasta el ${esc(lockDate(d))}. Los puntos vuelven a 0. Se lo diremos al entrar en su perfil.</span><div class="actions"><button class="btn primary" data-act="mclose">Entendido</button></div>`)}},
+ vocdel:async el=>{await idbDel('voc_'+el.dataset.k);PHOTOS=PHOTOS.filter(p=>p.id!=='voc_'+el.dataset.k);render()},
  negdel:el=>{editP(el.dataset.p,d=>{d.neg=Math.max(0,(d.neg||0)-1)});render()},
  unlockp:el=>{editP(el.dataset.p,d=>{d.lockUntil=0;d.penaltyNew=false});render()},
  tile:el=>{if(W.state!=='ask')return;const a=$('#ans');a.value+=el.textContent;el.disabled=true;W.tstack=W.tstack||[];W.tstack.push(el.dataset.i);sfx('ok')},
