@@ -581,6 +581,17 @@ body[data-bg="photo"]{background-size:cover;background-position:center;backgroun
 .negban .nd{width:28px;height:28px}
 #pin1,#pin2{font-size:1.6rem;letter-spacing:.4em;text-align:center;width:min(220px,100%)}
 
+.hintbtn{display:inline-flex;align-items:center;gap:8px;margin-right:auto;border-color:#e0a800!important}
+.hintbtn svg{width:22px;height:22px;color:#e0a800}
+.toolrow{display:flex;gap:10px;flex-wrap:wrap}
+.toolrow .hwopen{align-self:auto}
+.hintbox{display:flex;align-items:flex-start;gap:10px;margin:0;background:color-mix(in srgb,var(--marker) 28%,var(--card));border-radius:14px;padding:10px 14px;font-weight:700;width:100%}
+.hintbox svg{width:24px;height:24px;flex:none;color:#b88600}
+.hintopts{display:flex;flex-direction:column;gap:10px;width:100%}
+.trwords{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.trw{border:2px solid var(--accent);background:var(--card);color:var(--ink);border-radius:99px;padding:8px 14px;font-weight:700;font-size:1.05rem;cursor:pointer}
+.opt.struck{opacity:.3;text-decoration:line-through}
+
 /* tarjetas */
 .flip{display:block;width:100%;max-width:600px;margin:0 auto;height:clamp(240px,42vw,340px);border:0;background:none;padding:0;perspective:1400px;cursor:pointer}
 .inner{position:relative;display:block;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
@@ -687,6 +698,7 @@ const ICON={
  cards:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="13" height="14" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3"/></svg>',
  link:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="7" height="5" rx="1.5"/><rect x="15" y="15" width="7" height="5" rx="1.5"/><rect x="2" y="15" width="7" height="5" rx="1.5"/><rect x="15" y="4" width="7" height="5" rx="1.5"/><path d="M9 6.5l6 11M9 17.5l6-11"/></svg>',
  mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+ bulb:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.6 1 2.5h6c0-.9.2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg>',
  pencil:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20l1-4.5L16 4.5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M14 6.5l3 3"/></svg>'
 };
 
@@ -1163,6 +1175,31 @@ function resetQ(){UQ=wordCyc();SQ=()=>genGap(UQ().en);CQ=cyc(COMP)}
 const U1by=en=>U1.find(w=>w.en===en);
 const hasTTS=()=>'speechSynthesis' in window;
 const subj=()=>{const f=Math.random()<.5;return f?["She's",'She','she']:["He's",'He','he']};
+const DICT=(()=>{const d={};"a:un, una|after:despu\u00e9s de|again:otra vez|all:todo, todos|always:siempre|an:un, una|and:y|animal:animal|answer:contestar, respuesta|apple:manzana|are:son, est\u00e1n|arm:brazo|asleep:dormido|aunt:t\u00eda|baby:beb\u00e9|be:ser, estar|beard:barba|bed:cama|big:grande|bigger:m\u00e1s grande|bike:bici|bird:p\u00e1jaro|black:negro|board:pizarra|book:libro|boy:ni\u00f1o|breakfast:desayuno|broke:rompi\u00f3|brother:hermano|bus:guagua, autob\u00fas|cake:tarta|called:se llama|can:puede, poder|can't:no puede|carrying:llevando|cat:gato|cave:cueva|cheetah:guepardo|children:ni\u00f1os|class:clase|classroom:aula, clase|cleaner:m\u00e1s limpio|climbing:escalar|close:cerrar|coaster:monta\u00f1a rusa|coasters:monta\u00f1as rusas|coat:abrigo|comics:c\u00f3mics|computer:ordenador|cream:crema|cross:cruzar|curly:rizado|dad:pap\u00e1|dancing:bailar|dark:oscuro|day:d\u00eda|didn't:no (pasado)|do:hacer|does:hace|doesn't:no|dog:perro|doing:haciendo|don't:no|door:puerta|down:abajo|drawing:dibujando|dress:vestido|drums:bater\u00eda, tambores|eat:comer|eating:comiendo|eight:ocho|elephant:elefante|english:ingl\u00e9s|everybody:todo el mundo|everyone:todo el mundo|exercise:ejercicio|falls:se cae, se queda|faster:m\u00e1s r\u00e1pido|fell:se cay\u00f3|fighting:luchando, apagando|film:pel\u00edcula|films:pel\u00edculas|fire:fuego|firefighter:bombera, bombero|first:primero|five:cinco|football:f\u00fatbol|four:cuatro|game:juego|games:juegos|garden:jard\u00edn|giraffe:jirafa|girl:ni\u00f1a|go:ir|goes:va|got:tiene (has got)|grandpa:abuelo|grandson:nieto|great:genial|grey:gris|hair:pelo|has:tiene|hasn't:no tiene|hates:odia|have:tener|he:\u00e9l|he's:\u00e9l es, \u00e9l est\u00e1|here:aqu\u00ed|hides:esconde|his:su (de \u00e9l)|her:su (de ella)|homework:deberes|horse:caballo|hour:hora|i:yo|i'm:yo soy, yo estoy|ice:hielo|in:en, dentro|into:dentro de|is:es, est\u00e1|isn't:no es, no est\u00e1|it:eso, ello|it's:es, est\u00e1|jumping:saltando|languages:idiomas|late:tarde|lesson:clase|lessons:clases|library:biblioteca|like:gustar|likes:le gusta|listen:escuchar|long:largo|longer:m\u00e1s largo|looking:mirando|lot:mucho|louder:m\u00e1s ruidoso|loves:le encanta|lunch:almuerzo|man:hombre|match:partido|maths:matem\u00e1ticas|me:me, m\u00ed|minutes:minutos|motorbike:moto|mountain:monta\u00f1a|mouse:rat\u00f3n|much:mucho|mum:mam\u00e1|music:m\u00fasica|must:debe, tener que|mustn't:no debe|my:mi|need:necesitar|news:noticias|nothing:nada|now:ahora|of:de|old:viejo, mayor|older:mayor, m\u00e1s viejo|on:encima, en|one:uno|open:abrir|out:fuera|painting:pintando|park:parque|pencil:l\u00e1piz|per:por|person:persona|pink:rosa|place:lugar|plants:plantas|play:jugar|played:jug\u00f3|playground:patio|please:por favor|plus:m\u00e1s|pop:pop|puppy:cachorro|put:poner|questions:preguntas|quicker:m\u00e1s r\u00e1pido|quieter:m\u00e1s silencioso|rain:lluvia|rainy:lluvioso|read:leer|reading:leyendo|really:muy, de verdad|road:calle, carretera|rocket:cohete|roller:rodillo (roller coaster: monta\u00f1a rusa)|run:correr|runs:corre|sandwich:s\u00e1ndwich, bocadillo|scared:asustado|school:colegio|science:ciencias|scissors:tijeras|sharpening:sacando punta|she:ella|she's:ella es, ella est\u00e1|shh:\u00a1silencio!|shoes:zapatos|short:corto, bajo|shorter:m\u00e1s corto, m\u00e1s bajo|shouting:gritando|shouts:grita|sister:hermana|sleep:dormir|sleeping:durmiendo|slower:m\u00e1s lento|small:peque\u00f1o|smaller:m\u00e1s peque\u00f1o|snail:caracol|snowing:nevando|so:tan, muy|some:algo de, un poco|sorry:perd\u00f3n, lo siento|soup:sopa|spanish:espa\u00f1ol|speak:hablar|stop:parar|sun:sol|swim:nadar|talk:hablar|taller:m\u00e1s alto|teacher:profesor, profesora|teaches:ense\u00f1a|television:televisi\u00f3n|ten:diez|tennis:tenis|test:examen|than:que (m\u00e1s ... que)|the:el, la, los, las|there:all\u00ed, hay (there is / are)|there's:hay|they:ellos|they're:ellos son, ellos est\u00e1n|think:pensar, creer|thinks:piensa, cree|this:este, esta|three:tres|time:hora, tiempo|to:a, para|tortoise:tortuga|toys:juguetes|tree:\u00e1rbol|turn:girar (turn down: bajar)|uncle:t\u00edo|very:muy|walk:caminar, paseo|walks:camina|wall:pared|want:querer|wants:quiere|was:era, estaba|watches:mira, ve|water:agua|we:nosotros|we're:nosotros somos, estamos|wearing:llevando puesto|weather:tiempo (clima)|went:fue|what:qu\u00e9|when:cuando|where:d\u00f3nde|who:que, quien (personas)|why:por qu\u00e9|window:ventana|windy:con viento|with:con|woman:mujer|works:trabaja|writing:escribiendo|yawning:bostezando|you:t\u00fa|younger:m\u00e1s joven|yesterday:ayer|beach:playa|cold:fr\u00edo|younger:m\u00e1s joven|news:noticias|old films:pel\u00edculas antiguas".split('|').forEach(p=>{const i=p.indexOf(':');d[p.slice(0,i)]=p.slice(i+1)});return d})();
+/* ===== pistas que cuestan estrellas ===== */
+const HINT_PRICE=50;
+const hintAllowed=()=>!V.exam&&!V.ptest;
+const hintBtn=()=>hintAllowed()?`<button class="btn ghost hintbtn" type="button" data-act="hint">${ICON.bulb}<span>Pista · ${HINT_PRICE} ★</span></button>`:'';
+function curPromptText(){if(V.view==='test'){const q=T.qs[T.i];return q.q+' '+q.opts.join(' ')}if(V.view==='write'){const it=W.items[W.i];return String(it.p||it.plain||it.prompt||'').replace(/<[^>]+>/g,' ')}return ''}
+function wordsOf(t){const seen=new Set();return (t.match(/[A-Za-zÀ-ÿ]+(?:'[a-z]+)?/g)||[]).filter(w=>{const k=w.toLowerCase();if(seen.has(k)||!DICT[k]&&!U1by(k))return false;seen.add(k);return true})}
+const trOf=w=>{const k=w.toLowerCase(),u=U1by(k);return u?u.es:DICT[k]||''};
+function hintMenu(){
+ if(!hintAllowed())return;const t=totalStars();
+ if(t<HINT_PRICE){modal(`<b>No tienes estrellas suficientes</b><span>Una pista cuesta ${HINT_PRICE} estrellas y tienes ${t}.</span><div class="actions"><button class="btn primary" data-act="mclose">Vale</button></div>`);return}
+ const ws=V.sub==='ingles'?wordsOf(curPromptText()):[];
+ modal(`<div class="mpic">${ICON.bulb.replace('<svg','<svg style="width:90px;height:90px;color:#e0a800"')}</div><b>¿Qué ayuda quieres?</b><span>Cada ayuda cuesta ${HINT_PRICE} estrellas. Tienes ${t}.</span>
+ <div class="hintopts"><button class="btn primary" data-act="hintgo" data-k="clue">Una pista de la respuesta</button>${ws.length?`<button class="btn ghost" data-act="hintgo" data-k="tr">Traducir una palabra</button>`:''}<button class="btn ghost" data-act="mclose">No, gracias</button></div>`);
+}
+function hintGo(k){
+ if(totalStars()<HINT_PRICE)return hintMenu();
+ if(k==='tr'){const ws=wordsOf(curPromptText());modal(`<b>¿Qué palabra no entiendes?</b><span>Toca la palabra y te digo qué significa (${HINT_PRICE} ★).</span><div class="trwords">${ws.map(w=>`<button class="trw" data-act="hinttr" data-w="${esc(w)}">${esc(w)}</button>`).join('')}</div><div class="actions"><button class="btn ghost" data-act="mclose">Cancelar</button></div>`);return}
+ spendStars(HINT_PRICE);save();let txt='';
+ if(V.view==='test'){const q=T.qs[T.i],wrong=q.opts.map((_,i)=>i).filter(i=>i!==q.a);const rm=shuffle(wrong).slice(0,Math.max(0,q.opts.length-2));rm.forEach(i=>{const b=document.querySelector(`.opt[data-i="${i}"]`);if(b){b.disabled=true;b.classList.add('struck')}});txt=(rm.length?`He quitado ${rm.length===1?'una respuesta incorrecta':rm.length+' respuestas incorrectas'}. `:'')+(q.w&&trOf(q.w)?`La respuesta significa «${trOf(q.w)}».`:/\bwho\b/.test(q.q)?'Para hablar de personas se usa «who».':/than/.test(q.q)?'Piensa qué es más grande, más rápido, más viejo…':'Lee la frase entera en voz alta y piensa cuál tiene sentido.')}
+ else{const it=W.items[W.i],a=String(it.show||it.ans&&it.ans[0]||(it.res!=null?String(it.res).replace('.',','):''));
+  txt=it.s===':'?`El cociente es ${it.q}. Ahora calcula el resto.`:(it.hint?(h=>h.charAt(0).toUpperCase()+h.slice(1))(it.hint.replace(/^Pista: /,''))+' ':'')+(a?`Empieza por «${a.slice(0,Math.min(2,Math.ceil(a.length/3)))}» y tiene ${a.replace(/[^A-Za-zÀ-ÿ0-9]/g,'').length} ${/\d/.test(a)?'cifras':'letras'}.`:'')}
+ const m=$('#mdl');if(m)m.remove();showHint(txt);
+}
+function showHint(t){let h=$('#hintbox');if(!h){const anchor=document.querySelector('.qcard');if(!anchor)return;anchor.insertAdjacentHTML('beforeend','<p class="hintbox" id="hintbox" role="status"></p>');h=$('#hintbox')}h.innerHTML=`${ICON.bulb}<span>${esc(t)}</span>`;sfx('ok');const sc=$('.starcount b');if(sc)sc.textContent=totalStars()}
 /* ===== más ejercicios para el examen de la Unit 1 ===== */
 const OPIN=[['football',0],['tennis',0],['television',0],['school',0],['Maths',0],['pop music',0],['computer games',1],['comics',1],['Music lessons',1],['dancing',0]];
 const NOTADJ=['school','teacher','apple','bike','window','dog','book','sister','run','swim','play','read','pencil','garden'];
@@ -2283,7 +2320,7 @@ function renderTest(){
  <section class="qcard"><h2 class="q ${q.q.length>70?'long':''}">${esc(q.q)}</h2>${q.img?`<div class="qimg">${q.img}</div>`:''}${q.say&&!q.sayAfter?sayBtn(q.say,q.autoSay?'Escuchar otra vez':undefined):''}</section>
  <section class="opts">${q.opts.map((o,i)=>`<button class="opt" data-act="opt" data-i="${i}"><span class="letter">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</section>
  <div class="fb" id="fb" hidden></div>
- <div class="actions"><button class="btn primary" data-act="next" id="next" hidden>Siguiente</button></div></main>`;
+ <div class="actions">${hintBtn()}<button class="btn primary" data-act="next" id="next" hidden>Siguiente</button></div></main>`;
 }
 
 /* ---------- tarjetas ---------- */
@@ -2585,7 +2622,7 @@ function renderWrite(){
     <div class="sheet" id="sheet">${sheetHTML(it)}</div>
     <div class="fb" id="fb" hidden></div>
     <div class="keypad" id="kp">${keys.map(k=>`<button class="key" data-act="key" data-k="${k}" ${k===','&&!it.rd?'disabled':''} aria-label="${k==='del'?'Borrar último número':k}">${k==='del'?ICON.del:k}</button>`).join('')}</div>
-    ${hwBtn()}${padHTML('num')}
+    <div class="toolrow">${hintBtn()}${hwBtn()}</div>${padHTML('num')}
     <div class="actions"><button class="btn primary wide" data-act="check" id="chk">Comprobar</button></div>
    </section>
    <section class="scratch"><div class="scratch-head"><span>Borrador</span><em>Haz la cuenta con el dedo</em><button class="btn small ghost" data-act="clr">Limpiar</button></div><canvas id="cv" aria-label="Borrador para hacer la cuenta"></canvas></section>
@@ -2597,7 +2634,7 @@ function renderWrite(){
   <section class="qcard"><h2 class="q ${it.p.length>70?'long':''}">${esc(it.p)}</h2>${it.img?`<div class="qimg">${it.img}</div>`:''}<div id="sayslot">${it.sayFirst?sayBtn(it.say,'Escuchar la palabra'):''}</div></section>
   <form class="wform" id="wf"><label for="ans" class="sr">Tu respuesta</label><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe aquí"><button class="btn primary" id="chk">Comprobar</button></form>
   ${it.tiles?`<div class="tiles" id="tiles">${it.tiles.map((c,i)=>`<button class="tile" type="button" data-act="tile" data-i="${i}">${esc(c)}</button>`).join('')}<button class="tile tdel" type="button" data-act="tiledel" aria-label="Borrar la última letra">⌫</button></div>`:''}
-  ${hwBtn()}${padHTML('txt')}
+  <div class="toolrow">${hintBtn()}${hwBtn()}</div>${padHTML('txt')}
   <div class="fb" id="fb" hidden></div>
   <div class="actions"><button class="btn primary" data-act="wnext" id="nx" hidden>Siguiente</button></div></main>`;
   $('#wf').addEventListener('submit',e=>{e.preventDefault();if(!V.locked)checkTxt()});
@@ -2715,6 +2752,7 @@ const ACT={
  opt:el=>{
   if(T.done)return;T.done=true;
   const i=+el.dataset.i,q=T.qs[T.i],ok=i===q.a;if(ok)T.score++;if(V.mode==='path')pathTrack(ok);react(ok);mark(q.w,ok);if(V.exam&&V.exam.miss&&!ok&&q.w)V.exam.miss.push(q.w);if(q.sayAfter&&q.say)setTimeout(()=>speak(q.say),500);
+  {const hb=$('.hintbtn');if(hb)hb.hidden=true}
   document.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('right');else if(j===i)b.classList.add('wrong')});
   fbShow(ok?'ok':'bad',ok?pick(PRAISE):`La respuesta correcta es <b>${esc(q.opts[q.a])}</b>.`);
   const nx=$('#next');nx.hidden=false;nx.textContent=T.i+1<T.qs.length?'Siguiente':'Ver resultado';nx.focus({preventScroll:true});
@@ -2723,7 +2761,9 @@ const ACT={
  flip:el=>{C.flipped=!C.flipped;el.classList.toggle('is-flipped',C.flipped);if(C.flipped){document.querySelectorAll('[data-act=again],[data-act=know]').forEach(b=>b.disabled=false);const s=$('#sayrow');if(s)s.hidden=false}},
  know:()=>{const c=C.deck.shift();mark(c.w,!C.missed.has(c.id));if(!C.missed.has(c.id))C.score++;C.flipped=false;if(!C.deck.length)finish(C.score,C.total);else renderCards()},
  again:()=>{const c=C.deck.shift();if(!C.missed.has(c.id))mark(c.w,false);C.missed.add(c.id);C.deck.push(c);C.flipped=false;renderCards()},
- mt:el=>tapMatch(el), ptest:()=>{const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.mode='path';lives=MAXL;V.locked=false;pathStart(true)},
+ mt:el=>tapMatch(el),
+ hint:()=>hintMenu(), hintgo:el=>hintGo(el.dataset.k),
+ hinttr:el=>{if(totalStars()<HINT_PRICE)return hintMenu();spendStars(HINT_PRICE);save();const w=el.dataset.w;const m=$('#mdl');if(m)m.remove();showHint(`«${w}» significa «${trOf(w)}».`);speak(w)}, ptest:()=>{const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.mode='path';lives=MAXL;V.locked=false;pathStart(true)},
  parent:()=>{V.pinOk=false;go('parent')},
  pinok:()=>{const a=($('#pin1')||{}).value||'',b=$('#pin2'),st=$('#pinst'),pin=getPin();if(!/^\d{4}$/.test(a)){st.textContent='El PIN tiene que tener 4 números.';return}
   if(!pin){if(!b||b.value!==a){st.textContent='Los dos PIN no coinciden.';return}try{localStorage.setItem('cuaderno-pin',a)}catch(e){}V.pinOk=true;render();return}
