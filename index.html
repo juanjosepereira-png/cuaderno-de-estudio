@@ -514,7 +514,8 @@ body[data-bg="photo"]{background-size:cover;background-position:center;backgroun
 .vales.old .vale{opacity:.55;border-style:solid;background:var(--card)}
 .valesbtn{max-width:520px}
 
-.qimg{display:flex;justify-content:center;width:100%}
+.qimg{display:flex;flex-direction:column;align-items:center;gap:8px;width:100%}
+.imgcap{font-family:var(--f-display);font-weight:800;font-size:1.35rem;color:var(--accent);background:color-mix(in srgb,var(--accent) 10%,var(--card));padding:4px 16px;border-radius:99px;text-align:center}
 .qimg .clock{width:min(46vw,200px);height:auto}
 .propimg{width:min(40vw,170px);aspect-ratio:1;max-width:100%;background:#f3f6fc;border-radius:20px;padding:10px}
 .propimg svg{width:100%;height:100%;display:block}
@@ -1304,7 +1305,7 @@ function endingMC(){let f,g=0;do{f=genFinish(UQ())}while(!f&&g++<20);if(!f)retur
  const bad=new Set([f.w,...(f.fits||[])]),others=shuffle(U1.filter(x=>!bad.has(x.en))).slice(0,3).map(x=>f.tpl.replace('___',x.en)),right=f.tpl.replace('___',f.w),opts=shuffle([right,...others]);
  return {q:`¿Cómo termina la frase? ${f.pre} …`,opts,a:opts.indexOf(right),w:f.w,say:f.say,sayAfter:true}}
 function oppWrite(){const w=pick(U1.filter(x=>x.opp));return {p:`Escribe el contrario de «${w.en}»`,ans:[w.opp],say:w.opp,hint:`Pista: empieza por «${w.opp[0]}».`,w:w.en}}
-function picWrite(){const w=UQ();return {p:'Escribe el adjetivo que va con este dibujo',img:`<div class="propimg pscene">${sceneOf(w.en)}</div>`,ans:[w.en],say:w.en,hint:`Pista: significa «${w.es}» y empieza por «${w.en[0]}».`,w:w.en}}
+function picWrite(){const w=UQ();return {p:'Escribe el adjetivo que va con este dibujo',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: significa «${w.es}» y empieza por «${w.en[0]}».`,w:w.en}}
 function tilesWrite(){const w=UQ();let t;do{t=shuffle(w.en.split(''))}while(t.join('')===w.en);return {p:`Construye la palabra «${w.es}» tocando las letras`,tiles:t,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
 function listenGapWrite(){const w=UQ(),g=genGap(w.en);return {p:'Escucha la frase y escribe la palabra que falta: '+g[1].replace('___','_____'),sayFirst:true,say:g[1].replace('___',g[0]),ans:[g[0]],hint:`Pista: significa «${w.es}».`,w:g[0]}}
 function u1MC(){
@@ -2336,7 +2337,7 @@ const NOTILDE=['casa','reloj','pelota','examen','joven','mesa','papel','ventana'
 function tildeMC(){if(Math.random()<.7){const [ok,no]=pick(TILDE),opts=['Sí, lleva tilde','No lleva tilde'];return {q:`¿Lleva tilde? «${no}»`,opts,a:0,sayAfterTxt:ok}}const w=pick(NOTILDE),opts=['Sí, lleva tilde','No lleva tilde'];return {q:`¿Lleva tilde? «${w}»`,opts,a:1}}
 // Inglés: dibujos
 const PICW={slow:'snail',quick:'rocket',cold:'snow',hungry:'sandwich',thirsty:'glass',tired:'zzz',loud:'speaker',quiet:'shh',brave:'fire',busy:'clock',careful:'traffic',terrible:'storm',clever:'bulb',naughty:'splat',easy:'easy',difficult:'hard',boring:'yawn',exciting:'burst'};
-function picMC(){const w=UQ(),oth=shuffle(U1.filter(x=>x!==w&&PICW[x.en])).slice(0,3),opts=shuffle([w,...oth]).map(x=>x.en);return {q:'¿Qué adjetivo va con este dibujo?',img:`<div class="propimg pscene">${sceneOf(w.en)}</div>`,opts,a:opts.indexOf(w.en),say:w.en,sayAfter:true,w:w.en}}
+function picMC(){const w=UQ(),oth=shuffle(U1.filter(x=>x!==w&&PICW[x.en])).slice(0,3),opts=shuffle([w,...oth]).map(x=>x.en);return {q:'¿Qué adjetivo va con este dibujo?',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,opts,a:opts.indexOf(w.en),say:w.en,sayAfter:true,w:w.en}}
 /* ===== camino guiado de Inglés: apartados en orden, pasa solo con más del 90 % ===== */
 const PSTAGES=[
  {k:'pic',n:'Vocabulario con dibujos',d:'Mira el dibujo y escribe el adjetivo en inglés.'},
@@ -2361,9 +2362,9 @@ function pWord(st,used){const p=PTH();let dk=p.wd[st]||[];if(!dk.filter(x=>!used
 function pTpl(st,list,keyf){const p=PTH(),u=new Set(p.tu[st]||[]);let c=list.filter(x=>!u.has(keyf(x)));if(!c.length){list.forEach(x=>u.delete(keyf(x)));c=list}const x=pick(c);u.add(keyf(x));p.tu[st]=[...u];return x}
 const kidOf=()=>{const [n,g]=pick(KIDS),f=g==='f';return {n,f,fill:t=>t.replace(/\{N\}/g,n).replace(/\{P\}/g,f?"She's":"He's").replace(/\{Pn\}/g,f?'She':'He').replace(/\{p\}/g,f?'she':'he').replace(/\{his\}/g,f?'her':'his')}};
 function pItem(k,used){
- if(k==='pic'){const w=pWord(k,used);return {p:'¿Qué adjetivo es? Escríbelo en inglés.',img:`<div class="propimg pscene">${sceneOf(w.en)}</div>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en}}
+ if(k==='pic'){const w=pWord(k,used);return {p:'¿Qué adjetivo es? Escríbelo en inglés.',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en}}
  if(k==='gap'){const w=pWord(k,used),c=pTpl(k,CTX.filter(x=>x[0]===w.en),x=>x[1]),K=kidOf(),t=K.fill(c[1]);return {p:t.replace('___',w.en[0]+'_____'),ans:[w.en],rest:w.en.slice(1),say:t.replace('___',w.en),hint:`Pista: significa «${w.es}».`,w:w.en}}
- if(k==='sort'){const w=pWord(k,used);let m;do{m=shuffle(w.en.split('')).join('')}while(m===w.en);return {p:`Ordena las letras y escribe la palabra: ${m}`,img:`<div class="propimg pscene small">${sceneOf(w.en)}</div>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
+ if(k==='sort'){const w=pWord(k,used);let m;do{m=shuffle(w.en.split('')).join('')}while(m===w.en);return {p:`Ordena las letras y escribe la palabra: ${m}`,img:`<div class="propimg pscene small">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
  if(k==='circle'){const r=Math.random();
   if(r<.25){const b=pTpl('who',WHO,x=>x[0]),o=shuffle([b[1],...b[2]]);return {q:'Read and circle: '+b[0].replace('___',`( ${o.join(' / ')} )`),opts:o,a:o.indexOf(b[1]),say:b[0].replace('___',b[1]),sayAfter:true}}
   if(r<.45){const b=pTpl('comp',COMPB,x=>x[0]),o=shuffle([b[1],...b[2]]);return {q:'Read and circle: '+b[0].replace('___',`( ${o.join(' / ')} )`),opts:o,a:o.indexOf(b[1]),say:b[0].replace('___',b[1]),sayAfter:true}}
