@@ -2415,7 +2415,7 @@ function renderStickers(){
 
 /* ---------- materia ---------- */
 function renderSubject(){
- if(V.sub==='ingles'){renderPath();return}
+ if(V.sub==='ingles'||V.sub==='mates'){renderPath();return}
  const S=SUBJ[V.sub];
  app.innerHTML=header(S.name,'home')+`<main class="wrap">
  <section class="subj-head"><h1>${S.name}</h1><p class="lvline"><span class="lvst">${difStars(DIF())}</span> <b>${DIFNAME[DIF()]}</b>${DIF()?` · ejercicios de ${LV()}º`:''}</p><p>${D.lv}º de Primaria · ${D.stars[V.sub]} ${D.stars[V.sub]===1?'estrella':'estrellas'} conseguidas</p>${V.sub==='ingles'&&Date.now()<Date.parse('2026-10-27')?'<p class="exam">Examen el lunes 26 de octubre: Unit 1, vocabulario de adjetivos.</p>':''}</section>
@@ -2476,7 +2476,7 @@ function tildeMC(){if(Math.random()<.7){const [ok,no]=pick(TILDE),opts=['Sí, ll
 const PICW={slow:'snail',quick:'rocket',cold:'snow',hungry:'sandwich',thirsty:'glass',tired:'zzz',loud:'speaker',quiet:'shh',brave:'fire',busy:'clock',careful:'traffic',terrible:'storm',clever:'bulb',naughty:'splat',easy:'easy',difficult:'hard',boring:'yawn',exciting:'burst'};
 function picMC(){const w=UQ(),oth=shuffle(U1.filter(x=>x!==w&&PICW[x.en])).slice(0,3),opts=shuffle([w,...oth]).map(x=>x.en);return {q:'¿Qué adjetivo va con este dibujo?',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,opts,a:opts.indexOf(w.en),say:w.en,sayAfter:true,w:w.en}}
 /* ===== camino guiado de Inglés: apartados en orden, pasa solo con más del 90 % ===== */
-const PSTAGES=[
+const ISTAGES=[
  {k:'pic',n:'Vocabulario con dibujos',d:'Mira el dibujo y escribe el adjetivo en inglés.'},
  {k:'gap',n:'Completa las frases',d:'Escribe el adjetivo que falta. Te damos la primera letra.'},
  {k:'sort',n:'Ordena las letras',d:'Como en el crucigrama del libro: olcd → cold.'},
@@ -2484,6 +2484,16 @@ const PSTAGES=[
  {k:'fix',n:'Lee y corrige',d:'Hay una palabra mal. Escribe la correcta.'},
  {k:'think',n:'What do you think of…?',d:'Lee y escribe el adjetivo que va.'},
  {k:'sent',n:'Frases enteras',d:'Escribe la frase entera en inglés.'}];
+const MSTAGES=[
+ {k:'leer',n:'Leer y escribir números',d:'Escribe los números con letras y con cifras, como en el ejercicio 1 del examen.'},
+ {k:'des',n:'Descomponer números',d:'Según la posición (4 DM + 8 UM…) y según el valor (40.000 + 8.000…).'},
+ {k:'red',n:'Redondear',d:'Redondea a las decenas, a las centenas y a las unidades de millar.'},
+ {k:'col',n:'Coloca y resuelve',d:'Sumas y restas de 4 y 5 cifras llevándote.'},
+ {k:'comb',n:'Operaciones combinadas',d:'Primero los paréntesis, después × y :, y al final + y −.'},
+ {k:'pro',n:'Problemas',d:'Elige la operación y escribe la solución. También de metros a kilómetros.'}];
+const STG=()=>V.sub==='mates'?MSTAGES:ISTAGES;
+const MGEN={leer:()=>Math.random()<.6?leerWrite():leerNum(),des:()=>Math.random()<.5?desPosW():desValW(),red:()=>Math.random()<.75?redTrio():genRound(Math.min(LV(),5)),col:()=>colGen(),comb:()=>combWrite(),pro:()=>Math.random()<.6?proKm():genProblem(LV())};
+function mItems(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<200){for(const it of [].concat(MGEN[k]())){const key=it.p||it.prompt||it.lay;if(seen.has(key)||out.length>=n)continue;seen.add(key);out.push(it)}}return out}
 const P_MIN=20,P_GOAL=.9,PT_PASS=9;
 const WHO=[["Mary is the girl ___ is wearing a pink dress.","who",["where","with"]],["Mr Edison is the teacher ___ is writing on the board.","who",["what","when"]],["Jim is the boy ___ is sharpening his pencil.","who",["with","why"]],["The woman ___ teaches Music likes reading.","who",["where","what"]],["The man ___ is painting has got a black beard.","who",["when","where"]],["This is the person ___ teaches children.","who",["when","where"]],["The girl ___ is reading a book is my sister.","who",["what","where"]],["The boy ___ likes football is called Hugo.","who",["where","when"]],["There ___ five children in the classroom.","are",["is","have"]],["In the classroom, the children ___ listen to the teacher.","must",["mustn't","can't"]],["The teacher ___ has got curly grey hair is Mrs Bird.","who",["what","when"]],["There ___ a big tree in the park.","is",["are","have"]]];
 const COMPB=[["A snail is ___ than a rocket.","slower",["quicker"]],["An elephant is ___ than a mouse.","bigger",["smaller"]],["Grandpa is ___ than his grandson.","older",["younger"]],["A giraffe is ___ than a dog.","taller",["shorter"]],["A baby is ___ than his dad.","smaller",["bigger"]],["After the rain, the dog is ___ than the cat.","dirtier",["cleaner"]],["A cheetah is ___ than a horse.","quicker",["slower"]],["My sister is eight. I'm ten. My sister is ___ than me.","younger",["older"]],["Aunt May's hair is very long. Uncle Fred's hair is short. Aunt May's hair is ___.","longer",["shorter"]],["A library is ___ than a playground.","quieter",["louder"]]];
@@ -2493,7 +2503,7 @@ const THINK=[["{N} loves {x}. What does {p} think of {x}? — {Pn} thinks {it} _
  ["{N} does the {x} homework in five minutes. What does {p} think of it? — {Pn} thinks it's ___.","easy",['Maths','English','Science','Spanish']],
  ["{N} falls asleep when {p} watches {x}. What does {p} think of {x}? — {Pn} thinks {it} ___.","boring",['television','the news','old films']]];
 const PL=x=>/s$/.test(x)&&!['tennis','Maths','the news'].includes(x);
-function PTH(){D.path=D.path||{st:0,acc:{},wd:{},tu:{}};D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
+function PTH(){if(V.sub==='mates'){D.mpath=D.mpath||{st:0,acc:{}};D.mpath.acc=D.mpath.acc||{};return D.mpath}D.path=D.path||{st:0,acc:{},wd:{},tu:{}};D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
 function pWord(st,used){const p=PTH();let dk=p.wd[st]||[];if(!dk.filter(x=>!used.has(x)).length)dk=wshuffle(U1.map(w=>w.en).filter(x=>!used.has(x)),en=>missW(en)).reverse().concat(dk);
  const i=dk.map((x,j)=>[x,j]).reverse().find(([x])=>!used.has(x));const en=i[0];dk.splice(i[1],1);p.wd[st]=dk;used.add(en);return U1by(en)}
 function pTpl(st,list,keyf){const p=PTH(),u=new Set(p.tu[st]||[]);let c=list.filter(x=>!u.has(keyf(x)));if(!c.length){list.forEach(x=>u.delete(keyf(x)));c=list}const x=pick(c);u.add(keyf(x));p.tu[st]=[...u];return x}
@@ -2515,24 +2525,26 @@ function pItem(k,used){
  return {p:`Escribe la frase entera en inglés: «${es}»`,ans:sentAlts(en),show:en,say:en,hint:`Pista: empieza por «${en.split(' ')[0]}».`,w:w.en};
 }
 function pathStart(test){
- const p=PTH(),done=p.st>=PSTAGES.length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
- if(!done&&PSTAGES[p.st].mc){T={qs:Array.from({length:10},()=>pItem('circle',used)),i:0,score:0,done:false};go('test');return}
- const ks=done?PSTAGES.filter(x=>!x.mc).map(x=>x.k):[PSTAGES[p.st].k];
- W={kind:'txt',title:done?'Repaso de la Unit 1':(V.ptest?'Prueba: ':'')+PSTAGES[p.st].n,items:Array.from({length:10},()=>pItem(pick(ks),used)),i:0,score:0};resetW();go('write');
+ const p=PTH(),done=p.st>=STG().length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
+ if(V.sub==='mates'){W={kind:'op',title:done?'Ficha como el examen':(V.ptest?'Prueba: ':'')+MSTAGES[p.st].n,items:done?fichaItems():mItems(MSTAGES[p.st].k,10),i:0,score:0};resetW();go('write');return}
+ if(!done&&STG()[p.st].mc){T={qs:Array.from({length:10},()=>pItem('circle',used)),i:0,score:0,done:false};go('test');return}
+ const ks=done?STG().filter(x=>!x.mc).map(x=>x.k):[STG()[p.st].k];
+ W={kind:'txt',title:done?'Repaso de la Unit 1':(V.ptest?'Prueba: ':'')+STG()[p.st].n,items:Array.from({length:10},()=>pItem(pick(ks),used)),i:0,score:0};resetW();go('write');
 }
-function pathTrack(ok){const p=PTH();if(p.st>=PSTAGES.length||V.ptest)return;const a=p.acc[p.st]=p.acc[p.st]||[];a.push(ok?1:0);if(a.length>P_MIN)a.shift()}
+function pathTrack(ok){const p=PTH();if(p.st>=STG().length||V.ptest)return;const a=p.acc[p.st]=p.acc[p.st]||[];a.push(ok?1:0);if(a.length>P_MIN)a.shift()}
 function pathInfo(st){const a=(PTH().acc[st]||[]);return {n:a.length,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:0}}
-function pathAfterRound(score,total){const p=PTH(),st=p.st;if(st>=PSTAGES.length)return {review:true};
+function pathAfterRound(score,total){const p=PTH(),st=p.st;if(st>=STG().length)return {review:true};
  if(V.ptest){V.ptest=false;p.ready=null;if(score>=PT_PASS){p.st++;return {from:st,adv:true,test:true,score,total}}p.acc[st]=(p.acc[st]||[]).slice(-10);return {from:st,failTest:true,score,total}}
  const r=pathInfo(st);if(r.n>=P_MIN&&r.avg>P_GOAL){p.ready=st;return {from:st,ready:true,avg:r.avg}}return {from:st,adv:false,avg:r.avg,n:r.n}}
 function renderPath(){
- const p=PTH(),st=p.st,done=st>=PSTAGES.length;
- app.innerHTML=header('Inglés','home')+`<main class="wrap">
- <section class="subj-head"><h1>Inglés · Unit 1</h1><p>Los ejercicios van en orden, como en el libro. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${Date.now()<Date.parse('2026-10-27')?'<p class="exam">Examen el lunes 26 de octubre: Unit 1, vocabulario de adjetivos.</p>':''}</section>
- ${examReady('ingles')?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
- ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${PSTAGES[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
- <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?'Repaso de la Unit 1':'Continuar: '+PSTAGES[st].n}</b><span>${done?'¡Has dominado todos los apartados! Ronda de repaso mezclada.':PSTAGES[st].d+' Ronda de 10.'}</span></span></button>
- <ol class="path">${PSTAGES.map((x,i)=>{const r=pathInfo(i),state=i<st?'done':i===st?'now':'lock';return `<li class="ps ${state}"><span class="pn">${i<st?'✓':i+1}</span><div><b>${x.n}</b><span>${x.d}</span>${state==='now'?`<div class="bar"><i style="width:${Math.round(r.avg*100)}%"></i></div><span class="pm">${r.n?`Aciertos: ${Math.round(r.avg*100)} % en tus últimas ${r.n} respuestas. `:''}${p.ready===i?'¡Prueba disponible!':`Para pasar: más del 90 % en ${P_MIN} respuestas y después la prueba (${PT_PASS} de 10).`}</span>`:''}</div></li>`}).join('')}</ol>
+ const p=PTH(),st=p.st,done=st>=STG().length;
+ const M=V.sub==='mates',RV=M?'Ficha como el examen':'Repaso de la Unit 1';
+ app.innerHTML=header(M?'Matemáticas':'Inglés','home')+`<main class="wrap">
+ <section class="subj-head"><h1>${M?'Matemáticas':'Inglés · Unit 1'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p></section>
+ ${examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
+ ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${STG()[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
+ <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
+ <ol class="path">${STG().map((x,i)=>{const r=pathInfo(i),state=i<st?'done':i===st?'now':'lock';return `<li class="ps ${state}"><span class="pn">${i<st?'✓':i+1}</span><div><b>${x.n}</b><span>${x.d}</span>${state==='now'?`<div class="bar"><i style="width:${Math.round(r.avg*100)}%"></i></div><span class="pm">${r.n?`Aciertos: ${Math.round(r.avg*100)} % en tus últimas ${r.n} respuestas. `:''}${p.ready===i?'¡Prueba disponible!':`Para pasar: más del 90 % en ${P_MIN} respuestas y después la prueba (${PT_PASS} de 10).`}</span>`:''}</div></li>`}).join('')}</ol>
  <section class="modes"><button class="mode mgames" data-act="sgames"><span class="ic">${ICON.star}</span><b>Juegos</b><span>Carrera, burbujas, sopa de letras… ¡y ganas estrellas!</span></button></section></main>`;
 }
 function buildTest(){
@@ -2971,7 +2983,7 @@ function renderResult(){
  <p class="small">Has ganado ${earn} ${earn===1?'estrella':'estrellas'}${isR?' (¡dobles por el reto!)':''}.</p>
  ${(V.res.newPr||[]).map(p=>`<div class="newst">${PICON[p.type]}<span>¡Has desbloqueado ${p.type==='video'?'el minivídeo':p.type==='char'?'el personaje':'el minijuego'} «${esc(p.name)}»!</span><button class="btn small primary" data-act="prizes">Ver</button></div>`).join('')}
  ${newSt>=0?`<div class="newst">${stSVG(newSt)}<span>¡Nueva pegatina: ${STICKERS[newSt][0]}!</span></div>`:''}
- ${V.res.path?(pr=>pr.review?'<p class="small">Ronda de repaso terminada.</p>':pr.ready?`<div class="levelup"><b>¡Ya dominas «${PSTAGES[pr.from].n}»!</b><span>Aciertas el ${Math.round(pr.avg*100)} %. Ahora haz la <b>prueba</b> para pasar al siguiente apartado: necesitas ${PT_PASS} de 10.</span><button class="btn primary" data-act="ptest">Hacer la prueba</button></div>`:pr.failTest?`<div class="pathres"><b>Prueba de «${PSTAGES[pr.from].n}»: ${pr.score} de ${pr.total}</b><span>Necesitas ${PT_PASS} de 10 para pasar. Practica un poco más y la prueba volverá a aparecer.</span></div>`:pr.adv?`<div class="levelup"><b>¡Prueba superada: ${pr.score} de ${pr.total}!</b><b>¡Has dominado «${PSTAGES[pr.from].n}»!</b><span>${pr.from+1<PSTAGES.length?`Ahora pasas a: <b>${PSTAGES[pr.from+1].n}</b>.`:'¡Has terminado todos los apartados de la Unit 1!'}</span></div>`:`<div class="pathres"><b>${PSTAGES[pr.from].n}</b><div class="bar"><i style="width:${Math.round(pr.avg*100)}%"></i></div><span>Aciertos: ${Math.round(pr.avg*100)} % en ${pr.n} respuestas. Para pasar al siguiente necesitas más del 90 % en ${P_MIN} respuestas.</span></div>`)(V.res.path):''}
+ ${V.res.path?(pr=>pr.review?'<p class="small">Ronda de repaso terminada.</p>':pr.ready?`<div class="levelup"><b>¡Ya dominas «${STG()[pr.from].n}»!</b><span>Aciertas el ${Math.round(pr.avg*100)} %. Ahora haz la <b>prueba</b> para pasar al siguiente apartado: necesitas ${PT_PASS} de 10.</span><button class="btn primary" data-act="ptest">Hacer la prueba</button></div>`:pr.failTest?`<div class="pathres"><b>Prueba de «${STG()[pr.from].n}»: ${pr.score} de ${pr.total}</b><span>Necesitas ${PT_PASS} de 10 para pasar. Practica un poco más y la prueba volverá a aparecer.</span></div>`:pr.adv?`<div class="levelup"><b>¡Prueba superada: ${pr.score} de ${pr.total}!</b><b>¡Has dominado «${STG()[pr.from].n}»!</b><span>${pr.from+1<STG().length?`Ahora pasas a: <b>${STG()[pr.from+1].n}</b>.`:(V.sub==='mates'?'¡Has terminado todos los apartados! Ahora te salen fichas completas como el examen.':'¡Has terminado todos los apartados de la Unit 1!')}</span></div>`:`<div class="pathres"><b>${STG()[pr.from].n}</b><div class="bar"><i style="width:${Math.round(pr.avg*100)}%"></i></div><span>Aciertos: ${Math.round(pr.avg*100)} % en ${pr.n} respuestas. Para pasar al siguiente necesitas más del 90 % en ${P_MIN} respuestas.</span></div>`)(V.res.path):''}
  ${!isR&&examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  <div class="actions two">${isR?'<button class="btn primary" data-act="home">Volver al menú</button>':(V.mode==='path'?'<button class="btn ghost" data-act="subject">Ver mi camino</button><button class="btn primary" data-act="repeat">Siguiente ronda</button>':'<button class="btn ghost" data-act="subject">Otra actividad</button><button class="btn primary" data-act="repeat">Repetir</button>')}</div></main>`;
 }
