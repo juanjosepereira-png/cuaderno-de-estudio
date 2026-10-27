@@ -276,6 +276,15 @@ button{font:inherit;color:inherit}
 .tprompt p.prob{font-family:var(--f-body);font-weight:400;font-size:clamp(1.15rem,2.6vw,1.35rem);line-height:1.55;text-align:left;max-width:42ch}
 .ansrow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;justify-content:center}
 .unit{font-family:var(--f-display);font-weight:700;font-size:1.4rem;color:var(--muted)}
+.secl{margin:0 0 6px;font-family:var(--f-display);font-weight:800;font-size:1.05rem;color:var(--accent);text-align:center;letter-spacing:.01em}
+.lay{margin:0 0 10px;font-family:var(--f-display);font-weight:700;font-size:1.25rem;text-align:center}.lay b{color:var(--accent);white-space:nowrap}
+.opsel{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}.opsel span{font-family:var(--f-display);font-weight:700;font-size:1.2rem;color:var(--muted)}
+.opb{width:56px;height:56px;border-radius:14px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-family:var(--f-display);font-weight:800;font-size:1.8rem;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+.opb.on{border-color:var(--accent);background:var(--accent);color:#fff;box-shadow:0 4px 0 color-mix(in srgb,var(--accent) 60%,#000)}.opb.right{outline:3px solid #2fa36b;outline-offset:2px}
+.tkeys .tile{width:auto;min-width:58px;padding:0 10px}
+.sheet:has(.lay){flex-direction:column;align-items:center}
+.opsel span{flex-basis:100%;text-align:center}.opb{width:50px;height:50px}
+
 .q.long{font-family:var(--f-body);font-weight:700;font-size:clamp(1.2rem,2.8vw,1.45rem);line-height:1.5}
 .ansbox.fin-ok{color:var(--ok);border-color:var(--ok)}
 
@@ -715,10 +724,10 @@ const ICON={
 
 /* ---------- datos guardados ---------- */
 const TOPICS={
- mates:{mul:'Multiplicar',div:'Dividir',red:'Redondeo',des:'Descomponer números',pro:'Problemas',sum:'Sumas y restas',ser:'Series y comparar',hora:'La hora',geo:'Medidas y geometría'},
+ mates:{leer:'Leer y escribir números',des:'Descomponer números',red:'Redondeo',pro:'Problemas',comb:'Operaciones combinadas',col:'Coloca y resuelve',mul:'Multiplicar',div:'Dividir',sum:'Sumas y restas',ser:'Series y comparar',hora:'La hora',geo:'Medidas y geometría'},
  ingles:{u1:'Unit 1: adjetivos (examen)',comp:'Comparativos (-er)',pc:'Presente continuo',adj:'Otros adjetivos',voc:'Otro vocabulario',gram:'Otra gramática'}
 };
-const TP_DEFAULT={mates:['mul','div','red','des','pro'],ingles:['u1']};
+const TP_DEFAULT={mates:['leer','des','red','pro','comb','col'],ingles:['u1']};
 const PEOPLE={idaira:{name:'Niña',key:'cuaderno-v1',lv:5,avatar:'gata',fav:'violeta'},mama:{name:'Mamá',key:'cuaderno-v1-mama',lv:6,avatar:'osita',fav:'turquesa'}};
 let PID='idaira',D;
 function peek(pid){const p=PEOPLE[pid];let s=null;try{s=JSON.parse(localStorage.getItem(p.key)||'null')}catch(e){}return s||{}}
@@ -730,6 +739,7 @@ function loadProfile(pid){
  D.tp=D.tp||{};D.unlocked=Array.isArray(D.unlocked)?D.unlocked:[];D.spent=+D.spent||0;D.best=D.best||{};for(const k in TP_DEFAULT)if(!Array.isArray(D.tp[k])||!D.tp[k].length)D.tp[k]=TP_DEFAULT[k].slice();
  if(!D.tpv3){D.tp.ingles=['u1'];D.tpv3=1}
  if(!D.tpv2){if(!D.tp.mates.includes('pro'))D.tp.mates.push('pro');D.tpv2=1}
+ if(!D.tpv4){D.tp.mates=TP_DEFAULT.mates.slice();D.tpv4=1}
 }
 loadProfile('idaira');
 const rr=(tp,n)=>{let o=[];while(o.length<n)o.push(...shuffle(tp));return o.slice(0,n)};
@@ -1414,7 +1424,7 @@ function opMC(sym){
 const ABBR=['U','D','C','UM','DM','CM'],PV=[1,10,100,1000,10000,100000];
 const PLACE={1:'unidades',10:'decenas',100:'centenas',1000:'unidades de millar',10000:'decenas de millar'};
 const PLACE1={10:'la decena',100:'la centena',1000:'la unidad de millar',10000:'la decena de millar'};
-const nf=(x,d=0)=>x.toLocaleString('es-ES',{minimumFractionDigits:d,maximumFractionDigits:d});
+const nf=(x,d=0)=>{const [i,f]=Math.abs(x).toFixed(d).split('.');return (x<0?'-':'')+i.replace(/\B(?=(\d{3})+(?!\d))/g,'.')+(f?','+f:'')};
 function genRound(L){
  let V,q,sc=1,rd=0,place,hint;
  if(L>=5&&Math.random()<.4){
@@ -1458,7 +1468,8 @@ function mutate(ts){
 }
 function wrongs(ts,f){const right=f(ts),set=new Set();let g=0;while(set.size<3&&g++<80){let m=mutate(ts);if(Math.random()<.4)m=mutate(m);const x=f(m);if(x!==right)set.add(x)}return [...set]}
 function desMC(type){
- const L=LV(),n=genNum(L),ts=terms(n);type=type||pick(['a','b','c']);
+ const L=LV(),n=genNum(L),ts=terms(n);type=type||pick(['a','b','c','v','v']);
+ if(type==='v'){const m=exNum(),t=terms(m),right=expStr(m),set=new Set();if(t.length>2)set.add([nf(t[0][0]*PV[t[0][1]]+t[1][0]*PV[t[1][1]]),...t.slice(2).map(([d,i])=>nf(d*PV[i]))].join(' + '));set.add(t.map(([d,i])=>nf(d*PV[Math.max(0,i-1)])).join(' + '));for(const w of wrongs(t,x=>expStr(tNum(x))))if(set.size<3&&w!==right)set.add(w);set.delete(right);const opts=shuffle([right,...[...set].slice(0,3)]);return {q:`Descompón ${nf(m)} según el valor de sus cifras.`,opts,a:opts.indexOf(right)}}
  if(type==='b'){
   const dg=digitsOf(n),ok=dg.map((d,i)=>i).filter(i=>dg[i]&&dg.filter(x=>x===dg[i]).length===1);
   if(!ok.length)return desMC('a');
@@ -1528,7 +1539,7 @@ function genProblem(L){
   else{const a=rnd(20,90),b=rnd(10,50),c=rnd(5,a);res=a+b-c;alts=[a+b,a-c,a+b+c,res+10];
    text=`${N} tiene ${a} cromos. Le regalan ${b} y luego le da ${c} a ${N2}. ¿Cuántos cromos le quedan?`;unit='cromos';hint='Pista: hay dos pasos. Primero suma los que le regalan y después resta los que da.'}
  }
- return {s:'txt',kind:'pro',prompt:esc(text),plain:text,res,rd:0,unit,show:`${nf(res)} ${unit}`,hint,alts};
+ return {s:'txt',kind:'pro',sec:'Problema',opq:kind==='2'?null:kind[0],prompt:esc(text),plain:text,res,rd:0,unit,show:`${nf(res)} ${unit}`,hint,alts};
 }
 function proMC(){
  const o=genProblem(LV()),set=new Set();
@@ -1536,6 +1547,127 @@ function proMC(){
  let k=1;while(set.size<3){const x=o.res+k*(k%2?1:-1)*(1+(k>>1));if(x>0&&x!==o.res)set.add(x);k++}
  const opts=shuffle([o.res,...set].map(x=>`${nf(x)} ${o.unit}`));
  return {q:o.plain,opts,a:opts.indexOf(o.show)};
+}
+
+/* ===== ejercicios como el examen de mates (20/10/26) ===== */
+const NW_U=['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidós','veintitrés','veinticuatro','veinticinco','veintiséis','veintisiete','veintiocho','veintinueve'];
+const NW_T=['','','','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+const NW_C=['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+const w99=n=>n<30?NW_U[n]:NW_T[Math.floor(n/10)]+(n%10?' y '+NW_U[n%10]:'');
+const w999=n=>n===100?'cien':[Math.floor(n/100)?NW_C[Math.floor(n/100)]:'',n%100?w99(n%100):''].filter(Boolean).join(' ');
+function numWords(n){
+ if(!n)return 'cero';const m=Math.floor(n/1000),r=n%1000;let x='';
+ if(m){x=m===1?'':w999(m);if(x.endsWith('veintiuno'))x=x.slice(0,-3)+'ún';else if(x.endsWith('uno'))x=x.slice(0,-1);x=(x?x+' ':'')+'mil'}
+ return [x,r?w999(r):''].filter(Boolean).join(' ');
+}
+const exNum=()=>{const big=DIF()>=2&&Math.random()<.4,len=big?6:pick([4,5,5]);let n;do{n=rnd(10**(len-1),10**len-1);if(Math.random()<.35){const k=rnd(1,len-2);n=n-Math.floor(n/10**k)%10*10**k}}while(String(n).length!==len);return n};
+const nWords=s=>s.toLowerCase().replace(/[.,;]/g,' ').trim().split(/\s+/).filter(Boolean);
+const SPELL=[[/seisi|seici|seic/,'«Seiscientos» se escribe con «sc»: seis + cientos.'],[/nueb/,'«Nueve» se escribe con «v».'],[/veit|vienti|beint/,'Los números de veinte llevan «n» y se escriben juntos: veintiuno, veintidós, veintiséis…'],[/cincocient|cinco cient/,'El 500 se escribe «quinientos».'],[/sietecient/,'El 700 se escribe «setecientos».'],[/nuevecient/,'El 900 se escribe «novecientos».'],[/^dies|dieci y|diez y/,'Del 16 al 19 se escriben juntos: dieciséis, diecisiete…'],[/sinc|zinc/,'«Cinco» y «cincuenta» se escriben con «c».'],[/secent|setent?a?$|setenra/,'Revisa: 60 es «sesenta» y 70 es «setenta».'],[/cuatrocient|cuatro cient/,null],[/^un mil$/,'El 1.000 se escribe solo «mil».'],[/ochoc|ochozient/,null],[/sient|zient/,'«Cientos» se escribe con «c»: doscientos, trescientos…'],[/^tre[sz]ient/,null]];
+function wordsHint(raw,right){
+ const a=nWords(raw),b=nWords(right),A=a.map(noAcc),B=b.map(noAcc);
+ if(A.join(' ')===B.join(' '))return 'acc';
+ if(A.filter(w=>w!=='y').join(' ')===B.filter(w=>w!=='y').join(' '))return 'Entre las decenas y las unidades se pone «y»: cuarenta y tres, noventa y uno…';
+ for(let i=0;i<Math.max(A.length,B.length);i++){
+  if(A[i]===B[i])continue;
+  const w=a[i]||'';if(!w)return 'Te falta una parte del número. Léelo por trozos: primero los miles y después el resto.';
+  const sp=SPELL.find(([re,t])=>t&&re.test(noAcc(w)));
+  if(sp)return `Revisa la palabra «${w}». ${sp[1]}`;
+  if(B.includes(A[i])||!B[i])return 'Lee el número por trozos: primero lo que va antes del punto (los miles) y después el resto.';
+  return `Revisa la palabra «${w}». Léelo despacio por trozos: primero los miles y después el resto.`;
+ }
+ return 'Lee el número por trozos: primero los miles y después el resto.';
+}
+function leerWrite(){
+ const n=exNum(),w=numWords(n);
+ return {sec:'¿Cómo se leen estos números?',p:`Escribe con letras el número ${nf(n)}`,ans:[w],show:w,lax:true,chk:raw=>{const h=wordsHint(raw,w);return h==='acc'&&nWords(raw).join(' ')===w?true:h},hint:'Lee el número por trozos: primero los miles (lo que va antes del punto) y después el resto.'};
+}
+function leerNum(){
+ const n=exNum();
+ return {s:'txt',sec:'¿Cómo se leen estos números?',prompt:`Escribe con cifras:<br><b>${numWords(n)}</b>`,res:n,rd:0,show:nf(n),hint:'Busca la palabra «mil»: lo de antes son los miles. Después tienen que quedar 3 cifras (centenas, decenas y unidades). Si falta alguna, pon un 0.'};
+}
+const leerWrong=w=>{const T=[[/seiscient/,'seisient'],[/nueve/,'nuebe'],[/veinti/,'veiti'],[/quinient/,'cincocient'],[/setecient/,'sietecient'],[/novecient/,'nuevecient'],[/ y /,' '],[/ mil/,' mil y'],[/dieci/,'diez y '],[/cincuenta/,'cinquenta'],[/sesenta/,'secenta']];return shuffle(T).filter(([re])=>re.test(w)).map(([re,t])=>w.replace(re,t))};
+function leerMC(){
+ const n=exNum(),w=numWords(n);
+ if(Math.random()<.4){const ts=terms(n),f=t=>nf(tNum(t)),opts=shuffle([f(ts),...wrongs(ts,f)]);return {q:`¿Qué número es «${w}»?`,opts,a:opts.indexOf(nf(n))}}
+ const set=new Set(leerWrong(w));let g=0;while(set.size<3&&g++<30){const m=terms(n),x=numWords(tNum(mutate(m)));if(x!==w)set.add(x)}
+ const opts=shuffle([w,...[...set].slice(0,3)]);return {q:`¿Cómo se lee ${nf(n)}? Fíjate bien en cómo se escribe cada palabra.`,opts,a:opts.indexOf(w)};
+}
+const PLC={u:0,d:1,c:2,um:3,dm:4,cm:5};
+function desPosW(){
+ const n=exNum(),right=tStr(terms(n));
+ return {sec:'Descompón según la posición de las cifras',p:`Descompón ${nf(n)} según la POSICIÓN de sus cifras.\n(Ejemplo: 3.205 = 3 UM + 2 C + 5 U)`,ans:[right],show:right,keys:['+','U','D','C','UM','DM',...(n>=1e5?['CM']:[])],
+  chk:raw=>{const t=raw.toLowerCase().replace(/\s/g,'').split('+').filter(Boolean),used=new Set();let sum=0;
+   for(const x of t){const m=x.match(/^(\d+)(cm|dm|um|u|d|c)$/);if(!m)return 'Escribe cada parte con una cifra y su orden, por ejemplo «4 DM», y sepáralas con «+».';if(m[1].length>1)return `«${x.toUpperCase()}» tiene más de una cifra. Cada orden lleva una sola cifra.`;if(used.has(m[2]))return `Has puesto ${m[2].toUpperCase()} dos veces. Cada orden aparece una sola vez.`;used.add(m[2]);sum+=+m[1]*PV[PLC[m[2]]]}
+   return sum===n?true:`Revisa qué cifra va en cada orden. Empieza por la izquierda: la primera cifra de ${nf(n)} son las ${ABBR[String(n).length-1]}.`},
+  hint:`Empieza por la izquierda: la primera cifra de ${nf(n)} son las ${ABBR[String(n).length-1]}.`};
+}
+function desValW(){
+ const n=exNum(),right=expStr(n);
+ return {sec:'Descompón según el valor de las cifras',p:`Descompón ${nf(n)} según el VALOR de sus cifras.\n(Ejemplo: 3.205 = 3.000 + 200 + 5)`,ans:[right],show:right,keys:['+','1','2','3','4','5','6','7','8','9','0','.'],
+  chk:raw=>{const t=raw.replace(/[\s.]/g,'').split('+').filter(Boolean),used=new Set();let sum=0;
+   for(const x of t){if(!/^\d+$/.test(x))return 'Escribe solo números separados por «+».';const nz=x.replace(/0/g,'').length;if(!nz)continue;
+    if(nz>1||x[0]==='0')return `«${nf(+x)}» tiene más de una cifra que no es cero. Separa cada cifra: en ${nf(n)}, la primera cifra vale ${nf(terms(n)[0][0]*PV[terms(n)[0][1]])}.`;
+    if(used.has(x.length))return 'Hay dos números del mismo orden. Cada cifra va en su sitio.';used.add(x.length);sum+=+x}
+   return sum===n?true:'Revisa el valor de cada cifra: cuenta cuántas cifras tiene detrás y pon tantos ceros.'},
+  hint:`Cada cifra vale según su sitio: en ${nf(n)} la primera cifra vale ${nf(terms(n)[0][0]*PV[terms(n)[0][1]])}. Después sigue con las demás, una a una.`};
+}
+const PLACEPL={10:'las decenas',100:'las centenas',1000:'las unidades de millar',10000:'las decenas de millar'};
+function redItem(V,q){const r=Math.round(V/q)*q;return {s:'txt',sec:'Redondea',V,q,sc:1,rd:0,res:r,show:nf(r),plain:`Redondea ${nf(V)} a ${PLACEPL[q]}`,prompt:`Redondea <b>${nf(V)}</b> a <b>${PLACEPL[q]}</b>`,hint:`Mira la cifra de las ${PLACE[q/10]}: si es 5 o más, se sube; si es menor, se queda igual y las cifras de detrás se cambian por 0.`,wh:{[Math.floor(V/q)*q===r?Math.ceil(V/q)*q:Math.floor(V/q)*q]:`¡Casi! Mira bien la cifra de las ${PLACE[q/10]}: ¿es 5 o más?`}}}
+function redTrio(){const big=DIF()>=2&&Math.random()<.5;let V;do{V=rnd(big?10000:1000,big?99999:9999)}while(V%10===0);return (big?[10,100,1000,10000]:[10,100,1000]).map(q=>redItem(V,q))}
+const PLACES_KM=['el centro de salud','el colegio','la playa','el polideportivo','casa de mi abuela','el parque','la biblioteca','el puerto'];
+const kmStr=m=>nf(m/1000,3);
+function proKm(){
+ const N=pick(NAMES),t=rnd(0,5);let A,B,text,opq,res,unit,sol,wh={},rd=0;
+ const pair=(lo,hi)=>{let a,b;do{a=rnd(lo,hi);b=rnd(1000,a-1000)}while(a-b<1000||(a-b)%1000===0||a%1000===0);return [a,b]};
+ if(t===0){[A,B]=pair(5000,9999);const pl=pick(PLACES_KM);text=`Entre mi casa y ${pl} hay ${nf(A)} m. Ya he recorrido ${nf(B)} m. ¿Cuántos kilómetros me faltan?`;opq='−';res=(A-B)/1000;rd=3;unit='km';sol=`${nf(A)} − ${nf(B)} = ${nf(A-B)} m = ${kmStr(A-B)} km`;wh[A-B]='Has calculado bien los metros. Ahora pásalo a kilómetros: 1 km = 1.000 m, así que pon la coma tres cifras a la izquierda.'}
+ else if(t===1){[A,B]=pair(5000,9999);text=`${N} quiere recorrer ${nf(A)} m en bici. Ya lleva ${nf(B)} m. ¿Cuántos metros le faltan?`;opq='−';res=A-B;unit='m';sol=`${nf(A)} − ${nf(B)} = ${nf(A-B)} m`}
+ else if(t===2){A=rnd(1200,4999);B=rnd(1200,4999);text=`${N} ha corrido ${nf(A)} m por la mañana y ${nf(B)} m por la tarde. ¿Cuántos kilómetros ha corrido en total?`;opq='+';res=(A+B)/1000;rd=3;unit='km';sol=`${nf(A)} + ${nf(B)} = ${nf(A+B)} m = ${kmStr(A+B)} km`;wh[A+B]='Has calculado bien los metros. Ahora pásalo a kilómetros: 1 km = 1.000 m.'}
+ else if(t===3){[A,B]=pair(3000,9999);text=`Un camión lleva ${nf(A)} kg de plátanos y descarga ${nf(B)} kg en el mercado. ¿Cuántos kilos le quedan?`;opq='−';res=A-B;unit='kg';sol=`${nf(A)} − ${nf(B)} = ${nf(A-B)} kg`}
+ else if(t===4){A=rnd(1200,2900);B=rnd(3,7);text=`${N} camina ${nf(A)} m cada día para ir al colegio. ¿Cuántos metros camina en ${B} días?`;opq='×';res=A*B;unit='m';sol=`${nf(A)} × ${B} = ${nf(A*B)} m`}
+ else{A=rnd(12,48)*1000+rnd(1,9)*100;B=rnd(2,4);let q;do{q=rnd(2000,9999)}while(q%B);A=q*B;text=`Una carrera de relevos tiene ${nf(A)} m y la corren ${B} amigas, todas la misma distancia. ¿Cuántos metros corre cada una?`;opq=':';res=A/B;unit='m';sol=`${nf(A)} : ${B} = ${nf(A/B)} m`}
+ if(opq!=='−')wh[(opq==='+'?Math.abs(A-B):A+B)/(rd?1000:1)]='Esa no es la operación correcta. Vuelve a leer qué te pregunta el problema.';
+ return {s:'txt',kind:'pro',sec:'Problema',opq,prompt:esc(text),plain:text,res,rd,unit,show:`${opq==='−'?'una resta':opq==='+'?'una suma':opq==='×'?'una multiplicación':'una división'}: ${sol}`,hint:HINT[opq]+(rd?' Recuerda: 1 km = 1.000 m.':''),wh};
+}
+function evalEx(e){return Function('return ('+e.replace(/×/g,'*').replace(/−/g,'-').replace(/:/g,'/')+')')()}
+function naiveEx(e){const t=e.replace(/[()]/g,'').split(' ');let v=+t[0];for(let i=1;i<t.length;i+=2){const b=+t[i+1],o=t[i];v=o==='+'?v+b:o==='−'?v-b:o==='×'?v*b:v/b}return v}
+function combGen(){
+ const hard=DIF()>=1,T=[
+  ()=>{const a=rnd(20,95),b=rnd(5,a-1),c=rnd(2,30);return `${a} − ${b} + ${c}`},
+  ()=>{const a=rnd(20,90),b=rnd(5,40),c=rnd(2,a+b-1);return `${a} + ${b} − ${c}`},
+  ()=>{const b=rnd(6,20),c=rnd(1,b-1),a=rnd(b+10,99),d=rnd(2,20);return `${a} − (${b} − ${c}) + ${d}`},
+  ()=>{const b=rnd(5,30),c=rnd(2,b-1),a=rnd(10,80);return `${a} + (${b} − ${c})`},
+  ()=>{const a=rnd(30,90),b=rnd(5,25),c=rnd(2,a-b-1);return `${a} − (${b} + ${c})`},
+  ()=>{const a=rnd(12,99),b=rnd(3,9),p=a*b,c=p>=200?rnd(1,Math.floor(p/100))*100:rnd(5,p-1);return `${a} × ${b} − ${c}`},
+  ()=>{const a=rnd(5,60),b=rnd(2,9),c=rnd(2,9);return `${a} + ${b} × ${c}`},
+  ()=>{const b=rnd(2,9),c=rnd(2,9),a=rnd(b*c+2,99);return `${a} − ${b} × ${c}`},
+  ()=>{const a=rnd(3,15),b=rnd(2,15),c=rnd(2,9);return `(${a} + ${b}) × ${c}`},
+  ()=>{const b=rnd(8,20),c=rnd(2,b-2),a=rnd(2,9);return `${a} × (${b} − ${c})`},
+  ...(hard?[()=>{const a=rnd(11,60),b=rnd(2,9),c=rnd(2,9),d=rnd(2,9);return `${a} × ${b} − ${c} × ${d}`},()=>{const b=rnd(2,9),q=rnd(2,12),c=rnd(3,30);return `${b*q} : ${b} + ${c}`},()=>{const a=rnd(4,12),b=rnd(2,9),c=rnd(2,a*b+20);return `(${a} × ${b} + 20) − ${c}`}]:[])];
+ let e,v,g=0;do{e=pick(T)();v=evalEx(e)}while((v<0||!Number.isInteger(v))&&g++<50);
+ return {e,v,nv:naiveEx(e)};
+}
+const COMB_H='Primero lo que está entre paréntesis. Después las multiplicaciones y divisiones. Al final, las sumas y restas de izquierda a derecha.';
+function combWrite(){const {e,v,nv}=combGen(),wh={};if(nv!==v)wh[nv]=/\(/.test(e)?'¡Cuidado con el orden! Primero hay que hacer lo que está entre paréntesis.':'¡Cuidado con el orden! La multiplicación (o división) se hace antes que la suma y la resta.';
+ return {s:'txt',sec:'Operaciones combinadas',prompt:`Resuelve:<br><b>${e}</b>`,plain:e,res:v,rd:0,show:`${e} = ${v}`,hint:COMB_H,wh}}
+function combMC(){const {e,v,nv}=combGen(),set=new Set([v]);if(nv>=0&&Number.isInteger(nv))set.add(nv);for(const k of shuffle([1,-1,2,-2,10,-10,5]))if(set.size<4&&v+k>=0)set.add(v+k);const opts=shuffle([...set]).map(String);return {q:`¿Cuánto es ${e}?`,opts,a:opts.indexOf(String(v))}}
+function colGen(sym){
+ const s=sym||pick(['+','−']);let A,B,g=0;
+ const carries=(a,b)=>{let c=0,k=0;while(a||b){const x=a%10,y=b%10;if(s==='+'?x+y+k>9:x-k<y){c++;k=1}else k=0;a=Math.floor(a/10);b=Math.floor(b/10)}return c};
+ do{if(s==='+'){A=rnd(1000,DIF()>=1?99999:89999);B=rnd(1000,9999)}else{A=rnd(DIF()>=1?10000:3000,DIF()>=1?99999:9999);B=rnd(1000,A-500)}}while((carries(A,B)<(s==='+'?2:1)||String(A).length===String(B).length&&Math.random()<.4)&&g++<200);
+ return {s,ta:String(A),tb:String(B),res:s==='+'?A+B:A-B,rd:0,lay:`${nf(A)} ${s} ${nf(B)}`,sec:'Coloca y resuelve',hint:s==='+'?'Unidades debajo de unidades, decenas debajo de decenas… Empieza por la derecha y no olvides las que te llevas.':'Unidades debajo de unidades. Empieza por la derecha: si arriba hay menos, pide prestada una a la cifra de al lado.'};
+}
+function colMC(){const o=colGen(),A=+o.ta,B=+o.tb;let nc=0,p=1,a=A,b=B;while(a||b){const x=a%10,y=b%10;nc+=(o.s==='+'?(x+y)%10:Math.abs(x-y))*p;p*=10;a=Math.floor(a/10);b=Math.floor(b/10)}
+ const set=new Set([o.res]);if(nc!==o.res&&nc>0)set.add(nc);for(const k of shuffle([10,-10,100,-100,1000,-1000,1,-1]))if(set.size<4&&o.res+k>0)set.add(o.res+k);
+ const opts=shuffle([...set]).map(x=>nf(x));return {q:`Coloca y resuelve: ${o.lay}`,opts,a:opts.indexOf(nf(o.res))}}
+function fichaItems(){const L=LV();return [leerWrite(),leerNum(),desPosW(),desValW(),...redTrio(),proKm(),combWrite(),combWrite(),colGen('+'),colGen('−')]}
+function exItem(t,L){
+ if(t==='leer')return Math.random()<.55?leerWrite():leerNum();
+ if(t==='des')return Math.random()<.2?desWrite(L):Math.random()<.5?desPosW():desValW();
+ if(t==='red')return Math.random()<.3?genRound(L):redTrio();
+ if(t==='pro'){const o=Math.random()<.55?proKm():genProblem(L);return o}
+ if(t==='comb')return combWrite();
+ if(t==='col')return colGen();
+ return null;
 }
 function mathCards(t,n){
  const L=LV(),rows=shuffle(FC_MATES.filter(r=>r[3]===t&&r[0]<=L)),out=[],seen=new Set();
@@ -1549,6 +1681,9 @@ function mathCards(t,n){
   else if(t==='des'){const x=genNum(Math.min(L,4));add(Math.random()<.5?{f:nf(x),b:tStr(terms(x))}:{f:tStr(terms(x)),b:nf(x)})}
   else if(t==='pro'){const a=pick([4,5,6,8,10,12]),b=rnd(2,9);add(Math.random()<.5?{f:`${b} cajas de ${a} huevos. ¿Cuántos huevos hay?`,b:`${b} × ${a} = ${a*b} huevos`}:{f:`${a*b} caramelos entre ${b} niños. ¿Cuántos para cada uno?`,b:`${a*b} : ${b} = ${a} caramelos`})}
   else if(t==='sum'){const a=rnd(2,9)*pick([10,100]),b=rnd(1,9)*(a>=100?100:10);add({f:`${a} + ${b}`,b:String(a+b)})}
+  else if(t==='leer'){const x=exNum();add(Math.random()<.6?{f:nf(x),b:numWords(x)}:{f:numWords(x),b:nf(x)})}
+  else if(t==='comb'){const c=combGen();add({f:c.e,b:String(c.v)})}
+  else if(t==='col'){const x=exNum();add(Math.random()<.5?{f:`Descompón ${nf(x)} según el valor`,b:expStr(x)}:{f:`Descompón ${nf(x)} según la posición`,b:tStr(terms(x))})}
   else break;
  }
  return out;
@@ -2287,6 +2422,7 @@ function renderSubject(){
  ${(()=>{const r=accOf(V.sub),ok=examReady(V.sub);return ok?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Tu media es del ${Math.round(r.avg*100)} %. Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:`<p class="small">${r.n?`Media de aciertos: <b>${Math.round(r.avg*100)} %</b> en tus últimas ${r.n} respuestas. `:''}El examen aparece cuando aciertas el ${Math.round(EXAM_AVG*100)} % o más en al menos ${EXAM_MIN} respuestas.${(D.exams||{})[V.sub]?` Exámenes aprobados: ${D.exams[V.sub]}.`:''}</p>`})()}
  ${TOPICS[V.sub]?`<section class="topics"><h2>Temas que estoy estudiando</h2><div class="chips">${Object.keys(TOPICS[V.sub]).map(k=>{const on=D.tp[V.sub].includes(k);return `<button class="chip ${on?'on':''}" data-act="topic" data-k="${k}" aria-pressed="${on}">${TOPICS[V.sub][k]}</button>`}).join('')}</div><p class="hint">Las preguntas, tarjetas y ejercicios salen de los temas marcados.</p></section>`:''}
  <section class="modes">
+  ${V.sub==='mates'?`<button class="mode msim" data-act="mode" data-m="ficha"><span class="ic">${ICON_EXAM}</span><b>Ficha como el examen</b><span>Los 6 ejercicios del examen: leer números, descomponer, redondear, problema, operaciones combinadas y coloca y resuelve.</span></button>`:''}
   <button class="mode" data-act="mode" data-m="test"><span class="ic">${ICON.test}</span><b>Test</b><span>10 preguntas con cuatro respuestas. Elige la correcta.</span></button>
   <button class="mode" data-act="mode" data-m="cards"><span class="ic">${ICON.cards}</span><b>Tarjetas de repaso</b><span>Gira cada tarjeta y comprueba si te la sabes.</span></button>
   <button class="mode mgames" data-act="sgames"><span class="ic">${ICON.star}</span><b>Juegos</b><span>Carrera, burbujas, verdadero o falso, memoria… ¡y ganas estrellas!</span></button>
@@ -2302,6 +2438,7 @@ function start(m){
  else if(m==='path')pathStart();
  else if(m==='match')startMatch();
  else if(m==='trad')startTrad();
+ else if(m==='ficha'){W={kind:'op',title:'Ficha como el examen',items:fichaItems(),i:0,score:0};resetW();go('write')}
  else startWrite();
 }
 
@@ -2407,7 +2544,8 @@ function buildTest(){
    if(extra[t]&&extra[t].length&&Math.random()<.2)return extra[t].shift();
    if(t==='mul')return Math.random()<.3?missMC('×'):opMC('×');if(t==='div')return Math.random()<.3?missMC(':'):opMC(':');if(t==='sum')return opMC(pick(['+','−']));
    if(t==='ser')return Math.random()<.5?serMC():cmpMC();if(t==='hora')return horaMC();
-   if(t==='red')return roundMC();if(t==='des')return Math.random()<.25?cmpMC():desMC();if(t==='pro')return proMC();return geoQ.shift()||opMC();
+   if(t==='leer')return leerMC();if(t==='comb')return combMC();if(t==='col')return colMC();
+   if(t==='red')return roundMC();if(t==='des')return Math.random()<.15?cmpMC():desMC();if(t==='pro')return proMC();return geoQ.shift()||opMC();
   });
  }
  else if(V.sub==='lengua'){const b=pool(MC_LENGUA,6).map(mcFromRow);qs=[...b,...Array.from({length:10-b.length},()=>pick([tipoMC,silMC,tildeMC])())]}
@@ -2678,7 +2816,7 @@ function startWrite(){
  const L=LV();
  if(V.sub==='mates'){
   const wt=D.tp.mates.filter(t=>t!=='geo'),tp=wt.length?wt:['mul','div'];
-  W={kind:'op',items:rr(tp,8).map(t=>t==='mul'?(Math.random()<.3?missWrite('×'):genOp(L,false,'×')):t==='div'?(Math.random()<.3?missWrite(':'):genOp(L,false,':')):t==='ser'||t==='hora'?missWrite(pick(['×',':'])):t==='sum'?genOp(L,false,pick(['+','−'])):t==='red'?genRound(L):t==='pro'?genProblem(L):desWrite(L))};
+  W={kind:'op',items:rr(tp,8).flatMap(t=>exItem(t,L)||(t==='mul'?(Math.random()<.3?missWrite('×'):genOp(L,false,'×')):t==='div'?(Math.random()<.3?missWrite(':'):genOp(L,false,':')):t==='ser'||t==='hora'?missWrite(pick(['×',':'])):t==='sum'?genOp(L,false,pick(['+','−'])):t==='red'?genRound(L):t==='pro'?genProblem(L):desWrite(L))).slice(0,10)};
  }
  else if(V.sub==='lengua'){const dv=DIF(),ns=Math.round(8*[0,.5,.65,.8][dv]),sq=shuffle(LSENT.filter(x=>freshW('ls:'+x[0])>.3).concat(LSENT)).filter((x,i,a)=>a.indexOf(x)===i).slice(0,ns);sq.forEach(x=>markSeen('ls:'+x[0]));W={kind:'txt',items:shuffle([...sq.map(x=>({p:x[0],ans:x[1].split('|'),show:x[1].split('|')[0]})),...pool(WR_LENGUA,8-ns).map(r=>Math.random()<.25?(h=>({p:`Separa en sílabas con guiones: «${h.replace(/-/g,'')}»  (ejemplo: ca-sa)`,ans:[h],raw:true,show:h,hint:'Pista: da palmadas al decir la palabra. Cada palmada es una sílaba.'}))(pick(SIL)):({p:r[1],ans:r[2].split('|')}))])}}
  else{
@@ -2695,13 +2833,13 @@ function startWrite(){
  }
  if(V.exam){W.items=W.items.slice(0,5);W.title=V.exam.sim?'Examen de prueba (2/2)':'Examen (2/2)'}W.i=0;W.score=0;resetW();go('write');
 }
-function resetW(){W.tstack=[];W.tries=0;W.inp='';W.c='';W.r='';W.field='c';W.state='ask'}
+function resetW(){W.opsel='';W.tstack=[];W.tries=0;W.inp='';W.c='';W.r='';W.field='c';W.state='ask'}
 const cellRow=(str,w,cls)=>[...str.padStart(w,' ')].map(ch=>`<span class="c">${ch===' '?'':esc(ch)}</span>`).join('');
 function colHTML(o){
  const w=Math.max(o.ta.length,o.tb.length+1,resStr(o).length)+1;
  const ans=W.inp, showCaret=W.state==='ask';
  const ansRow=[...ans.padStart(w,' ')].map((ch,i)=>`<span class="c">${ch===' '?(showCaret&&i===w-ans.length-1&&!ans?'<span class="caret">|</span>':''):esc(ch)}</span>`).join('');
- return `<div class="col" role="img" aria-label="${esc(o.ta+' '+o.s+' '+o.tb)}">
+ return `${o.lay?`<p class="lay">Coloca y resuelve: <b>${o.lay}</b></p>`:''}<div class="col" role="img" aria-label="${esc(o.ta+' '+o.s+' '+o.tb)}">
   <div class="row">${cellRow(o.ta,w)}</div>
   <div class="row r2"><span class="c sym">${o.s}</span>${cellRow(o.tb,w-1)}</div>
   <div class="row ans ${W.state==='ok'?'fin-ok':''}">${ansRow}</div></div>`;
@@ -2712,15 +2850,16 @@ function divHTML(o){
   <div class="rcell"><button class="slot ${W.field==='r'&&!dis?'on':''}" data-act="slot" data-f="r" ${dis}><small>RESTO</small><b>${esc(W.r)}</b></button></div>
   <div class="qcell"><button class="slot ${W.field==='c'&&!dis?'on':''}" data-act="slot" data-f="c" ${dis}><small>COCIENTE</small><b>${esc(W.c)}</b></button></div></div>`;
 }
-function txtHTML(o){const a=W.inp;return `<div class="tprompt"><p class="${o.kind==='pro'?'prob':''}">${o.prompt}</p><div class="ansrow"><div class="ansbox ${W.state==='ok'?'fin-ok':''}" aria-label="Tu respuesta">${a?esc(a):(W.state==='ask'?'<span class="caret">|</span>':'')}</div>${o.unit?`<span class="unit">${esc(o.unit)}</span>`:''}</div></div>`}
+function txtHTML(o){const a=W.inp,dis=W.state!=='ask'?'disabled':'';return `<div class="tprompt"><p class="${o.kind==='pro'?'prob':''}">${o.prompt}</p>${o.opq?`<div class="opsel"><span>Operación:</span>${['+','−','×',':'].map(x=>`<button class="opb ${W.opsel===x?'on':''} ${W.state!=='ask'&&x===o.opq?'right':''}" data-act="opsel" data-o="${x}" ${dis} aria-label="${{'+':'suma','−':'resta','×':'multiplicación',':':'división'}[x]}">${x}</button>`).join('')}</div>`:''}<div class="ansrow">${o.opq?'<span class="unit">Solución:</span>':''}<div class="ansbox ${W.state==='ok'?'fin-ok':''}" aria-label="Tu respuesta">${a?esc(a):(W.state==='ask'?'<span class="caret">|</span>':'')}</div>${o.unit?`<span class="unit">${esc(o.unit)}</span>`:''}</div></div>`}
 const sheetHTML=o=>o.s===':'?divHTML(o):o.s==='txt'?txtHTML(o):colHTML(o);
 function updSheet(){$('#sheet').innerHTML=sheetHTML(W.items[W.i])}
 function renderWrite(){
  const it=W.items[W.i],n=W.items.length;
- if(W.kind==='op'){
+ if(W.kind==='op'&&!it.p){
   const keys=['7','8','9','4','5','6','1','2','3',',','0','del'];
-  app.innerHTML=header('Matemáticas · '+(V.exam?(V.exam.sim?'Examen de prueba (2/2)':'Examen (2/2)'):'Ejercicios'),'quit')+`<main class="wrap">
+  app.innerHTML=header('Matemáticas · '+(V.exam?(V.exam.sim?'Examen de prueba (2/2)':'Examen (2/2)'):W.title||'Ejercicios'),'quit')+`<main class="wrap">
   ${metaBar(`Ejercicio ${W.i+1} de ${n}`,W.i,n)}
+  ${it.sec?`<p class="secl">${esc(it.sec)}</p>`:''}
   <div class="opgrid">
    <section class="opbox">
     <div class="sheet" id="sheet">${sheetHTML(it)}</div>
@@ -2735,8 +2874,9 @@ function renderWrite(){
  }else{
   app.innerHTML=header(SUBJ[V.sub].name+' · '+(W.title||'Escribir'),'quit')+`<main class="wrap">
   ${metaBar(`Pregunta ${W.i+1} de ${n}`,W.i,n)}
-  <section class="qcard"><h2 class="q ${it.p.length>70?'long':''}">${esc(it.p)}</h2>${it.img?`<div class="qimg">${it.img}</div>`:''}<div id="sayslot">${it.sayFirst?sayBtn(it.say,'Escuchar la palabra'):''}</div></section>
+  <section class="qcard">${it.sec?`<p class="secl">${esc(it.sec)}</p>`:''}<h2 class="q ${it.p.length>70?'long':''}" style="white-space:pre-line">${esc(it.p)}</h2>${it.img?`<div class="qimg">${it.img}</div>`:''}<div id="sayslot">${it.sayFirst?sayBtn(it.say,'Escuchar la palabra'):''}</div></section>
   <form class="wform" id="wf"><label for="ans" class="sr">Tu respuesta</label><input id="ans" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escribe aquí"><button class="btn primary" id="chk">Comprobar</button></form>
+  ${it.keys?`<div class="tiles tkeys">${it.keys.map(k=>`<button class="tile" type="button" data-act="tkey" data-k="${esc(k)}">${esc(k)}</button>`).join('')}<button class="tile tdel" type="button" data-act="tkdel" aria-label="Borrar">⌫</button></div>`:''}
   ${it.tiles?`<div class="tiles" id="tiles">${it.tiles.map((c,i)=>`<button class="tile" type="button" data-act="tile" data-i="${i}">${esc(c)}</button>`).join('')}<button class="tile tdel" type="button" data-act="tiledel" aria-label="Borrar la última letra">⌫</button></div>`:''}
   <div class="toolrow">${hintBtn()}${hwBtn()}</div>${padHTML('txt')}
   <div class="fb" id="fb" hidden></div>
@@ -2763,8 +2903,11 @@ function checkOp(){
   if(!ok&&+W.c===o.q)hint='El cociente está bien. Revisa el resto.';
   if(!ok&&+W.r>=+o.tb)hint='¡Ojo! El resto tiene que ser más pequeño que el divisor.';
  }else{
+  if(o.opq&&!W.opsel){fbShow('bad','Primero elige qué operación vas a hacer: suma, resta, multiplicación o división.');return}
   if(!W.inp){fbShow('bad','Escribe la respuesta con los números de abajo.');return}
-  ok=Math.abs(parseFloat(W.inp.replace(',','.'))-o.res)<1e-6;
+  const val=parseFloat(W.inp.replace(',','.'));ok=Math.abs(val-o.res)<1e-6;
+  if(!ok&&o.wh){const k=Object.keys(o.wh).find(k=>Math.abs(+k-val)<1e-6);if(k)hint=o.wh[k]}
+  if(o.opq&&W.opsel!==o.opq){ok=false;hint='Esa operación no es la correcta. Vuelve a leer la pregunta: ¿juntamos, quitamos, repetimos la misma cantidad o repartimos?'}
  }
  const correct=o.s===':'?`cociente ${o.q} y resto ${o.r}`:(o.show||resStr(o));
  settle(ok,correct,hint);
@@ -2775,7 +2918,7 @@ function settle(ok,correct,hint){
  {const it=W&&W.items&&W.items[W.i];if(it&&it.w&&(ok||W.tries===0))mark(it.w,ok);if(!ok&&V.exam&&V.exam.miss&&it&&it.w)V.exam.miss.push(it.w)}
  if(ok){W.score++;W.state='ok';fbShow('ok',pick(PRAISE)+' Ganas una estrella.')}
  else{W.tries++;if(W.tries<2){fbShow('bad',V.ptest?'No es correcto. Inténtalo otra vez (en la prueba no hay pistas).':DIF()>=2&&!V.exam?'No es correcto. Inténtalo otra vez (en este nivel no hay pistas).':hint);return}W.state='reveal';fbShow('bad',`La respuesta correcta es <b>${esc(correct)}</b>.`)}
- if(W.kind==='op'){
+ if(W.kind==='op'&&!W.items[W.i].p){
   updSheet();$('#kp').classList.add('off');
   const b=$('#chk');b.textContent=W.i+1<W.items.length?'Siguiente':'Ver resultado';b.dataset.act='wnext';
  }else{
@@ -2790,6 +2933,7 @@ function checkTxt(){
  if(W.state!=='ask')return;
  const it=W.items[W.i],v=norm($('#ans').value);
  if(!v){fbShow('bad','Escribe tu respuesta antes de comprobar.');return}
+ if(it.chk){const r=it.chk($('#ans').value);if(r===true){settle(true,'');return}if(r==='acc'){const a=it.show;settle(true,'');fbShow('ok',`${pick(PRAISE)} Ganas una estrella. Fíjate en las tildes: <b>${esc(a)}</b>.`);return}settle(false,it.show,r);if(W.state==='ask')$('#ans').select();return}
  if(it.raw){const rv=$('#ans').value.trim().toLowerCase().replace(/\s*-\s*|\s+/g,'-'),ok=it.ans.includes(rv),al=!ok&&it.ans.some(a=>noAcc(a)===noAcc(rv));settle(ok,it.show,al?'¡Casi! Revisa las tildes.':rv.includes('-')?it.hint:'Separa las sílabas con guiones, por ejemplo: ca-sa.');return}
  let ok=it.ans.some(a=>norm(a)===v)||(!!it.rest&&norm(it.rest)===v);
  const almost=!ok&&it.ans.some(a=>noAcc(norm(a))===noAcc(v));
@@ -2912,13 +3056,16 @@ const ACT={
  mic:()=>{if(REC){stopRec();D.micAuto=false;save();micStatus('Micrófono parado. Tócalo para hablar.');return}D.micAuto=true;save();micTries=0;listen()},
  key:el=>typeKey(el.dataset.k),
  slot:el=>{W.field=el.dataset.f;updSheet()},
+ opsel:el=>{if(W.state!=='ask')return;W.opsel=el.dataset.o;updSheet();$('#fb').hidden=true},
+ tkey:el=>{if(W.state!=='ask')return;const a=$('#ans'),k=el.dataset.k;a.value=k==='+'?a.value.replace(/\s*$/,'')+' + ':/^[A-Z]+$/.test(k)?a.value.replace(/\s*$/,'')+' '+k:a.value+k;sfx('ok')},
+ tkdel:()=>{const a=$('#ans');a.value=a.value.replace(/\s*\+\s*$|\s*[A-Z]+$|.$/,'')},
  check:()=>checkOp(),
  wnext:()=>nextW(),
  clr:()=>{const cv=$('#cv');if(cv&&cv._clear)cv._clear()}
 };
 app.addEventListener('click',e=>{if(V.locked)return;const el=e.target.closest('[data-act]');if(!el||el.disabled)return;const f=ACT[el.dataset.act];if(f)f(el,e)});
 document.addEventListener('keydown',e=>{
- if(V.locked||V.view!=='write'||!W||W.kind!=='op')return;
+ if(V.locked||V.view!=='write'||!W||W.kind!=='op'||W.items[W.i].p)return;
  if(/^[0-9]$/.test(e.key))typeKey(e.key);
  else if(e.key===','||e.key==='.')typeKey(',');
  else if(e.key==='Backspace'){e.preventDefault();typeKey('del')}
