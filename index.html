@@ -1195,6 +1195,14 @@ function genGap(en){
 }
 let UQ,SQ,CQ;
 function resetQ(){UQ=wordCyc();SQ=()=>genGap(UQ().en);CQ=cyc(COMP)}
+/* solo los adjetivos de las hojas del libro (Unit 1) */
+const CONF0={tired:['boring','busy'],boring:['tired','terrible','exciting'],exciting:['boring'],easy:['difficult'],difficult:['easy','terrible'],quick:['slow'],slow:['quick','careful'],careful:['slow'],terrible:['boring','difficult']};
+const SHEET=U1.filter(w=>w.u).map(w=>w.en);
+{const keep=U1.filter(w=>w.u);U1.length=0;U1.push(...keep);
+ const ok=x=>SHEET.includes(x);
+ const fix=r=>{const used=new Set([r[0]]);for(let i=2;i<r.length;i++){if(!ok(r[i])||used.has(r[i]))r[i]=shuffle(SHEET).find(x=>!used.has(x)&&!(CONF0[r[0]]||[]).includes(x));used.add(r[i])}return r};
+ const g=U1S.filter(r=>ok(r[0])).map(fix);U1S.length=0;U1S.push(...g);
+ const c=CTX.filter(r=>ok(r[0]));CTX.length=0;CTX.push(...c);}
 const U1by=en=>U1.find(w=>w.en===en);
 const hasTTS=()=>'speechSynthesis' in window;
 const subj=()=>{const f=Math.random()<.5;return f?["She's",'She','she']:["He's",'He','he']};
@@ -1309,7 +1317,7 @@ function showHint(t){let h=$('#hintbox');if(!h){const anchor=document.querySelec
 const OPIN=[['football',0],['tennis',0],['television',0],['school',0],['Maths',0],['pop music',0],['computer games',1],['comics',1],['Music lessons',1],['dancing',0]];
 const NOTADJ=['school','teacher','apple','bike','window','dog','book','sister','run','swim','play','read','pencil','garden'];
 function opinionMC(){const [x,pl]=pick(OPIN),[n,g]=pick(KIDS),f=g==='f',love=Math.random()<.5,right=love?'exciting':'boring';
- const others=shuffle(['hungry','thirsty','cold','tired','naughty','brave','careful','quiet']).slice(0,2),opts=shuffle([right,love?'boring':'exciting',...others]);
+ const others=shuffle(['busy','brave','careful','slow','quick']).slice(0,2),opts=shuffle([right,love?'boring':'exciting',...others]);
  return {q:`${n} ${love?'loves':'hates'} ${x}. What does ${f?'she':'he'} think of ${x}? — ${f?'She':'He'} thinks ${pl?"they're":"it's"} ___.`,opts,a:opts.indexOf(right),w:right}}
 function oddMC(){const ad=shuffle(U1).slice(0,3).map(w=>w.en),odd=pick(NOTADJ),opts=shuffle([...ad,odd]);return {q:'¿Cuál NO es un adjetivo?',opts,a:opts.indexOf(odd)}}
 function circleMC(){const w=UQ(),g=genGap(w.en),other=w.opp&&Math.random()<.5?w.opp:g[2],opts=shuffle([g[0],other]);return {q:'Elige la palabra correcta: '+g[1].replace('___',`( ${opts[0]} / ${opts[1]} )`),opts,a:opts.indexOf(g[0]),w:g[0],say:g[1].replace('___',g[0]),sayAfter:true}}
@@ -1933,7 +1941,7 @@ const othersFor=(w,n)=>{const out=[];for(const x of shuffle(U1.map(x=>x.en)))if(
 const STATE={busy:'is busy',exciting:"thinks it's exciting",boring:"thinks it's boring",careful:'is careful',difficult:"thinks it's difficult",brave:'is brave',slow:'is slow',quick:'is quick',terrible:"thinks it's terrible",easy:"thinks it's easy",cold:'is cold',naughty:'is naughty',hungry:'is hungry',loud:'is loud',thirsty:'is thirsty',clever:'is clever',quiet:'is quiet',tired:'is tired'};
 const HOBBY=['football','tennis','dancing','swimming','computer games','comics','pop music','television','basketball','reading'];
 const SUBJS=['Maths','English','Science','Music','Art'];
-const REASON={hungry:"I didn't have breakfast",thirsty:"it's very hot",tired:"I played tennis all morning",cold:"I haven't got my coat"};
+const REASON={busy:"I've got a lot of homework",careful:"I'm carrying a big cake",slow:"I've got a bad leg"};
 const AGEW={8:'eight',9:'nine',10:'ten',11:'eleven'};
 const itOf=x=>PL(x)?"they're":"it's";
 const scnBox=en=>`<div class="propimg pscene">${sceneOf(en)}</div>`;
@@ -1941,15 +1949,15 @@ const readBox=t=>`<div class="readbox">${esc(t)}</div>`;
 const ctxSent=en=>{const c=pick(CTX.filter(x=>x[0]===en));return kidOf().fill(c[1]).replace('___',en)};
 const noTTS=(q,say)=>hasTTS()?q:q+` (Lee: «${say}»)`;
 function story(){
- const [N,g]=pick(KIDS),f=g==='f',age=rnd(8,11),[X,Y]=shuffle(HOBBY).slice(0,2),[S1,S2]=shuffle(SUBJS).slice(0,2),e1=pick(['easy','difficult']),e2=e1==='easy'?'difficult':'easy',sib=pick(KIDS.filter(k=>k[0]!==N)),sa=pick(['clever','naughty','loud','quiet']),st=pick(Object.keys(REASON)),Pn=f?'She':'He';
- const text=`Hi! My name's ${N} and I'm ${age}. I love ${X}. I think ${itOf(X)} exciting! I don't like ${Y}. I think ${itOf(Y)} boring. ${S1} is ${e1} for me, but ${S2} is ${e2}. My ${sib[1]==='f'?'sister':'brother'} ${sib[0]} is very ${sa}. Today I'm ${st} because ${REASON[st]}.`;
+ const [N,g]=pick(KIDS),f=g==='f',age=rnd(8,11),[X,Y]=shuffle(HOBBY).slice(0,2),[S1,S2]=shuffle(SUBJS).slice(0,2),e1=pick(['easy','difficult']),e2=e1==='easy'?'difficult':'easy',sib=pick(KIDS.filter(k=>k[0]!==N)),sa=pick(['brave','busy','careful','quick','slow']),st=pick(Object.keys(REASON)),Pn=f?'She':'He';
+ const text=`Hi! My name's ${N} and I'm ${age}. I love ${X}. I think ${itOf(X)} exciting! I don't like ${Y}. I think ${itOf(Y)} boring. ${S1} is ${e1} for me, but ${S2} is ${e2}. My ${sib[1]==='f'?'sister':'brother'} ${sib[0]} is very ${sa}. Today I'm very ${st} because ${REASON[st]}.`;
  const qs=[
   {q:`What does ${N} think of ${X}?`,a:'exciting',o:['boring','difficult','terrible'],w:`${Pn} thinks ${itOf(X)} ___.`},
   {q:`What does ${N} think of ${Y}?`,a:'boring',o:['exciting','easy','quick'],w:`${Pn} thinks ${itOf(Y)} ___.`},
   {q:`Is ${S1} easy or difficult for ${N}?`,a:e1,o:[e2],w:`${S1} is ___ for ${N}.`},
   {q:`Is ${S2} easy or difficult for ${N}?`,a:e2,o:[e1],w:`${S2} is ___ for ${N}.`},
-  {q:`What is ${sib[0]} like?`,a:sa,o:['clever','naughty','loud','quiet'].filter(x=>x!==sa),w:`${sib[0]} is very ___.`},
-  {q:`How does ${N} feel today?`,a:st,o:Object.keys(REASON).filter(x=>x!==st),w:`Today ${N} is ___.`},
+  {q:`What is ${sib[0]} like?`,a:sa,o:['brave','busy','careful','quick','slow'].filter(x=>x!==sa),w:`${sib[0]} is very ___.`},
+  {q:`How is ${N} today?`,a:st,o:['brave','quick','easy','exciting'].concat(Object.keys(REASON)).filter(x=>x!==st&&x!==sa),w:`Today ${N} is very ___.`},
   {q:`How old is ${N}?`,a:String(age),o:['8','9','10','11'].filter(x=>x!==String(age)),w:`${N} is ___ years old.`,alt:AGEW[age]}];
  return {text,qs};
 }
@@ -1960,7 +1968,7 @@ function ynWrite(){const w=pick(U1).en,yes=Math.random()<.5,w2=yes?w:othersFor(w
 function lPic(){const w=pick(U1).en,opts=shuffle([w,...othersFor(w,2)]),say=ctxSent(w);return {q:noTTS('Listening: listen and choose the right picture.',say),opts,a:opts.indexOf(w),imgOpts:true,say,autoSay:hasTTS(),w}}
 function lThink(){const [N]=pick(KIDS),X=pick(HOBBY),adj=pick(['exciting','boring','difficult','easy','terrible']),say=`${N}, what do you think of ${X}? … I think ${itOf(X)} ${adj}.`,opts=shuffle([adj,...shuffle(['exciting','boring','difficult','easy','terrible'].filter(x=>x!==adj&&okPair(x,adj))).slice(0,2)]);return {q:noTTS(`Listening: what does ${N} think of ${X}?`,say),opts,a:opts.indexOf(adj),say,autoSay:hasTTS(),w:adj}}
 function lYN(){const w=pick(U1).en,yes=Math.random()<.5,w2=yes?w:othersFor(w,1)[0],say=`The child in the picture ${STATE[w2]}.`;return {q:noTTS('Listening: look at the picture and listen. Is it right?',say),img:scnBox(w),opts:['Yes','No'],a:yes?0:1,say,autoSay:hasTTS(),w}}
-function lWho(){const ks=[pick(KIDS.filter(k=>k[1]==='f')),pick(KIDS.filter(k=>k[1]==='m'))];ks.push(pick(KIDS.filter(k=>!ks.includes(k))));const kk=shuffle(ks),ad=shuffle(['hungry','thirsty','tired','cold','naughty','clever','quiet','loud','brave','careful']).slice(0,3),j=rnd(0,2);
+function lWho(){const ks=[pick(KIDS.filter(k=>k[1]==='f')),pick(KIDS.filter(k=>k[1]==='m'))];ks.push(pick(KIDS.filter(k=>!ks.includes(k))));const kk=shuffle(ks),ad=shuffle(['busy','brave','careful','slow','quick']).slice(0,3),j=rnd(0,2);
  const say=kk.map((k,i)=>`${k[0]} is the ${k[1]==='f'?'girl':'boy'} who is ${ad[i]}.`).join(' ');const opts=kk.map(k=>k[0]);return {q:noTTS(`Listening: who is ${ad[j]}?`,say),opts,a:j,say,autoSay:hasTTS(),w:ad[j]}}
 function lSent(){const w=pick(U1).en,c=pick(CTX.filter(x=>x[0]===w)),K=kidOf(),t=K.fill(c[1]),bad=new Set(c[2]),oth=othersFor(w,3).filter(x=>!bad.has(x)).slice(0,2),opts=shuffle([w,...oth].map(x=>t.replace('___',x))),right=t.replace('___',w);return {q:noTTS('Listening: listen and choose the sentence you hear.',right),opts,a:opts.indexOf(right),say:right,autoSay:hasTTS(),w}}
 const listenItem=()=>pick([lPic,lPic,lThink,lYN,lWho,lSent])();
@@ -2551,7 +2559,7 @@ const THINK=[["{N} loves {x}. What does {p} think of {x}? — {Pn} thinks {it} _
  ["{N} falls asleep when {p} watches {x}. What does {p} think of {x}? — {Pn} thinks {it} ___.","boring",['television','the news','old films']]];
 const PL=x=>/s$/.test(x)&&!['tennis','Maths','the news'].includes(x);
 function PTH(){if(V.sub==='mates'){D.mpath=D.mpath||{st:0,acc:{}};D.mpath.acc=D.mpath.acc||{};return D.mpath}D.path=D.path||{st:0,acc:{},wd:{},tu:{}};D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
-function pWord(st,used){const p=PTH();let dk=p.wd[st]||[];if(!dk.filter(x=>!used.has(x)).length)dk=wshuffle(U1.map(w=>w.en).filter(x=>!used.has(x)),en=>missW(en)).reverse().concat(dk);
+function pWord(st,used){const p=PTH();let dk=(p.wd[st]||[]).filter(x=>SHEET.includes(x));if(!dk.filter(x=>!used.has(x)).length)dk=wshuffle(U1.map(w=>w.en).filter(x=>!used.has(x)),en=>missW(en)).reverse().concat(dk);
  const i=dk.map((x,j)=>[x,j]).reverse().find(([x])=>!used.has(x));const en=i[0];dk.splice(i[1],1);p.wd[st]=dk;used.add(en);return U1by(en)}
 function pTpl(st,list,keyf){const p=PTH(),u=new Set(p.tu[st]||[]);let c=list.filter(x=>!u.has(keyf(x)));if(!c.length){list.forEach(x=>u.delete(keyf(x)));c=list}const x=pick(c);u.add(keyf(x));p.tu[st]=[...u];return x}
 const kidOf=()=>{const [n,g]=pick(KIDS),f=g==='f';return {n,f,fill:t=>t.replace(/\{N\}/g,n).replace(/\{P\}/g,f?"She's":"He's").replace(/\{Pn\}/g,f?'She':'He').replace(/\{p\}/g,f?'she':'he').replace(/\{his\}/g,f?'her':'his')}};
