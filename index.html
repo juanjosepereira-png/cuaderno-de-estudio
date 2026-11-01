@@ -296,6 +296,8 @@ button{font:inherit;color:inherit}
 .qcard{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:26px 24px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
 .q{font-family:var(--f-display);font-weight:700;font-size:clamp(1.5rem,3.6vw,2.1rem);line-height:1.2;margin:0;text-wrap:balance}
 .opts{display:grid;grid-template-columns:1fr;gap:12px}
+.opts.picopts{grid-template-columns:repeat(3,1fr)}.picopts .opt{flex-direction:column;padding:8px;gap:6px}.optpic{display:block;width:100%;aspect-ratio:4/3;border-radius:10px;overflow:hidden}.optpic svg,.optpic img{width:100%;height:100%;display:block;object-fit:cover}
+.readbox{background:var(--card);border:2px dashed var(--line);border-radius:14px;padding:14px 18px;text-align:left;font-size:1.15rem;line-height:1.6;max-width:62ch;align-self:stretch}
 @media (min-width:620px){.opts{grid-template-columns:1fr 1fr}}
 .opt{display:flex;gap:14px;align-items:center;min-height:66px;padding:12px 16px;background:var(--card);border:2px solid var(--line);border-radius:14px;font-size:1.2rem;text-align:left;cursor:pointer}
 .opt:hover:not(:disabled){border-color:var(--accent)}
@@ -1922,12 +1924,55 @@ function track(ok){if(V.exam||noLives()||!['mates','lengua','ingles'].includes(V
 function accOf(sub){const a=(D.acc||{})[sub]||[];return {n:a.length,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:0}}
 const examReady=sub=>{const r=accOf(sub);return r.n>=EXAM_MIN&&r.avg>=EXAM_AVG};
 function examAsk(){const r=accOf(V.sub);modal(`<div class="mpic">${ICON_EXAM}</div><b>¡Estás lista para el examen de ${SUBJ[V.sub].name}!</b><span class="lvst">${difStars(DIF())}</span><span>Tu media de aciertos es del ${Math.round(r.avg*100)} %. Examen del ${DIFNAME[DIF()]}: 10 preguntas y 5 ejercicios, sin vidas. Si aciertas ${Math.ceil(15*EXAM_PASS)} o más, apruebas y ganas ${EXAM_PRIZE} estrellas.${DIF()<MAXDIF?' Si sacas más de un 8, ¡subes de nivel!':''}</span><div class="actions two"><button class="btn ghost" data-act="mclose">Ahora no</button><button class="btn primary" data-act="examgo">¡Hacer el examen!</button></div>`)}
+
+/* ===== examen Unit 1 (5 nov): Listening + Reading & Writing ===== */
+const RW_DEF={busy:"You are ___ when you have got lots of things to do.",exciting:"A roller coaster or a great football match is ___.",boring:"A film is ___ when nothing happens and you want to sleep.",careful:"You are ___ when you do things slowly and well so you don't break anything.",difficult:"Something is ___ when it isn't easy.",brave:"A person who isn't afraid is ___.",slow:"Snails and tortoises are ___ animals.",quick:"Cheetahs and rockets are very ___.",terrible:"Something is ___ when it is very, very bad.",easy:"Two plus two is very ___.",cold:"You are ___ when you need a coat and a scarf.",naughty:"A child who doesn't do what mum and dad say is ___.",hungry:"You are ___ when you want to eat.",loud:"Music is ___ when it makes a lot of noise.",thirsty:"You are ___ when you want to drink some water.",clever:"A person who knows lots of things is ___.",quiet:"You must be ___ in the library. Don't talk!",tired:"You are ___ when you want to go to bed and sleep."};
+const CONF={tired:['boring','busy'],boring:['tired','terrible'],quiet:['careful','slow'],careful:['quiet','slow'],slow:['careful','quiet'],exciting:['quick','loud'],terrible:['boring','difficult'],difficult:['terrible','busy'],busy:['tired','difficult'],quick:['exciting']};
+const okPair=(a,b)=>a!==b&&!(CONF[a]||[]).includes(b)&&!(CONF[b]||[]).includes(a);
+const othersFor=(w,n)=>{const out=[];for(const x of shuffle(U1.map(x=>x.en)))if(okPair(w,x)&&out.every(y=>okPair(x,y))&&out.length<n)out.push(x);return out};
+const STATE={busy:'is busy',exciting:"thinks it's exciting",boring:"thinks it's boring",careful:'is careful',difficult:"thinks it's difficult",brave:'is brave',slow:'is slow',quick:'is quick',terrible:"thinks it's terrible",easy:"thinks it's easy",cold:'is cold',naughty:'is naughty',hungry:'is hungry',loud:'is loud',thirsty:'is thirsty',clever:'is clever',quiet:'is quiet',tired:'is tired'};
+const HOBBY=['football','tennis','dancing','swimming','computer games','comics','pop music','television','basketball','reading'];
+const SUBJS=['Maths','English','Science','Music','Art'];
+const REASON={hungry:"I didn't have breakfast",thirsty:"it's very hot",tired:"I played tennis all morning",cold:"I haven't got my coat"};
+const AGEW={8:'eight',9:'nine',10:'ten',11:'eleven'};
+const itOf=x=>PL(x)?"they're":"it's";
+const scnBox=en=>`<div class="propimg pscene">${sceneOf(en)}</div>`;
+const readBox=t=>`<div class="readbox">${esc(t)}</div>`;
+const ctxSent=en=>{const c=pick(CTX.filter(x=>x[0]===en));return kidOf().fill(c[1]).replace('___',en)};
+const noTTS=(q,say)=>hasTTS()?q:q+` (Lee: «${say}»)`;
+function story(){
+ const [N,g]=pick(KIDS),f=g==='f',age=rnd(8,11),[X,Y]=shuffle(HOBBY).slice(0,2),[S1,S2]=shuffle(SUBJS).slice(0,2),e1=pick(['easy','difficult']),e2=e1==='easy'?'difficult':'easy',sib=pick(KIDS.filter(k=>k[0]!==N)),sa=pick(['clever','naughty','loud','quiet']),st=pick(Object.keys(REASON)),Pn=f?'She':'He';
+ const text=`Hi! My name's ${N} and I'm ${age}. I love ${X}. I think ${itOf(X)} exciting! I don't like ${Y}. I think ${itOf(Y)} boring. ${S1} is ${e1} for me, but ${S2} is ${e2}. My ${sib[1]==='f'?'sister':'brother'} ${sib[0]} is very ${sa}. Today I'm ${st} because ${REASON[st]}.`;
+ const qs=[
+  {q:`What does ${N} think of ${X}?`,a:'exciting',o:['boring','difficult','terrible'],w:`${Pn} thinks ${itOf(X)} ___.`},
+  {q:`What does ${N} think of ${Y}?`,a:'boring',o:['exciting','easy','quick'],w:`${Pn} thinks ${itOf(Y)} ___.`},
+  {q:`Is ${S1} easy or difficult for ${N}?`,a:e1,o:[e2],w:`${S1} is ___ for ${N}.`},
+  {q:`Is ${S2} easy or difficult for ${N}?`,a:e2,o:[e1],w:`${S2} is ___ for ${N}.`},
+  {q:`What is ${sib[0]} like?`,a:sa,o:['clever','naughty','loud','quiet'].filter(x=>x!==sa),w:`${sib[0]} is very ___.`},
+  {q:`How does ${N} feel today?`,a:st,o:Object.keys(REASON).filter(x=>x!==st),w:`Today ${N} is ___.`},
+  {q:`How old is ${N}?`,a:String(age),o:['8','9','10','11'].filter(x=>x!==String(age)),w:`${N} is ___ years old.`,alt:AGEW[age]}];
+ return {text,qs};
+}
+function readMC(){const s=story(),k=pick(s.qs),opts=shuffle([k.a,...shuffle(k.o).slice(0,2)]);return {q:'Reading: read the text and choose the right answer. '+k.q,img:readBox(s.text),opts,a:opts.indexOf(k.a),w:U1by(k.a)?k.a:undefined}}
+function readWrite(){const s=story(),k=pick(s.qs);return {sec:'Reading & Writing',p:'Read the text and write one word:\n'+k.w,img:readBox(s.text),ans:[k.a,...(k.alt?[k.alt]:[])],show:k.a,say:k.w.replace('___',k.a),hint:'Pista: la respuesta está escrita en el texto. Búscala.',w:U1by(k.a)?k.a:undefined}}
+function defWrite(){const w=pick(U1).en;return {sec:'Reading & Writing',p:`Read and write the word.\n${RW_DEF[w]}\n( ${w[0]}${' _'.repeat(w.length-1)} )`,ans:[w],say:RW_DEF[w].replace('___',w),hint:`Pista: significa «${U1by(w).es.split(',')[0]}».`,w}}
+function ynWrite(){const w=pick(U1).en,yes=Math.random()<.5,w2=yes?w:othersFor(w,1)[0];return {sec:'Reading & Writing',p:`Look and read. Write «yes» or «no».\nThe child in the picture ${STATE[w2]}.`,img:scnBox(w),ans:[yes?'yes':'no'],say:`The child in the picture ${STATE[w2]}.`,hint:'Mira bien el dibujo y piensa qué le pasa al niño o a la niña.',w}}
+function lPic(){const w=pick(U1).en,opts=shuffle([w,...othersFor(w,2)]),say=ctxSent(w);return {q:noTTS('Listening: listen and choose the right picture.',say),opts,a:opts.indexOf(w),imgOpts:true,say,autoSay:hasTTS(),w}}
+function lThink(){const [N]=pick(KIDS),X=pick(HOBBY),adj=pick(['exciting','boring','difficult','easy','terrible']),say=`${N}, what do you think of ${X}? … I think ${itOf(X)} ${adj}.`,opts=shuffle([adj,...shuffle(['exciting','boring','difficult','easy','terrible'].filter(x=>x!==adj&&okPair(x,adj))).slice(0,2)]);return {q:noTTS(`Listening: what does ${N} think of ${X}?`,say),opts,a:opts.indexOf(adj),say,autoSay:hasTTS(),w:adj}}
+function lYN(){const w=pick(U1).en,yes=Math.random()<.5,w2=yes?w:othersFor(w,1)[0],say=`The child in the picture ${STATE[w2]}.`;return {q:noTTS('Listening: look at the picture and listen. Is it right?',say),img:scnBox(w),opts:['Yes','No'],a:yes?0:1,say,autoSay:hasTTS(),w}}
+function lWho(){const ks=[pick(KIDS.filter(k=>k[1]==='f')),pick(KIDS.filter(k=>k[1]==='m'))];ks.push(pick(KIDS.filter(k=>!ks.includes(k))));const kk=shuffle(ks),ad=shuffle(['hungry','thirsty','tired','cold','naughty','clever','quiet','loud','brave','careful']).slice(0,3),j=rnd(0,2);
+ const say=kk.map((k,i)=>`${k[0]} is the ${k[1]==='f'?'girl':'boy'} who is ${ad[i]}.`).join(' ');const opts=kk.map(k=>k[0]);return {q:noTTS(`Listening: who is ${ad[j]}?`,say),opts,a:j,say,autoSay:hasTTS(),w:ad[j]}}
+function lSent(){const w=pick(U1).en,c=pick(CTX.filter(x=>x[0]===w)),K=kidOf(),t=K.fill(c[1]),bad=new Set(c[2]),oth=othersFor(w,3).filter(x=>!bad.has(x)).slice(0,2),opts=shuffle([w,...oth].map(x=>t.replace('___',x))),right=t.replace('___',w);return {q:noTTS('Listening: listen and choose the sentence you hear.',right),opts,a:opts.indexOf(right),say:right,autoSay:hasTTS(),w}}
+const listenItem=()=>pick([lPic,lPic,lThink,lYN,lWho,lSent])();
+const rwItem=()=>pick([readWrite,readWrite,defWrite,defWrite,ynWrite])();
+function startPrep(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.sub='ingles';V.exam={part:1,s:0,n:0,sub:'ingles',sim:true,prep:true,miss:[]};V.mode='sim';lives=MAXL;V.locked=false;
+ T={qs:[...Array.from({length:5},listenItem),...Array.from({length:5},readMC)],i:0,score:0,done:false};go('test')}
 function startSim(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.exam={part:1,s:0,n:0,sub:V.sub,sim:true,miss:[]};V.mode='sim';lives=MAXL;V.locked=false;T={qs:buildTest().slice(0,10),i:0,score:0,done:false};go('test')}
 function startExam(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.exam={part:1,s:0,n:0,sub:V.sub};V.mode='exam';lives=MAXL;V.locked=false;T={qs:buildTest().slice(0,10),i:0,score:0,done:false};go('test')}
 function examStep(score,total){
  const E=V.exam;E.s+=score;E.n+=total;
- if(E.part===1){E.part=2;startWrite();return}
- if(E.sim){const st=Math.round(E.s/2);D.stars[E.sub]=(D.stars[E.sub]||0)+st;V.examRes={s:E.s,n:E.n,pass:E.s/E.n>=EXAM_PASS,sim:true,stars:st,miss:[...new Set(E.miss)]};V.exam=null;save();go('examres');return}
+ if(E.part===1){E.part=2;if(E.prep){W={kind:'txt',title:'Examen de prueba (2/2): Writing',items:[readWrite(),defWrite(),ynWrite(),defWrite(),readWrite()],i:0,score:0};resetW();go('write');return}startWrite();return}
+ if(E.sim){const st=Math.round(E.s/2);D.stars[E.sub]=(D.stars[E.sub]||0)+st;V.examRes={s:E.s,n:E.n,pass:E.s/E.n>=EXAM_PASS,sim:true,prep:!!E.prep,stars:st,miss:[...new Set(E.miss)]};V.exam=null;save();go('examres');return}
  const pass=E.s/E.n>=EXAM_PASS;D.acc[E.sub]=[];
  let up=false;if(pass){D.stars[E.sub]=(D.stars[E.sub]||0)+EXAM_PRIZE;D.exams=D.exams||{};D.exams[E.sub]=(D.exams[E.sub]||0)+1;if(E.s/E.n*10>8&&DIF(E.sub)<MAXDIF){D.dif=D.dif||{};D.dif[E.sub]=DIF(E.sub)+1;up=true}}
  V.examRes={s:E.s,n:E.n,pass,up,lvl:DIF(E.sub)};V.exam=null;save();go('examres');
@@ -1939,7 +1984,7 @@ function renderExamRes(){
   <p class="msg">${s/n>=.9?'¡Estás preparadísima para el examen!':good?'¡Muy bien! Vas bien preparada.':s/n>=.5?'¡Bien! Repasa las palabras de abajo y vuelve a intentarlo.':'Hay que repasar un poco más. ¡Tú puedes!'}</p>
   <p class="small">Has acertado ${s} de ${n}. Ganas ${r.stars} ${r.stars===1?'estrella':'estrellas'}.</p>
   ${r.miss.length?`<div class="missbox"><b>Repasa estas palabras:</b>${r.miss.map(en=>{const w=U1by(en);return `<button class="misschip" data-act="say" data-t="${esc(en)}">${esc(en)}${w?` <span>= ${esc(w.es)}</span>`:''}</button>`}).join('')}</div>`:'<p class="lost ok">¡Sin ningún fallo!</p>'}
-  <div class="actions two"><button class="btn ghost" data-act="subject">Seguir</button><button class="btn primary" data-act="simgo">Repetir examen de prueba</button></div></main>`;return}
+  <div class="actions two"><button class="btn ghost" data-act="subject">Seguir</button><button class="btn primary" data-act="${r.prep?'prepgo':'simgo'}">Repetir examen de prueba</button></div></main>`;return}
  if(pass)setTimeout(()=>sfx('win'),200);else sfx('over');
  app.innerHTML=header(SUBJ[V.sub].name,'subject')+(pass?confettiHTML():'')+`<main class="wrap result">
  ${pass?`<div class="diploma"><span class="dstamp">¡APROBADO!</span><span class="dk">Diploma</span><b>${esc(D.name.trim())}</b><span>ha aprobado el examen de</span><b class="dsub">${SUBJ[V.sub].name}</b><span class="dnota">Nota: ${nota}</span><span class="small">${new Date().toLocaleDateString('es-ES')}</span></div>
@@ -2483,7 +2528,9 @@ const ISTAGES=[
  {k:'circle',n:'Lee y elige',d:'Elige la palabra correcta de cada frase: adjetivos, comparativos y who.',mc:true},
  {k:'fix',n:'Lee y corrige',d:'Hay una palabra mal. Escribe la correcta.'},
  {k:'think',n:'What do you think of…?',d:'Lee y escribe el adjetivo que va.'},
- {k:'sent',n:'Frases enteras',d:'Escribe la frase entera en inglés.'}];
+ {k:'sent',n:'Frases enteras',d:'Escribe la frase entera en inglés.'},
+ {k:'listen',n:'Listening',d:'Escucha y elige: el dibujo, quién es quién, sí o no, la frase que oyes.',mc:true},
+ {k:'rw',n:'Reading & Writing',d:'Lee textos cortos, definiciones y dibujos, y escribe la palabra.'}];
 const MSTAGES=[
  {k:'leer',n:'Leer y escribir números',d:'Escribe los números con letras y con cifras, como en el ejercicio 1 del examen.'},
  {k:'des',n:'Descomponer números',d:'Según la posición (4 DM + 8 UM…) y según el valor (40.000 + 8.000…).'},
@@ -2509,6 +2556,8 @@ function pWord(st,used){const p=PTH();let dk=p.wd[st]||[];if(!dk.filter(x=>!used
 function pTpl(st,list,keyf){const p=PTH(),u=new Set(p.tu[st]||[]);let c=list.filter(x=>!u.has(keyf(x)));if(!c.length){list.forEach(x=>u.delete(keyf(x)));c=list}const x=pick(c);u.add(keyf(x));p.tu[st]=[...u];return x}
 const kidOf=()=>{const [n,g]=pick(KIDS),f=g==='f';return {n,f,fill:t=>t.replace(/\{N\}/g,n).replace(/\{P\}/g,f?"She's":"He's").replace(/\{Pn\}/g,f?'She':'He').replace(/\{p\}/g,f?'she':'he').replace(/\{his\}/g,f?'her':'his')}};
 function pItem(k,used){
+ if(k==='listen')return listenItem();
+ if(k==='rw')return rwItem();
  if(k==='pic'){const w=pWord(k,used);return {p:'¿Qué adjetivo es? Escríbelo en inglés.',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en}}
  if(k==='gap'){const w=pWord(k,used),c=pTpl(k,CTX.filter(x=>x[0]===w.en),x=>x[1]),K=kidOf(),t=K.fill(c[1]);return {p:t.replace('___',w.en[0]+'_____'),ans:[w.en],rest:w.en.slice(1),say:t.replace('___',w.en),hint:`Pista: significa «${w.es}».`,w:w.en}}
  if(k==='sort'){const w=pWord(k,used);let m;do{m=shuffle(w.en.split('')).join('')}while(m===w.en);return {p:`Ordena las letras y escribe la palabra: ${m}`,img:`<div class="propimg pscene small">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}».`,w:w.en}}
@@ -2527,7 +2576,7 @@ function pItem(k,used){
 function pathStart(test){
  const p=PTH(),done=p.st>=STG().length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
  if(V.sub==='mates'){W={kind:'op',title:done?'Ficha como el examen':(V.ptest?'Prueba: ':'')+MSTAGES[p.st].n,items:done?fichaItems():mItems(MSTAGES[p.st].k,10),i:0,score:0};resetW();go('write');return}
- if(!done&&STG()[p.st].mc){T={qs:Array.from({length:10},()=>pItem('circle',used)),i:0,score:0,done:false};go('test');return}
+ if(!done&&STG()[p.st].mc){T={qs:Array.from({length:10},()=>pItem(STG()[p.st].k,used)),i:0,score:0,done:false};go('test');return}
  const ks=done?STG().filter(x=>!x.mc).map(x=>x.k):[STG()[p.st].k];
  W={kind:'txt',title:done?'Repaso de la Unit 1':(V.ptest?'Prueba: ':'')+STG()[p.st].n,items:Array.from({length:10},()=>pItem(pick(ks),used)),i:0,score:0};resetW();go('write');
 }
@@ -2540,7 +2589,8 @@ function renderPath(){
  const p=PTH(),st=p.st,done=st>=STG().length;
  const M=V.sub==='mates',RV=M?'Ficha como el examen':'Repaso de la Unit 1';
  app.innerHTML=header(M?'Matemáticas':'Inglés','home')+`<main class="wrap">
- <section class="subj-head"><h1>${M?'Matemáticas':'Inglés · Unit 1'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p></section>
+ <section class="subj-head"><h1>${M?'Matemáticas':'Inglés · Unit 1'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${!M&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
+ ${!M?`<button class="pathgo ptestgo" data-act="prepgo"><span class="pgi">${ICON_EXAM}</span><span><b>Examen de prueba: Listening y Reading &amp; Writing</b><span>5 de escuchar, 5 de leer y 5 de escribir, como el examen del jueves. Te da una nota y te dice qué repasar.</span></span></button>`:''}
  ${examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${STG()[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
  <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
@@ -2572,7 +2622,7 @@ function renderTest(){
  app.innerHTML=header(SUBJ[V.sub].name+(V.exam?(V.exam.sim?' · Examen de prueba (1/2)':' · Examen (1/2)'):' · Test'),'quit')+`<main class="wrap">
  ${metaBar(`Pregunta ${T.i+1} de ${T.qs.length}`,T.i,T.qs.length)}
  <section class="qcard"><h2 class="q ${q.q.length>70?'long':''}">${esc(q.q)}</h2>${q.img?`<div class="qimg">${q.img}</div>`:''}${q.say&&!q.sayAfter?sayBtn(q.say,q.autoSay?'Escuchar otra vez':undefined):''}</section>
- <section class="opts">${q.opts.map((o,i)=>`<button class="opt" data-act="opt" data-i="${i}"><span class="letter">${'ABCD'[i]}</span><span>${esc(o)}</span></button>`).join('')}</section>
+ <section class="opts ${q.imgOpts?'picopts':''}">${q.opts.map((o,i)=>`<button class="opt" data-act="opt" data-i="${i}" aria-label="${'ABCD'[i]}"><span class="letter">${'ABCD'[i]}</span>${q.imgOpts?`<span class="optpic">${sceneOf(o)}</span>`:`<span>${esc(o)}</span>`}</button>`).join('')}</section>
  <div class="fb" id="fb" hidden></div>
  <div class="actions">${hintBtn()}<button class="btn primary" data-act="next" id="next" hidden>Siguiente</button></div></main>`;
 }
@@ -3036,7 +3086,7 @@ const ACT={
  unlockp:el=>{editP(el.dataset.p,d=>{d.lockUntil=0;d.penaltyNew=false});render()},
  tile:el=>{if(W.state!=='ask')return;const a=$('#ans');a.value+=el.textContent;el.disabled=true;W.tstack=W.tstack||[];W.tstack.push(el.dataset.i);sfx('ok')},
  tiledel:()=>{const a=$('#ans');if(!W.tstack||!W.tstack.length)return;const i=W.tstack.pop();a.value=a.value.slice(0,-1);const b=document.querySelector(`.tile[data-i="${i}"]`);if(b)b.disabled=false},
- simgo:()=>startSim(), sopa:el=>tapSopa(el),
+ simgo:()=>startSim(), prepgo:()=>startPrep(), sopa:el=>tapSopa(el),
  sgames:()=>go('sgames'), sgstart:el=>startSG(el.dataset.g), sgagain:()=>startSG(SG.type),
  sggo:()=>{if(SG.type==='race'){raceNext();SG.timers.push(setInterval(()=>{if(SG.end)return;SG.bot++;raceMove();if(SG.bot>=SG.goal)sgEnd(Math.floor(SG.me/3),'¡La tortuga ha ganado esta vez!')},SG.speed))}
   else if(SG.type==='bub')startBub();else{tfNext();sgTimer(()=>sgEnd(Math.floor(SG.score/3),`¡Has acertado ${SG.score}!`))}},
