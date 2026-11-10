@@ -2597,16 +2597,40 @@ function concMC(){
  if(r<9){const x=pick(C),o=shuffle(C.filter(y=>y!==x&&y[0]!==x[0])).slice(0,2);return lQ(`Relaciona: ¿qué predicado va con «${x[0]}»?`,sbPred(x),[`${x[2]} ${x[4]}`,...o.map(sbPred)],`«${x[0]}» y «${x[1]}» concuerdan.`)}
  const x=pick(C);return lQ(`Cambia el sujeto «${x[0]}» por «${x[3]}». ¿Cómo queda bien la oración?`,`${x[3]} ${x[2]} ${x[4]}.`,[`${x[3]} ${x[1]} ${x[4]}.`,`${x[0]} ${x[2]} ${x[4]}.`],'Si cambias el sujeto, tienes que cambiar también el verbo para que concuerden.');
 }
+
+const cmpTxt=a=>a.toLowerCase().replace(/[¡!¿?.,«»"]/g,'').replace(/\s+/g,' ').trim();
+function mkW(sec,p,right,hint,extra){return {sec,p,ans:[right],show:right,hint,chk:raw=>{const a=cmpTxt(raw),b=cmpTxt(right);if(!a)return 'Escribe tu respuesta.';if(a===b)return true;if(noAcc(a)===noAcc(b))return 'acc';return (extra&&extra(a))||hint}}}
+function enuW(){
+ const r=rnd(0,2),isNo=Math.random()<.5,t=isNo?pick(NOOR):pick(OREX.filter(x=>!x[1].includes(' '))),txt=isNo?t:t[0];
+ if(r===0){const words=txt.replace(/[¡!¿?.,]/g,'').toLowerCase().split(' ');return mkW('Enunciados',`Separa las palabras del humo y escríbelas bien:\n«${words.join('')}»`,words.join(' '),`Busca dónde termina cada palabra. Son ${words.length} palabras.`)}
+ if(r===1)return mkW('Enunciados',`Si este enunciado tiene verbo, escríbelo. Si no tiene verbo, escribe «no tiene».\n«${txt}»`,isNo?'no tiene':t[1],isNo?'Busca una palabra que indique una acción. ¿La hay?':'Busca la palabra que indica la acción.',a=>isNo?null:a==='no tiene'?'Sí tiene verbo. Busca la palabra que indica una acción.':null);
+ return mkW('Enunciados',`¿Es oracional o no oracional? Escribe «oracional» o «no oracional».\n«${txt}»`,isNo?'no oracional':'oracional','Si tiene verbo, es oracional. Si no tiene verbo, es no oracional.',a=>a.replace(/^enunciado /,'')===(isNo?'no oracional':'oracional')||(!isNo&&a==='oracion')?null:null);
+}
+function verboW(){const r=Math.random();let t,v,su=null;if(r<.7){const x=pick(SB);t=sbSent(x);v=x[1];su=x[0]}else if(r<.85){const x=pick(SBI);t=x[0];v=x[2];su=x[1]}else{[t,v]=pick(OREX.filter(x=>!x[1].includes(' ')))}
+ return mkW('Busca el verbo',`Escribe el verbo de esta oración:\n«${t}»`,v,'El verbo es la palabra que indica la acción: ¿qué se hace?',a=>su&&a===cmpTxt(su)?'Eso es el sujeto. El verbo es la palabra que indica la acción.':a.split(' ').length>1?'Escribe solo una palabra: el verbo.':null)}
+function sujW(){
+ const r=rnd(0,9);
+ if(r<5){const x=pick(SB),t=sbSent(x);return mkW('Sujeto y predicado',`Escribe el SUJETO de esta oración:\n«${t}»`,x[0],`Primero busca el verbo («${x[1]}»). Después pregunta: ¿quién ${x[1]}?`,a=>a===cmpTxt(sbPred(x))?'Eso es el predicado. El sujeto es quien hace la acción.':a===cmpTxt(x[1])?'Eso es el verbo. Pregunta: ¿quién '+x[1]+'?':a===cmpTxt(x[5]||'-')?`«${x[5]}» no hace la acción. Pregunta: ¿quién ${x[1]}?`:null)}
+ if(r<8){const x=pick(SB),t=sbSent(x);return mkW('Sujeto y predicado',`Escribe el PREDICADO de esta oración:\n«${t}»`,sbPred(x),`El sujeto es «${x[0]}». Todo lo demás es el predicado.`,a=>a===cmpTxt(x[0])?'Eso es el sujeto. El predicado es todo lo demás.':a===cmpTxt(x[4])?'Casi: el verbo también forma parte del predicado.':null)}
+ const x=pick(SBI.filter(y=>y[1]));return mkW('Sujeto y predicado',`¡Ojo, el sujeto no va al principio! Escribe el SUJETO:\n«${x[0]}»`,x[1],`El verbo es «${x[2]}». Pregunta: ¿quién ${x[2]}?`);
+}
+function concW(){
+ const C=SB.filter(x=>x[2]&&x[3]),x=pick(C);
+ if(Math.random()<.55){const right=`${x[3]} ${x[2]} ${x[4]}.`;return mkW('Concordancia',`Cambia «${x[0]}» por «${x[3]}» y escribe la oración entera:\n«${sbSent(x)}»`,right,`El verbo tiene que cambiar para concordar con «${x[3]}».`,a=>a.includes(' '+cmpTxt(x[1])+' ')||a.endsWith(' '+cmpTxt(x[1]))?`¡Cuidado! «${x[3]}» y «${x[1]}» no concuerdan. Cambia también el verbo.`:null)}
+ const opts=shuffle([x[1],x[2]]);return mkW('Concordancia',`Escribe la forma del verbo que concuerda (${opts.join(' / ')}):\n«${x[0]} ___ ${x[4]}.»`,x[1],`El sujeto es «${x[0]}». ¿Es singular o plural?`,a=>a===cmpTxt(x[2])?`«${x[0]}» y «${x[2]}» no concuerdan en número.`:null);
+}
+const LW={abrw:abrWrite,enu:enuW,verbo:verboW,suj:sujW,conc:concW};
+function lItemsW(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<300){const it=LW[k]();if(seen.has(it.p))continue;seen.add(it.p);out.push(it)}return out}
 const LMC={abrmc:abrMC,enu:enuMC,verbo:verboMC,suj:sujMC,conc:concMC};
 function lItems(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<300){const it=k==='abrw'?abrWrite():LMC[k]();const key=(it.q||it.p)+(it.img||'');if(seen.has(key))continue;seen.add(key);out.push(it)}return out}
 const lMix=n=>{const ks=['abrmc','enu','verbo','suj','conc'];return shuffle(Array.from({length:n},(_,i)=>LMC[ks[i%ks.length]]()))};
 const LSTAGES=[
  {k:'abrmc',n:'Abreviaturas: relaciona',d:'Une cada abreviatura con su palabra entera.',mc:true},
  {k:'abrw',n:'Abreviaturas: escríbelas',d:'Escribe abreviaturas y tus datos con abreviaturas (C/, Avda., núm.…).'},
- {k:'enu',n:'Enunciados',d:'¿Oracional o no oracional? Separa las palabras del humo.',mc:true},
- {k:'verbo',n:'Busca el verbo',d:'La palabra que indica la acción. ¡Todas las oraciones tienen uno!',mc:true},
- {k:'suj',n:'Sujeto y predicado',d:'Busca el sujeto y el predicado. Localiza las oraciones en un texto.',mc:true},
- {k:'conc',n:'Concordancia',d:'Completa con sujetos o predicados que concuerden.',mc:true}];
+ {k:'enu',n:'Enunciados',d:'¿Oracional o no oracional? Separa las palabras del humo. Rondas de elegir y de escribir.',mc:true},
+ {k:'verbo',n:'Busca el verbo',d:'Escribe el verbo: la palabra que indica la acción. ¡Todas las oraciones tienen uno!',mc:true},
+ {k:'suj',n:'Sujeto y predicado',d:'Escribe el sujeto y el predicado. Localiza las oraciones en un texto.',mc:true},
+ {k:'conc',n:'Concordancia',d:'Completa y reescribe oraciones para que sujeto y verbo concuerden.',mc:true}];
 const MSTAGES=[
  {k:'leer',n:'Leer y escribir números',d:'Escribe los números con letras y con cifras, como en el ejercicio 1 del examen.'},
  {k:'des',n:'Descomponer números',d:'Según la posición (4 DM + 8 UM…) y según el valor (40.000 + 8.000…).'},
@@ -2649,14 +2673,15 @@ function pItem(k,used){
  const w=pWord('sent',used),list=SENT[w.en].map((x,j)=>j),j=pTpl('sent:'+w.en,list,x=>String(x)),[n,g]=pick(KIDS),f=g==='f',fill=t=>t.replace(/\{N\}/g,n).replace(/\{a\}/g,f?'a':'o'),es=fill(SENT[w.en][j][0]),en=fill(SENT[w.en][j][1]);
  return {p:`Escribe la frase entera en inglés: «${es}»`,ans:sentAlts(en),show:en,say:en,hint:`Pista: empieza por «${en.split(' ')[0]}».`,w:w.en};
 }
-function stageItem(k,used){if(V.sub==='mates')return mItems(k,1)[0];if(V.sub==='lengua')return k==='abrw'?abrWrite():LMC[k]();return pItem(k,used)}
+function stageItem(k,used){if(V.sub==='mates')return mItems(k,1)[0];if(V.sub==='lengua')return V.view==='write'?(LW[k]||abrWrite)():(LMC[k]||abrMC)();return pItem(k,used)}
 function pathStart(test){pathStart0(test);const p=PTH();if(V.ptest||p.st>=STG().length)return;
- const S=STG(),mc=!!S[p.st].mc,prev=S.map((x,i)=>i).filter(i=>i<p.st&&!!S[i].mc===mc&&(V.sub!=='mates'||true));if(!prev.length)return;
+ const S=STG(),mc=!!S[p.st].mc,prev=S.map((x,i)=>i).filter(i=>i<p.st&&(V.sub==='lengua'?(V.view==='write'?!!LW[S[i].k]:!!LMC[S[i].k]):!!S[i].mc===mc));if(!prev.length)return;
  const list=V.view==='test'?T.qs:W.items,used=new Set(),pos=shuffle(list.map((_,i)=>i).slice(1)).slice(0,3);
  for(const i of pos){let it=null;try{it=stageItem(S[pick(prev)].k,used)}catch(e){}if(!it)continue;it=Object.assign({},it,{rev:true});if(V.view==='test')it.q='Repaso · '+it.q;else it.sec='Repaso · '+(it.sec||S[prev[0]].n);list[i]=it}}
 function pathStart0(test){
  const p=PTH(),done=p.st>=STG().length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
- if(V.sub==='lengua'){const k=done?null:LSTAGES[p.st].k,ttl=done?'Repaso para el examen':(V.ptest?'Prueba: ':'')+LSTAGES[p.st].n;if(k==='abrw'){W={kind:'txt',title:ttl,items:lItems('abrw',10),i:0,score:0};resetW();go('write');return}T={qs:done?lMix(10):lItems(k,10),i:0,score:0,done:false};go('test');return}
+ if(V.sub==='lengua'){const k=done?null:LSTAGES[p.st].k,ttl=done?'Repaso para el examen':(V.ptest?'Prueba: ':'')+LSTAGES[p.st].n;p.rc=(p.rc||0)+1;const wr=k==='abrw'||(k!=='abrmc'&&(V.ptest||p.rc%2===1));
+  if(wr){const ks=Object.keys(LW);W={kind:'txt',title:ttl+(k&&k!=='abrw'?' (escribe)':''),items:done?Array.from({length:10},(_,i)=>LW[ks[i%ks.length]]()):lItemsW(k,10),i:0,score:0};resetW();go('write');return}T={qs:done?lMix(10):lItems(k,10),i:0,score:0,done:false};go('test');return}
  if(V.sub==='mates'){W={kind:'op',title:done?'Ficha como el examen':(V.ptest?'Prueba: ':'')+MSTAGES[p.st].n,items:done?fichaItems():mItems(MSTAGES[p.st].k,10),i:0,score:0};resetW();go('write');return}
  if(!done&&STG()[p.st].mc){T={qs:Array.from({length:10},()=>pItem(STG()[p.st].k,used)),i:0,score:0,done:false};go('test');return}
  const ks=done?STG().filter(x=>!x.mc).map(x=>x.k):[STG()[p.st].k];
@@ -2959,7 +2984,7 @@ function listen(){
 /* ---------- escribir / operaciones ---------- */
 function startWrite(){
  const L=LV();
- if(V.sub==='lengua'){W={kind:'txt',items:lItems('abrw',V.exam?5:8),i:0,score:0};resetW();go('write');return}
+ if(V.sub==='lengua'){const ks=['abrw','enu','verbo','suj','conc','abrw','suj','conc'];W={kind:'txt',items:shuffle(ks.map(k=>LW[k]())).slice(0,V.exam?5:8),i:0,score:0};resetW();go('write');return}
  if(V.sub==='mates'){
   const wt=D.tp.mates.filter(t=>t!=='geo'),tp=wt.length?wt:['mul','div'];
   W={kind:'op',items:rr(tp,8).flatMap(t=>exItem(t,L)||(t==='mul'?(Math.random()<.3?missWrite('×'):genOp(L,false,'×')):t==='div'?(Math.random()<.3?missWrite(':'):genOp(L,false,':')):t==='ser'||t==='hora'?missWrite(pick(['×',':'])):t==='sum'?genOp(L,false,pick(['+','−'])):t==='red'?genRound(L):t==='pro'?genProblem(L):desWrite(L))).slice(0,10)};
