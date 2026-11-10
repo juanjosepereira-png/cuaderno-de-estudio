@@ -2468,7 +2468,7 @@ function renderStickers(){
 
 /* ---------- materia ---------- */
 function renderSubject(){
- if(V.sub==='ingles'||V.sub==='mates'){renderPath();return}
+ if(V.sub==='ingles'||V.sub==='mates'||V.sub==='lengua'){renderPath();return}
  const S=SUBJ[V.sub];
  app.innerHTML=header(S.name,'home')+`<main class="wrap">
  <section class="subj-head"><h1>${S.name}</h1><p class="lvline"><span class="lvst">${difStars(DIF())}</span> <b>${DIFNAME[DIF()]}</b>${DIF()?` · ejercicios de ${LV()}º`:''}</p><p>${D.lv}º de Primaria · ${D.stars[V.sub]} ${D.stars[V.sub]===1?'estrella':'estrellas'} conseguidas</p>${V.sub==='ingles'&&Date.now()<Date.parse('2026-10-27')?'<p class="exam">Examen el lunes 26 de octubre: Unit 1, vocabulario de adjetivos.</p>':''}</section>
@@ -2539,6 +2539,74 @@ const ISTAGES=[
  {k:'sent',n:'Frases enteras',d:'Escribe la frase entera en inglés.'},
  {k:'listen',n:'Listening',d:'Escucha y elige: el dibujo, quién es quién, sí o no, la frase que oyes.',mc:true},
  {k:'rw',n:'Reading & Writing',d:'Lee textos cortos, definiciones y dibujos, y escribe la palabra.'}];
+
+/* ===== Lengua: examen 12 nov (abreviaturas, enunciados, sujeto y predicado) ===== */
+const ABR=[['adj.','adjetivo'],['v.','verbo'],['n.','nombre'],['Sr.','señor'],['Dra.','doctora'],['pág.','página'],['p. ej.','por ejemplo'],['avda.','avenida'],['etc.','etcétera'],['sig.','siguiente'],['izq.','izquierda'],['dcha.','derecha'],['Dir.','director'],['C/','calle'],['núm.','número'],['Pl.','plaza'],['C. P.','código postal'],['gta.','glorieta']];
+const ABR_CAP=['Sr.','Dra.','Dir.'];
+const SB=[['La arquitecta','hizo','hicieron','Las arquitectas','los planos','los planos'],['Mi hermano','juega','juegan','Mis hermanos','al fútbol los sábados','los sábados'],['Los niños','cantan','canta','El niño','en el patio del colegio','el patio'],['El perro de Lucía','ladra','ladran','Los perros de Lucía','por las noches','Lucía'],['La profesora','explica','explican','Las profesoras','las abreviaturas','las abreviaturas'],['Mis abuelos','viven','vive','Mi abuelo','en Telde','Telde'],['El gato negro','duerme','duermen','Los gatos negros','en el sofá','el sofá'],['Mamá','prepara','preparan',null,'una tarta de chocolate','una tarta'],['Las olas','mojan','moja','La ola','la arena de la playa','la arena'],['El médico','cura','curan','Los médicos','a los enfermos','los enfermos'],['Nayra y Hugo','pintan','pinta',null,'un mural enorme','un mural'],['El tren','llega','llegan','Los trenes','a la estación','la estación'],['Los pájaros','vuelan','vuela','El pájaro','sobre los árboles','los árboles'],['La niña','escribe','escriben','Las niñas','una carta a su abuela','su abuela'],['El sol','calienta','calientan',null,'la tierra','la tierra'],['Papá','conduce','conducen',null,'el coche nuevo','el coche'],['Los alumnos de cuarto','visitaron','visitó','El alumno de cuarto','el museo','el museo'],['El cocinero','corta','cortan','Los cocineros','las verduras','las verduras'],['Mi prima','bailó','bailaron','Mis primas','en la fiesta','la fiesta'],['El bombero','apagó','apagaron','Los bomberos','el fuego','el fuego'],['La abeja','busca','buscan','Las abejas','flores en el jardín','el jardín'],['Los delfines','saltan','salta','El delfín','en el mar','el mar'],['La luna','brilla','brillan',null,'en el cielo','el cielo'],['Mi vecina','riega','riegan','Mis vecinas','las plantas','las plantas'],['Los azulejos','protegen','protege','El azulejo','las paredes de la humedad','las paredes'],['Las casas blancas','refrescan','refresca','La casa blanca','en verano','el verano'],['Los muros gruesos','aíslan','aísla','El muro grueso','del frío','el frío'],['El palafito','está','están','Los palafitos','sobre el agua','el agua'],['Las tiendas de piel','resguardan','resguarda','La tienda de piel','de la lluvia','la lluvia'],['Mi amiga Carla','toca','tocan',null,'la guitarra','la guitarra'],['Los turistas','visitan','visita','El turista','las playas de Gran Canaria','Gran Canaria'],['La arquitecta','dibuja','dibujan','Las arquitectas','una casa moderna','una casa']];
+const SBI=[['En el parque juegan los niños.','los niños','juegan','el parque'],['Por la mañana canta el gallo.','el gallo','canta','la mañana'],['Desde la ventana mira la abuela.','la abuela','mira','la ventana'],['En invierno nieva mucho.',null,'nieva',null]];
+const NOOR=['¡Hola!','¡Enhorabuena!','Muchas gracias.','¡Qué calor!','Buenos días.','¡Feliz cumpleaños!','¡Socorro!','¡Qué bonito!','Hasta mañana.','¡Cuidado!','Silencio, por favor.','Un zumo de naranja, por favor.','¡Fuego!','Buenas noches.','¡Qué susto!','¡Felices vacaciones!','Adiós.','¡Qué solución tan bonita!','¡Vaya día!','¡Qué frío!','¡Muy bien!','¡Qué rico!'];
+const OREX=[['Felicidades, has hecho un buen trabajo.','has hecho'],['Hace mucho frío.','hace'],['Esta noche nevará.','nevará'],['Hoy hace sol.','hace'],['Me gusta el helado.','gusta'],['¡Qué bien cantas!','cantas'],['Cierra la puerta, por favor.','cierra'],['Mañana tengo examen.','tengo'],['¿Dónde está mi lápiz?','está'],['¿Vienes al parque?','vienes'],['Las casas resultan muy atractivas.','resultan']];
+const cap1=x=>x[0].toUpperCase()+x.slice(1);
+const sbSent=r=>`${r[0]} ${r[1]} ${r[4]}.`;
+const sbPred=r=>`${r[1]} ${r[4]}`;
+const LSTOP=new Set('el la los las un una unos unas de del en a al mi mis tu tus su sus por y muy mucho sobre con desde para'.split(' '));
+const lQ=(q,right,wr,why)=>{const o=[right];for(const w of wr)if(w&&!o.includes(w)&&o.length<4)o.push(w);const opts=shuffle(o);return {q,opts,a:opts.indexOf(right),why}};
+function abrMC(){const [ab,full]=pick(ABR),oth=shuffle(ABR.filter(x=>x[0]!==ab));
+ if(Math.random()<.5)return lQ(`¿Con qué palabra se relaciona la abreviatura «${ab}»?`,full,oth.slice(0,3).map(x=>x[1]),`«${ab}» es la abreviatura de «${full}».`);
+ const w=[ab.replace(/\.$/,''),noAcc(ab)!==ab?noAcc(ab):null,ABR_CAP.includes(ab)?ab.toLowerCase():null,oth[0][0],oth[1][0]].filter(x=>x&&x!==ab);
+ return lQ(`¿Cuál es la abreviatura de «${full}»?`,ab,w,`Se escribe «${ab}»${/\.$/.test(ab)?', con punto al final':''}.`)}
+const abrNorm=x=>x.trim().replace(/\s+/g,'');
+function abrWrite(){
+ const r=Math.random();
+ if(r<.25){const X=pick(['de Canarias','Real','del Mar','de la Paz','Mayor','de San Juan','de Telde']),n=rnd(2,90),cp=pick(['35200','35210','35019','35100']),t=pick([[`Calle ${X}, número ${n}`,`C/ ${X}, núm. ${n}`],[`Avenida ${X}, número ${n}, izquierda`,`Avda. ${X}, núm. ${n}, izq.`],[`Plaza ${X}, número ${n}, derecha`,`Pl. ${X}, núm. ${n}, dcha.`],[`Glorieta ${X}, código postal ${cp}`,`gta. ${X}, C. P. ${cp}`]]);
+  return {sec:'Escribe tus datos con abreviaturas',p:`Escribe con abreviaturas:\n${t[0]}`,ans:[t[1]],show:t[1],chk:raw=>{const a=abrNorm(raw).toLowerCase(),b=abrNorm(t[1]).toLowerCase();if(a===b)return true;if(noAcc(a)===noAcc(b))return 'Revisa las tildes: «núm.» lleva tilde, como «número».';if(a.replace(/\./g,'')===b.replace(/\./g,''))return 'Te falta algún punto. Casi todas las abreviaturas terminan en punto (menos C/).';return 'Cambia cada palabra larga por su abreviatura: calle → C/, avenida → Avda., plaza → Pl., número → núm., izquierda → izq., derecha → dcha., glorieta → gta., código postal → C. P.'},hint:'Calle → C/ · Avenida → Avda. · Plaza → Pl. · número → núm. · izquierda → izq. · derecha → dcha. · glorieta → gta. · código postal → C. P.'}}
+ const [ab,full]=pick(ABR);
+ if(r<.6)return {sec:'Abreviaturas',p:`Escribe la abreviatura de «${full}»`,ans:[ab],show:ab,chk:raw=>{const a=abrNorm(raw),b=abrNorm(ab);if(a===b||(!ABR_CAP.includes(ab)&&a.toLowerCase()===b.toLowerCase()))return true;if(a.toLowerCase()===b.toLowerCase())return `«${ab}» empieza con mayúscula.`;if(noAcc(a.toLowerCase())===noAcc(b.toLowerCase()))return `Revisa la tilde: «${ab}» la lleva, igual que «${full}».`;if(a.toLowerCase()+'.'===b.toLowerCase())return 'Te falta el punto del final.';return `Pista: empieza por «${ab[0]}» y tiene ${ab.replace(/[ .\/]/g,'').length} letras.`},hint:`Empieza por «${ab[0]}».`};
+ return {sec:'Abreviaturas',p:`¿Qué palabra entera es «${ab}»? Escríbela.`,ans:[full],show:full,lax:true,hint:`Empieza por «${full[0]}».`};
+}
+function enuMC(){
+ const k=rnd(0,9);
+ if(k<4){const t=pick(NOOR);return lQ(`¿Qué tipo de enunciado es «${t}»?`,'Enunciado no oracional',['Enunciado oracional u oración'],'No tiene verbo, así que es un enunciado no oracional.')}
+ if(k<7){const [t,v]=Math.random()<.5?pick(OREX):(r=>[sbSent(r),r[1]])(pick(SB));return lQ(`¿Qué tipo de enunciado es «${t}»?`,'Enunciado oracional u oración',['Enunciado no oracional'],`Tiene verbo («${v}»), así que es una oración.`)}
+ if(k<9){const t=Math.random()<.5?pick(NOOR):pick(OREX)[0],words=t.replace(/[¡!¿?.,]/g,'').toLowerCase().split(' '),glued=words.join('');
+  const right=words.join(' '),wr=new Set();for(let g=0;g<30&&wr.size<3;g++){const cut=[];let p=0;for(const w of words.slice(0,-1)){p+=w.length;cut.push(p)}if(!cut.length)cut.push(rnd(1,glued.length-1));const i=rnd(0,cut.length-1);cut[i]+=pick([-2,-1,1,2]);if(cut[i]<=0||cut[i]>=glued.length)continue;const cs=[...new Set(cut)].sort((a,b)=>a-b);let out=[],q=0;for(const c of cs){out.push(glued.slice(q,c));q=c}out.push(glued.slice(q));const x=out.filter(Boolean).join(' ');if(x!==right)wr.add(x)}
+  return lQ(`Separa las palabras del humo: «${glued}». ¿Cómo se separa bien?`,right,[...wr],`Es «${t}».`)}
+ return pick([()=>lQ('Un enunciado que NO tiene verbo es…','un enunciado no oracional',['una oración','un sujeto','un predicado'],'Las oraciones siempre tienen verbo.'),()=>lQ('¿Qué tiene SIEMPRE una oración?','Un verbo',['Signos de exclamación','Un adjetivo','Una abreviatura'],'Todas las oraciones tienen un verbo.'),()=>lQ('Un enunciado es…','una palabra o grupo de palabras ordenadas que tienen sentido',['siempre una sola palabra','una palabra escrita más corta','solo las preguntas'],null),()=>lQ('Las dos partes de una oración son…','el sujeto y el predicado',['el verbo y el adjetivo','el enunciado y la abreviatura','el nombre y el punto'],null),()=>lQ('Completa el esquema: «¡Hola!» es un ejemplo de…','enunciado no oracional',['sujeto','predicado','oración'],null)])();
+}
+function sbWords(t,v){return t.replace(/[¡!¿?.,]/g,'').split(' ').filter(w=>w!==v&&!LSTOP.has(w.toLowerCase())&&w.length>2)}
+function verboMC(){
+ const r=Math.random();let t,v;
+ if(r<.7){const x=pick(SB);t=sbSent(x);v=x[1]}else if(r<.85){const x=pick(SBI);t=x[0];v=x[2]}else{[t,v]=pick(OREX.filter(x=>!x[1].includes(' ')))}
+ const ws=shuffle([...new Set(sbWords(t,v).map(w=>w.toLowerCase()))]).slice(0,3);
+ if(Math.random()<.12)return lQ('Para buscar el sujeto y el predicado, ¿qué buscas primero?','El verbo',['El sujeto','El predicado','La última palabra'],'1.º busca el verbo, 2.º el sujeto y 3.º lo demás es el predicado.');
+ return lQ(`Busca el verbo (la palabra que indica la acción): «${t}»`,v.toLowerCase(),ws,`El verbo es «${v}».`)}
+function sujMC(){
+ const r=rnd(0,9);
+ if(r<4){const x=pick(SB),t=sbSent(x);return lQ(`¿Cuál es el SUJETO de «${t}»?`,x[0],[x[5]?cap1(x[5]):null,cap1(sbPred(x)),x[1]],`El verbo «${x[1]}» concuerda con «${x[0]}». Ese es el sujeto.`)}
+ if(r<6){const x=pick(SB),t=sbSent(x);return lQ(`¿Cuál es el PREDICADO de «${t}»?`,sbPred(x),[x[0],x[4],`${x[0]} ${x[1]}`],`Todo lo que no es el sujeto («${x[0]}») es el predicado.`)}
+ if(r<7){const x=pick(SBI.filter(y=>y[1]));return lQ(`¡Ojo, el sujeto no siempre va al principio! ¿Cuál es el sujeto de «${x[0]}»?`,cap1(x[1]),[x[3]?cap1(x[3]):null,cap1(x[2]),'No tiene sujeto'],`¿Quién ${x[2]}? → ${x[1]}.`)}
+ const ors=shuffle(SB).slice(0,rnd(2,3)).map(sbSent),no=pick(NOOR),parts=shuffle([...ors,no]),text=parts.join(' ');
+ if(r<9)return {...lQ('¿Cuál de estos enunciados del texto NO es una oración?',no,ors,'No tiene verbo.'),img:`<div class="readbox">${esc(text)}</div>`};
+ return {...lQ('Localiza las oraciones en el texto. ¿Cuántas oraciones hay?',String(ors.length),['1','2','3','4'].filter(x=>x!==String(ors.length)),`Hay ${ors.length}: «${no}» no tiene verbo.`),img:`<div class="readbox">${esc(text)}</div>`};
+}
+function concMC(){
+ const r=rnd(0,9),C=SB.filter(x=>x[2]&&x[3]);
+ if(r<4){const x=pick(C);return lQ(`Completa con el verbo que concuerda: «${x[0]} ___ ${x[4]}.»`,x[1],[x[2]],`«${x[0]}» es ${/s$/.test(x[0].split(' ')[0])||/ y /.test(x[0])?'plural':'singular'}, así que el verbo también: «${x[1]}».`)}
+ if(r<7){const x=pick(C);return lQ(`Completa con un sujeto que concuerde: «… ${sbPred(x)}.»`,x[0],[x[3],x[5]?cap1(x[5]):null],`El verbo «${x[1]}» y el sujeto «${x[0]}» concuerdan en número.`)}
+ if(r<9){const x=pick(C),o=shuffle(C.filter(y=>y!==x&&y[0]!==x[0])).slice(0,2);return lQ(`Relaciona: ¿qué predicado va con «${x[0]}»?`,sbPred(x),[`${x[2]} ${x[4]}`,...o.map(sbPred)],`«${x[0]}» y «${x[1]}» concuerdan.`)}
+ const x=pick(C);return lQ(`Cambia el sujeto «${x[0]}» por «${x[3]}». ¿Cómo queda bien la oración?`,`${x[3]} ${x[2]} ${x[4]}.`,[`${x[3]} ${x[1]} ${x[4]}.`,`${x[0]} ${x[2]} ${x[4]}.`],'Si cambias el sujeto, tienes que cambiar también el verbo para que concuerden.');
+}
+const LMC={abrmc:abrMC,enu:enuMC,verbo:verboMC,suj:sujMC,conc:concMC};
+function lItems(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<300){const it=k==='abrw'?abrWrite():LMC[k]();const key=(it.q||it.p)+(it.img||'');if(seen.has(key))continue;seen.add(key);out.push(it)}return out}
+const lMix=n=>{const ks=['abrmc','enu','verbo','suj','conc'];return shuffle(Array.from({length:n},(_,i)=>LMC[ks[i%ks.length]]()))};
+const LSTAGES=[
+ {k:'abrmc',n:'Abreviaturas: relaciona',d:'Une cada abreviatura con su palabra entera.',mc:true},
+ {k:'abrw',n:'Abreviaturas: escríbelas',d:'Escribe abreviaturas y tus datos con abreviaturas (C/, Avda., núm.…).'},
+ {k:'enu',n:'Enunciados',d:'¿Oracional o no oracional? Separa las palabras del humo.',mc:true},
+ {k:'verbo',n:'Busca el verbo',d:'La palabra que indica la acción. ¡Todas las oraciones tienen uno!',mc:true},
+ {k:'suj',n:'Sujeto y predicado',d:'Busca el sujeto y el predicado. Localiza las oraciones en un texto.',mc:true},
+ {k:'conc',n:'Concordancia',d:'Completa con sujetos o predicados que concuerden.',mc:true}];
 const MSTAGES=[
  {k:'leer',n:'Leer y escribir números',d:'Escribe los números con letras y con cifras, como en el ejercicio 1 del examen.'},
  {k:'des',n:'Descomponer números',d:'Según la posición (4 DM + 8 UM…) y según el valor (40.000 + 8.000…).'},
@@ -2546,7 +2614,7 @@ const MSTAGES=[
  {k:'col',n:'Coloca y resuelve',d:'Sumas y restas de 4 y 5 cifras llevándote.'},
  {k:'comb',n:'Operaciones combinadas',d:'Primero los paréntesis, después × y :, y al final + y −.'},
  {k:'pro',n:'Problemas',d:'Elige la operación y escribe la solución. También de metros a kilómetros.'}];
-const STG=()=>V.sub==='mates'?MSTAGES:ISTAGES;
+const STG=()=>V.sub==='mates'?MSTAGES:V.sub==='lengua'?LSTAGES:ISTAGES;
 const MGEN={leer:()=>Math.random()<.6?leerWrite():leerNum(),des:()=>Math.random()<.5?desPosW():desValW(),red:()=>Math.random()<.75?redTrio():genRound(Math.min(LV(),5)),col:()=>colGen(),comb:()=>combWrite(),pro:()=>Math.random()<.6?proKm():genProblem(LV())};
 function mItems(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<200){for(const it of [].concat(MGEN[k]())){const key=it.p||it.prompt||it.lay;if(seen.has(key)||out.length>=n)continue;seen.add(key);out.push(it)}}return out}
 const P_MIN=20,P_GOAL=.9,PT_PASS=9;
@@ -2558,7 +2626,7 @@ const THINK=[["{N} loves {x}. What does {p} think of {x}? — {Pn} thinks {it} _
  ["{N} does the {x} homework in five minutes. What does {p} think of it? — {Pn} thinks it's ___.","easy",['Maths','English','Science','Spanish']],
  ["{N} falls asleep when {p} watches {x}. What does {p} think of {x}? — {Pn} thinks {it} ___.","boring",['television','the news','old films']]];
 const PL=x=>/s$/.test(x)&&!['tennis','Maths','the news'].includes(x);
-function PTH(){if(V.sub==='mates'){D.mpath=D.mpath||{st:0,acc:{}};D.mpath.acc=D.mpath.acc||{};return D.mpath}D.path=D.path||{st:0,acc:{},wd:{},tu:{}};D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
+function PTH(){if(V.sub==='lengua'){D.lpath=D.lpath||{st:0,acc:{}};D.lpath.acc=D.lpath.acc||{};return D.lpath}if(V.sub==='mates'){D.mpath=D.mpath||{st:0,acc:{}};D.mpath.acc=D.mpath.acc||{};return D.mpath}D.path=D.path||{st:0,acc:{},wd:{},tu:{}};D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
 function pWord(st,used){const p=PTH();let dk=(p.wd[st]||[]).filter(x=>SHEET.includes(x));if(!dk.filter(x=>!used.has(x)).length)dk=wshuffle(U1.map(w=>w.en).filter(x=>!used.has(x)),en=>missW(en)).reverse().concat(dk);
  const i=dk.map((x,j)=>[x,j]).reverse().find(([x])=>!used.has(x));const en=i[0];dk.splice(i[1],1);p.wd[st]=dk;used.add(en);return U1by(en)}
 function pTpl(st,list,keyf){const p=PTH(),u=new Set(p.tu[st]||[]);let c=list.filter(x=>!u.has(keyf(x)));if(!c.length){list.forEach(x=>u.delete(keyf(x)));c=list}const x=pick(c);u.add(keyf(x));p.tu[st]=[...u];return x}
@@ -2581,32 +2649,39 @@ function pItem(k,used){
  const w=pWord('sent',used),list=SENT[w.en].map((x,j)=>j),j=pTpl('sent:'+w.en,list,x=>String(x)),[n,g]=pick(KIDS),f=g==='f',fill=t=>t.replace(/\{N\}/g,n).replace(/\{a\}/g,f?'a':'o'),es=fill(SENT[w.en][j][0]),en=fill(SENT[w.en][j][1]);
  return {p:`Escribe la frase entera en inglés: «${es}»`,ans:sentAlts(en),show:en,say:en,hint:`Pista: empieza por «${en.split(' ')[0]}».`,w:w.en};
 }
-function pathStart(test){
+function stageItem(k,used){if(V.sub==='mates')return mItems(k,1)[0];if(V.sub==='lengua')return k==='abrw'?abrWrite():LMC[k]();return pItem(k,used)}
+function pathStart(test){pathStart0(test);const p=PTH();if(V.ptest||p.st>=STG().length)return;
+ const S=STG(),mc=!!S[p.st].mc,prev=S.map((x,i)=>i).filter(i=>i<p.st&&!!S[i].mc===mc&&(V.sub!=='mates'||true));if(!prev.length)return;
+ const list=V.view==='test'?T.qs:W.items,used=new Set(),pos=shuffle(list.map((_,i)=>i).slice(1)).slice(0,3);
+ for(const i of pos){let it=null;try{it=stageItem(S[pick(prev)].k,used)}catch(e){}if(!it)continue;it=Object.assign({},it,{rev:true});if(V.view==='test')it.q='Repaso · '+it.q;else it.sec='Repaso · '+(it.sec||S[prev[0]].n);list[i]=it}}
+function pathStart0(test){
  const p=PTH(),done=p.st>=STG().length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
+ if(V.sub==='lengua'){const k=done?null:LSTAGES[p.st].k,ttl=done?'Repaso para el examen':(V.ptest?'Prueba: ':'')+LSTAGES[p.st].n;if(k==='abrw'){W={kind:'txt',title:ttl,items:lItems('abrw',10),i:0,score:0};resetW();go('write');return}T={qs:done?lMix(10):lItems(k,10),i:0,score:0,done:false};go('test');return}
  if(V.sub==='mates'){W={kind:'op',title:done?'Ficha como el examen':(V.ptest?'Prueba: ':'')+MSTAGES[p.st].n,items:done?fichaItems():mItems(MSTAGES[p.st].k,10),i:0,score:0};resetW();go('write');return}
  if(!done&&STG()[p.st].mc){T={qs:Array.from({length:10},()=>pItem(STG()[p.st].k,used)),i:0,score:0,done:false};go('test');return}
  const ks=done?STG().filter(x=>!x.mc).map(x=>x.k):[STG()[p.st].k];
  W={kind:'txt',title:done?'Repaso de la Unit 1':(V.ptest?'Prueba: ':'')+STG()[p.st].n,items:Array.from({length:10},()=>pItem(pick(ks),used)),i:0,score:0};resetW();go('write');
 }
-function pathTrack(ok){const p=PTH();if(p.st>=STG().length||V.ptest)return;const a=p.acc[p.st]=p.acc[p.st]||[];a.push(ok?1:0);if(a.length>P_MIN)a.shift()}
+function pathTrack(ok){const p=PTH();if(p.st>=STG().length||V.ptest)return;const cur=V.view==='test'?T.qs[T.i]:W&&W.items[W.i];if(cur&&cur.rev)return;const a=p.acc[p.st]=p.acc[p.st]||[];a.push(ok?1:0);if(a.length>P_MIN)a.shift()}
 function pathInfo(st){const a=(PTH().acc[st]||[]);return {n:a.length,avg:a.length?a.reduce((x,y)=>x+y,0)/a.length:0}}
 function pathAfterRound(score,total){const p=PTH(),st=p.st;if(st>=STG().length)return {review:true};
  if(V.ptest){V.ptest=false;p.ready=null;if(score>=PT_PASS){p.st++;return {from:st,adv:true,test:true,score,total}}p.acc[st]=(p.acc[st]||[]).slice(-10);return {from:st,failTest:true,score,total}}
  const r=pathInfo(st);if(r.n>=P_MIN&&r.avg>P_GOAL){p.ready=st;return {from:st,ready:true,avg:r.avg}}return {from:st,adv:false,avg:r.avg,n:r.n}}
 function renderPath(){
  const p=PTH(),st=p.st,done=st>=STG().length;
- const M=V.sub==='mates',RV=M?'Ficha como el examen':'Repaso de la Unit 1';
- app.innerHTML=header(M?'Matemáticas':'Inglés','home')+`<main class="wrap">
- <section class="subj-head"><h1>${M?'Matemáticas':'Inglés · Unit 1'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${!M&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
- ${!M?`<button class="pathgo ptestgo" data-act="prepgo"><span class="pgi">${ICON_EXAM}</span><span><b>Examen de prueba: Listening y Reading &amp; Writing</b><span>5 de escuchar, 5 de leer y 5 de escribir, como el examen del jueves. Te da una nota y te dice qué repasar.</span></span></button>`:''}
+ const M=V.sub==='mates',L=V.sub==='lengua',RV=M?'Ficha como el examen':L?'Repaso para el examen':'Repaso de la Unit 1';
+ app.innerHTML=header(M?'Matemáticas':L?'Lengua':'Inglés','home')+`<main class="wrap">
+ <section class="subj-head"><h1>${M?'Matemáticas':L?'Lengua':'Inglés · Unit 1'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${L&&Date.now()<Date.parse('2026-11-13')?'<p class="exam">Examen el jueves 12 de noviembre: abreviaturas, enunciados y sujeto y predicado.</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
+ ${V.sub==='ingles'?`<button class="pathgo ptestgo" data-act="prepgo"><span class="pgi">${ICON_EXAM}</span><span><b>Examen de prueba: Listening y Reading &amp; Writing</b><span>5 de escuchar, 5 de leer y 5 de escribir, como el examen del jueves. Te da una nota y te dice qué repasar.</span></span></button>`:''}
  ${examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${STG()[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
- <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
+ <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':L?'¡Has dominado todos los apartados! Ronda de repaso mezclada como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
  <ol class="path">${STG().map((x,i)=>{const r=pathInfo(i),state=i<st?'done':i===st?'now':'lock';return `<li class="ps ${state}"><span class="pn">${i<st?'✓':i+1}</span><div><b>${x.n}</b><span>${x.d}</span>${state==='now'?`<div class="bar"><i style="width:${Math.round(r.avg*100)}%"></i></div><span class="pm">${r.n?`Aciertos: ${Math.round(r.avg*100)} % en tus últimas ${r.n} respuestas. `:''}${p.ready===i?'¡Prueba disponible!':`Para pasar: más del 90 % en ${P_MIN} respuestas y después la prueba (${PT_PASS} de 10).`}</span>`:''}</div></li>`}).join('')}</ol>
  <section class="modes"><button class="mode mgames" data-act="sgames"><span class="ic">${ICON.star}</span><b>Juegos</b><span>Carrera, burbujas, sopa de letras… ¡y ganas estrellas!</span></button></section></main>`;
 }
 function buildTest(){
  let qs=[];
+ if(V.sub==='lengua')return lMix(10);
  if(V.sub==='mates'){
   const geoQ=pool(MC_MATES.filter(r=>!r[6]),10).map(mcFromRow);
   const extra={des:pool(MC_MATES.filter(r=>r[6]==='des'),3).map(mcFromRow),mul:pool(MC_MATES.filter(r=>r[6]==='mul'),2).map(mcFromRow)};
@@ -2884,6 +2959,7 @@ function listen(){
 /* ---------- escribir / operaciones ---------- */
 function startWrite(){
  const L=LV();
+ if(V.sub==='lengua'){W={kind:'txt',items:lItems('abrw',V.exam?5:8),i:0,score:0};resetW();go('write');return}
  if(V.sub==='mates'){
   const wt=D.tp.mates.filter(t=>t!=='geo'),tp=wt.length?wt:['mul','div'];
   W={kind:'op',items:rr(tp,8).flatMap(t=>exItem(t,L)||(t==='mul'?(Math.random()<.3?missWrite('×'):genOp(L,false,'×')):t==='div'?(Math.random()<.3?missWrite(':'):genOp(L,false,':')):t==='ser'||t==='hora'?missWrite(pick(['×',':'])):t==='sum'?genOp(L,false,pick(['+','−'])):t==='red'?genRound(L):t==='pro'?genProblem(L):desWrite(L))).slice(0,10)};
@@ -3072,7 +3148,7 @@ const ACT={
   const i=+el.dataset.i,q=T.qs[T.i],ok=i===q.a;if(ok)T.score++;if(V.mode==='path')pathTrack(ok);react(ok);mark(q.w,ok);if(V.exam&&V.exam.miss&&!ok&&q.w)V.exam.miss.push(q.w);if(q.sayAfter&&q.say)setTimeout(()=>speak(q.say),500);
   {const hb=$('.hintbtn');if(hb)hb.hidden=true}
   document.querySelectorAll('.opt').forEach((b,j)=>{b.disabled=true;if(j===q.a)b.classList.add('right');else if(j===i)b.classList.add('wrong')});
-  fbShow(ok?'ok':'bad',ok?pick(PRAISE):`La respuesta correcta es <b>${esc(q.opts[q.a])}</b>.`);
+  fbShow(ok?'ok':'bad',(ok?pick(PRAISE):`La respuesta correcta es <b>${esc(q.opts[q.a])}</b>.`)+(q.why?' '+esc(q.why):''));
   const nx=$('#next');nx.hidden=false;nx.textContent=T.i+1<T.qs.length?'Siguiente':'Ver resultado';nx.focus({preventScroll:true});
  },
  next:()=>{T.i++;if(T.i>=T.qs.length)finish(T.score,T.qs.length);else{renderTest();window.scrollTo(0,0)}},
