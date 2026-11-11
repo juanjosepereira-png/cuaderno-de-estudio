@@ -212,6 +212,9 @@ button{font:inherit;color:inherit}
 .ptitle{font-family:var(--f-display);font-weight:800;font-size:clamp(2rem,5vw,2.6rem);margin:0}
 .pcard{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 .pcard h2,.pcard label{font-family:var(--f-display);font-weight:800;font-size:1.3rem;margin:0}
+.psheet{align-items:stretch}.plist{margin:0;padding-left:1.6em;display:flex;flex-direction:column;gap:14px}.plist li{font-size:1.15rem;line-height:1.5}.plist li::marker{font-family:var(--f-display);font-weight:800;color:var(--accent)}
+.pst{display:block;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.pq{margin:2px 0;white-space:pre-line}.pex{margin:2px 0;color:var(--muted)}.psol{margin:4px 0 0;color:#2a8a5a}
+@media print{header,.top,.pcard:not(.psheet),.ptitle,.wrap>p.small,.actions{display:none!important}.psheet{border:none}}
 .pcard input{min-height:54px;border-radius:12px;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;font-size:1.2rem;padding:0 14px;width:min(320px,100%)}
 .avgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:100%;max-width:520px}
 .avopt{aspect-ratio:1;width:100%;max-width:120px;border-radius:50%;border:3px solid var(--line);background:var(--paper);padding:6px;cursor:pointer;transition:transform .15s}
@@ -2365,7 +2368,7 @@ function renderWho(){
  app.innerHTML=(cur?header('Cambiar de perfil','home'):'')+`<main class="wrap who"><h1 class="ptitle">${cur?'¿Quién va a estudiar ahora?':'¿Quién va a estudiar hoy?'}</h1>
  <section class="whogrid">${Object.keys(PEOPLE).map(pid=>{const d=peek(pid),p=PEOPLE[pid],st=Object.values(d.stars||{}).reduce((a,b)=>a+(+b||0),0),lt=st+(+d.spent||0);
   return `<button class="whob ${cur===pid?'cur':''}" data-act="pick" data-p="${pid}">${cur===pid?'<span class="whonow">Ahora</span>':''}<span class="whoav">${avatarSVG(d.avatar||p.avatar)}</span><b>${esc((d.name||'').trim()||p.name)}</b><span>${ICON.star} ${st} ${st===1?'estrella':'estrellas'} · ${levelInfo(lt).name}</span></button>`}).join('')}</section>
- <p class="small">Cada persona tiene sus propias estrellas, premios y personajes.</p><div class="actions"><button class="btn ghost small" data-act="parent">Zona de padres</button></div></main>`;
+ <p class="small">Cada persona tiene sus propias estrellas, premios y personajes.</p><div class="actions"><button class="btn ghost small" data-act="parent">Zona de padres</button><button class="btn ghost small" data-act="prof">Modo profesor</button></div></main>`;
 }
 
 /* ===== zona de padres: puntos negativos con PIN ===== */
@@ -2375,6 +2378,50 @@ const lockedNow=d=>((d||D).lockUntil||0)>Date.now();
 const lockDate=d=>new Date((d||D).lockUntil).toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'})+' a las '+new Date((d||D).lockUntil).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
 function editP(pid,fn){if(pid===PID){fn(D);save()}else{const d=peek(pid);d.stars=d.stars||{};fn(d);try{localStorage.setItem(PEOPLE[pid].key,JSON.stringify(d))}catch(e){}}}
 function penalize(d){d.stars=d.stars||{};let need=NEG_STARS;for(const k of Object.keys(d.stars).sort((a,b)=>(d.stars[b]||0)-(d.stars[a]||0))){const t=Math.min(need,d.stars[k]||0);d.stars[k]-=t;need-=t;if(!need)break}d.lockUntil=Date.now()+NEG_DAYS*864e5;d.penaltyNew=true;d.penalties=(d.penalties||0)+1;d.neg=0}
+
+/* ===== Modo profesor: fichas para copiar en papel ===== */
+const PROF_PIN='1989';
+const stripH=h=>String(h||'').replace(/<br\s*\/?>/g,'\n').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&amp;/g,'&').replace(/&quot;/g,'"').trim();
+const PROF_SKIP={ingles:['pic','listen']};
+function profGen(sub,k){
+ const prev=V.sub;V.sub=sub;let it=null;
+ try{for(let g=0;g<20;g++){
+  if(sub==='mates')it=mItems(k,1)[0];
+  else if(sub==='lengua')it=(LW[k]||LMC[k])();
+  else it=pItem(k,new Set());
+  if(!it)continue;
+  if(it.autoSay||it.imgOpts||/pscene/.test(it.img||''))continue;break}}finally{V.sub=prev}
+ return it;
+}
+function profFmt(it){
+ let q='',ex='',sol='';
+ if(it.p){q=it.p;sol=it.show||(it.ans||[])[0]||''}
+ else if(it.opts){q=String(it.q).replace(/^Repaso · /,'');const L='abcd';ex=it.opts.map((o,i)=>`${L[i]}) ${o}`).join('   ');sol=`${L[it.a]}) ${it.opts[it.a]}`}
+ else if(it.s==='txt'){q=it.kind==='pro'&&it.plain?it.plain:stripH(it.prompt);sol=String(it.show)+(it.unit&&!/[a-zA-Záéíóú€]/.test(String(it.show))?' '+it.unit:'')}
+ else if(it.s){q=it.lay?`Coloca y resuelve: ${it.lay}`:`Resuelve: ${it.ta} ${it.s} ${it.tb}`;sol=it.s===':'&&it.q!=null?`${nf(it.q)}${it.r?' (resto '+it.r+')':''}`:nf(it.res,it.rd||0)}
+ const txt=it.img?stripH(it.img):'';
+ return {sec:it.sec,q,ex,sol,txt};
+}
+function profMake(){const P=V.prof,S=P.sub==='mates'?MSTAGES:P.sub==='lengua'?LSTAGES:ISTAGES,ks=P.ks.length?P.ks:S.map(x=>x.k).filter(k=>!(PROF_SKIP[P.sub]||[]).includes(k));const out=[],seen=new Set();let g=0;
+ while(out.length<P.n&&g++<P.n*12){const k=ks[out.length%ks.length],it=profGen(P.sub,k);if(!it)continue;const f=profFmt(it);if(seen.has(f.q+f.txt))continue;seen.add(f.q+f.txt);f.st=S.find(x=>x.k===k).n;out.push(f)}
+ P.items=out;P.sol=false}
+function renderProf(){
+ if(!V.profOk){app.innerHTML=header('Modo profesor','home')+`<main class="wrap"><h1 class="ptitle">Modo profesor</h1>
+  <section class="pcard"><h2>Escribe el PIN</h2><p class="small">Para preparar fichas en papel con sus soluciones.</p>
+  <input id="ppin" type="password" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="····">
+  <button class="btn primary" data-act="profok">Entrar</button><p class="micst bad" id="ppinst"></p></section></main>`;setTimeout(()=>{const i=$('#ppin');if(i)i.focus()},50);return}
+ const P=V.prof=V.prof||{sub:'mates',ks:[],n:10,items:null,sol:false};
+ const S=P.sub==='mates'?MSTAGES:P.sub==='lengua'?LSTAGES:ISTAGES,skip=PROF_SKIP[P.sub]||[];
+ const list=P.items?`<section class="pcard psheet" id="psheet"><h2>Ficha de ${SUBJ[P.sub].name} · ${new Date().toLocaleDateString('es-ES')}</h2>
+  <ol class="plist">${P.items.map(f=>`<li><span class="pst">${esc(f.st)}</span>${f.txt?`<div class="readbox">${esc(f.txt)}</div>`:''}<p class="pq">${esc(f.q)}</p>${f.ex?`<p class="pex">${esc(f.ex)}</p>`:''}${P.sol?`<p class="psol">Solución: <b>${esc(f.sol)}</b></p>`:''}</li>`).join('')}</ol></section>`:'';
+ app.innerHTML=header('Modo profesor','home')+`<main class="wrap"><h1 class="ptitle">Modo profesor</h1>
+ <p class="small">Elige asignatura y apartados, genera la ficha y cópiala en un papel. Pulsa «Ver soluciones» para corregir.</p>
+ <section class="pcard"><h2>Asignatura</h2><div class="chips">${['mates','lengua','ingles'].map(x=>`<button class="chip ${P.sub===x?'on':''}" data-act="profsub" data-s="${x}">${SUBJ[x].name}</button>`).join('')}</div>
+ <h2>Apartados</h2><p class="small">Si no marcas ninguno, salen de todos.</p><div class="chips">${S.filter(x=>!skip.includes(x.k)).map(x=>`<button class="chip ${P.ks.includes(x.k)?'on':''}" data-act="profk" data-k="${x.k}">${esc(x.n)}</button>`).join('')}</div>
+ <h2>Número de ejercicios</h2><div class="chips">${[5,10,15,20].map(n=>`<button class="chip ${P.n===n?'on':''}" data-act="profn" data-n="${n}">${n}</button>`).join('')}</div>
+ <div class="actions"><button class="btn primary" data-act="profgo">${P.items?'Otra ficha':'Generar ficha'}</button>${P.items?`<button class="btn ghost" data-act="profsol">${P.sol?'Ocultar soluciones':'Ver soluciones'}</button><button class="btn ghost" data-act="profprint">Imprimir</button>`:''}</div></section>
+ ${list}</main>`;
+}
 function renderParent(){
  const pin=getPin();
  if(!V.pinOk){app.innerHTML=header('Zona de padres','home')+`<main class="wrap"><h1 class="ptitle">Zona de padres</h1>
@@ -2405,14 +2452,14 @@ function penaltyNotice(){if(!D.penaltyNew)return;D.penaltyNew=false;save();setTi
 
 /* ---------- estado y navegación ---------- */
 let V={view:'intro',sub:null,mode:null,res:null},T,C,W;
-function go(view,sub){if(V.view==='parent'&&view!=='parent')V.pinOk=false;if(CLEAN){try{CLEAN()}catch(e){}CLEAN=null}V.view=view;if(sub)V.sub=sub;render();window.scrollTo(0,0)}
+function go(view,sub){if(V.view==='parent'&&view!=='parent')V.pinOk=false;if(V.view==='prof'&&view!=='prof')V.profOk=false;if(CLEAN){try{CLEAN()}catch(e){}CLEAN=null}V.view=view;if(sub)V.sub=sub;render();window.scrollTo(0,0)}
 function render(){
- document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who','vales','parent'].includes(V.view)?'':V.sub;applyFav();
- ({parent:renderParent,sgames:renderSGames,sgame:renderSG,vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
+ document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who','vales','parent','prof'].includes(V.view)?'':V.sub;applyFav();
+ ({prof:renderProf,parent:renderParent,sgames:renderSGames,sgame:renderSG,vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
 }
 function header(title,back){
  const tot=totalStars();
- const chip=['home','subject','profile','stickers','prizes','vales','result','examres','over','parent'].includes(V.view);
+ const chip=['home','subject','profile','stickers','prizes','vales','result','examres','over','parent','prof'].includes(V.view);
  return `<header class="top"><div class="top-in">${back?`<button class="back" data-act="${back}" aria-label="Volver">${ICON.back}</button>`:''}<span class="top-title">${esc(title)}</span><span class="starcount" title="Estrellas conseguidas">${ICON.star}<b>${tot}</b></span>${chip?`<button class="whochip" data-act="who" aria-label="Cambiar de perfil. Ahora: ${esc(D.name.trim())}"><span class="wcav">${avatarSVG(D.avatar)}</span><span class="wcn">${esc(D.name.trim())}</span><svg class="wcsw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></button>`:''}</div></header>`;
 }
 const sayBtn=(t,label)=>('speechSynthesis' in window)?`<button class="say" data-act="say" data-t="${esc(t)}">${ICON.sound}<span>${label||'Escuchar'}</span></button>`:'';
@@ -2455,7 +2502,7 @@ function renderProfile(){
  <h2>Fondos con mis fotos</h2><p class="small">Elige fotos de la galería de la tablet. Se guardan solo en esta tablet y no se suben a internet. Cada foto se desbloquea por ${PHOTO_PRICE} ★.</p>
  <div class="bggrid">${myPhotos().map(ph=>{const own=(D.photosOwned||[]).includes(ph.id);return `<div class="phtile"><button class="bgopt ${D.bg===ph.id?'on':''} ${own?'':'locked'}" data-act="${own?'phset':'phbuy'}" data-id="${ph.id}"><span class="bgprev phprev" style="background-image:url(${ph.data})"></span>${own?(D.bg===ph.id?'Puesta':'Usar'):`<small>${PHOTO_PRICE} ★</small>`}</button><button class="phdel" data-act="phdel" data-id="${ph.id}" aria-label="Quitar foto">✕</button></div>`}).join('')}${myPhotos().length<PHOTO_MAX?`<label class="bgopt addph" for="phin"><span class="bgprev plus">+</span>Añadir foto</label>`:''}</div>
  <input id="phin" type="file" accept="image/*" hidden><p class="micst" id="phst"></p></section>
- <div class="actions two"><button class="btn ghost" data-act="parent">Zona de padres</button><button class="btn ghost" data-act="who">Cambiar de perfil</button><button class="btn primary" data-act="home">Listo</button></div></main>`;
+ <div class="actions two"><button class="btn ghost" data-act="parent">Zona de padres</button><button class="btn ghost" data-act="prof">Modo profesor</button><button class="btn ghost" data-act="who">Cambiar de perfil</button><button class="btn primary" data-act="home">Listo</button></div></main>`;
  const phin=$('#phin');if(phin)phin.addEventListener('change',()=>{const f=phin.files&&phin.files[0];if(f)addPhoto(f)});
  const nm=$('#nm');nm.addEventListener('input',()=>{D.name=nm.value;save()});
 }
@@ -3186,6 +3233,14 @@ const ACT={
  hint:()=>hintMenu(), hintgo:el=>hintGo(el.dataset.k),
  hinttr:el=>{if(totalStars()<HINT_PRICE)return hintMenu();spendStars(HINT_PRICE);save();const w=el.dataset.w;const m=$('#mdl');if(m)m.remove();showHint(`«${w}» significa «${trOf(w)}».`);speak(w)}, ptest:()=>{const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.mode='path';lives=MAXL;V.locked=false;pathStart(true)},
  parent:()=>{V.pinOk=false;go('parent')},
+ prof:()=>{V.profOk=false;go('prof')},
+ profok:()=>{const a=($('#ppin')||{}).value||'';if(a===PROF_PIN){V.profOk=true;renderProf()}else{$('#ppinst').textContent='PIN incorrecto.';sfx('bad')}},
+ profsub:el=>{const P=V.prof;P.sub=el.dataset.s;P.ks=[];P.items=null;renderProf()},
+ profk:el=>{const P=V.prof,k=el.dataset.k;P.ks=P.ks.includes(k)?P.ks.filter(x=>x!==k):[...P.ks,k];renderProf()},
+ profn:el=>{V.prof.n=+el.dataset.n;renderProf()},
+ profgo:()=>{profMake();renderProf();setTimeout(()=>{const e=$('#psheet');if(e)e.scrollIntoView({behavior:'smooth'})},60)},
+ profsol:()=>{V.prof.sol=!V.prof.sol;const y=window.scrollY;renderProf();window.scrollTo(0,y)},
+ profprint:()=>{try{window.print()}catch(e){}},
  pinok:()=>{const a=($('#pin1')||{}).value||'',b=$('#pin2'),st=$('#pinst'),pin=getPin();if(!/^\d{4}$/.test(a)){st.textContent='El PIN tiene que tener 4 números.';return}
   if(!pin){if(!b||b.value!==a){st.textContent='Los dos PIN no coinciden.';return}try{localStorage.setItem('cuaderno-pin',a)}catch(e){}V.pinOk=true;render();return}
   if(a!==pin){st.textContent='PIN incorrecto.';sfx('bad');return}V.pinOk=true;render()},
