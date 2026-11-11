@@ -2559,8 +2559,8 @@ function abrMC(){const [ab,full]=pick(ABR),oth=shuffle(ABR.filter(x=>x[1]!==full
  const w=[ab.replace(/\.$/,'')+(ab.length<4?'':''),noAcc(ab)!==ab?noAcc(ab):null,ABR_CAP.includes(ab)?ab.toLowerCase():null,oth[0][0],oth[1][0]].filter(x=>x&&x!==ab);
  return lQ(`¿Cuál es la abreviatura de «${full}»?`,ab,w,`Se escribe «${ab}»${/\.$/.test(ab)?', con punto al final':''}.`)}
 const abrNorm=x=>x.trim().replace(/\s+/g,'');
-function abrWrite(){
- const r=Math.random();
+function abrWrite(mode){
+ const r=mode==='w'?.25+Math.random()*.75:Math.random();
  if(r<.25){const X=pick(['de Canarias','Real','del Mar','de la Paz','Mayor','de San Juan','de Telde']),n=rnd(2,90),cp=pick(['35200','35210','35019','35100']),t=pick([[`Calle ${X}, número ${n}`,`C/ ${X}, núm. ${n}`],[`Avenida ${X}, número ${n}, izquierda`,`Avda. ${X}, núm. ${n}, izq.`],[`Plaza ${X}, número ${n}, derecha`,`Pl. ${X}, núm. ${n}, dcha.`],[`Glorieta ${X}, código postal ${cp}`,`gta. ${X}, C. P. ${cp}`]]);
   return {sec:'Escribe tus datos con abreviaturas',p:`Escribe con abreviaturas:\n${t[0]}`,ans:[t[1]],show:t[1],chk:raw=>{const a=abrNorm(raw).toLowerCase(),b=abrNorm(t[1]).toLowerCase();if(a===b)return true;if(noAcc(a)===noAcc(b))return 'Revisa las tildes: «núm.» lleva tilde, como «número».';if(a.replace(/\./g,'')===b.replace(/\./g,''))return 'Te falta algún punto. Casi todas las abreviaturas terminan en punto (menos C/).';return 'Cambia cada palabra larga por su abreviatura: calle → C/, avenida → Avda., plaza → Pl., número → núm., izquierda → izq., derecha → dcha., glorieta → gta., código postal → C. P.'},hint:'Calle → C/ · Avenida → Avda. · Plaza → Pl. · número → núm. · izquierda → izq. · derecha → dcha. · glorieta → gta. · código postal → C. P.'}}
  const [ab,full]=pick(ABR);
@@ -2621,14 +2621,14 @@ function concW(){
  if(Math.random()<.55){const right=`${x[3]} ${x[2]} ${x[4]}.`;return mkW('Concordancia',`Cambia «${x[0]}» por «${x[3]}» y escribe la oración entera:\n«${sbSent(x)}»`,right,`El verbo tiene que cambiar para concordar con «${x[3]}».`,a=>a.includes(' '+cmpTxt(x[1])+' ')||a.endsWith(' '+cmpTxt(x[1]))?`¡Cuidado! «${x[3]}» y «${x[1]}» no concuerdan. Cambia también el verbo.`:null)}
  const opts=shuffle([x[1],x[2]]);return mkW('Concordancia',`Escribe la forma del verbo que concuerda (${opts.join(' / ')}):\n«${x[0]} ___ ${x[4]}.»`,x[1],`El sujeto es «${x[0]}». ¿Es singular o plural?`,a=>a===cmpTxt(x[2])?`«${x[0]}» y «${x[2]}» no concuerdan en número.`:null);
 }
-const LW={abrw:abrWrite,enu:enuW,verbo:verboW,suj:sujW,conc:concW};
+const LW={abrmc:()=>abrWrite('w'),abrw:abrWrite,enu:enuW,verbo:verboW,suj:sujW,conc:concW};
 function lItemsW(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<300){const it=LW[k]();if(seen.has(it.p))continue;seen.add(it.p);out.push(it)}return out}
-const LMC={abrmc:abrMC,enu:enuMC,verbo:verboMC,suj:sujMC,conc:concMC};
+const LMC={enu:enuMC,verbo:verboMC,suj:sujMC,conc:concMC};
 function lItems(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<300){const it=k==='abrw'?abrWrite():LMC[k]();const key=(it.q||it.p)+(it.img||'');if(seen.has(key))continue;seen.add(key);out.push(it)}return out}
-const lMix=n=>{const ks=['abrmc','enu','verbo','suj','conc'];return shuffle(Array.from({length:n},(_,i)=>LMC[ks[i%ks.length]]()))};
+const lMix=n=>{const ks=['enu','verbo','suj','conc'];return shuffle(Array.from({length:n},(_,i)=>LMC[ks[i%ks.length]]()))};
 const LSTAGES=[
- {k:'abrmc',n:'Abreviaturas: relaciona',d:'Une cada abreviatura con su palabra entera.',mc:true},
- {k:'abrw',n:'Abreviaturas: escríbelas',d:'Escribe abreviaturas y tus datos con abreviaturas (C/, Avda., núm.…).'},
+ {k:'abrmc',n:'Abreviaturas',d:'Escribe la abreviatura de cada palabra, o la palabra entera de cada abreviatura.'},
+ {k:'abrw',n:'Abreviaturas y datos personales',d:'Escribe abreviaturas y tus datos con abreviaturas (C/, Avda., núm.…).'},
  {k:'enu',n:'Enunciados',d:'¿Oracional o no oracional? Separa las palabras del humo. Rondas de elegir y de escribir.',mc:true},
  {k:'verbo',n:'Busca el verbo',d:'Escribe el verbo: la palabra que indica la acción. ¡Todas las oraciones tienen uno!',mc:true},
  {k:'suj',n:'Sujeto y predicado',d:'Escribe el sujeto y el predicado. Localiza las oraciones en un texto.',mc:true},
@@ -2682,8 +2682,8 @@ function pathStart(test){pathStart0(test);const p=PTH();if(V.ptest||p.st>=STG().
  for(const i of pos){let it=null;try{it=stageItem(S[pick(prev)].k,used)}catch(e){}if(!it)continue;it=Object.assign({},it,{rev:true});if(V.view==='test')it.q='Repaso · '+it.q;else it.sec='Repaso · '+(it.sec||S[prev[0]].n);list[i]=it}}
 function pathStart0(test){
  const p=PTH(),done=p.st>=STG().length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
- if(V.sub==='lengua'){const k=done?null:LSTAGES[p.st].k,ttl=done?'Repaso para el examen':(V.ptest?'Prueba: ':'')+LSTAGES[p.st].n;p.rc=(p.rc||0)+1;const wr=k==='abrw'||(k!=='abrmc'&&(V.ptest||p.rc%2===1));
-  if(wr){const ks=Object.keys(LW);W={kind:'txt',title:ttl+(k&&k!=='abrw'?' (escribe)':''),items:done?Array.from({length:10},(_,i)=>LW[ks[i%ks.length]]()):lItemsW(k,10),i:0,score:0};resetW();go('write');return}T={qs:done?lMix(10):lItems(k,10),i:0,score:0,done:false};go('test');return}
+ if(V.sub==='lengua'){const k=done?null:LSTAGES[p.st].k,ttl=done?'Repaso para el examen':(V.ptest?'Prueba: ':'')+LSTAGES[p.st].n;p.rc=(p.rc||0)+1;const wr=k==='abrw'||k==='abrmc'||V.ptest||p.rc%2===1;
+  if(wr){const ks=Object.keys(LW);W={kind:'txt',title:ttl+(k&&!/^abr/.test(k)?' (escribe)':''),items:done?Array.from({length:10},(_,i)=>LW[ks[i%ks.length]]()):lItemsW(k,10),i:0,score:0};resetW();go('write');return}T={qs:done?lMix(10):lItems(k,10),i:0,score:0,done:false};go('test');return}
  if(V.sub==='mates'){W={kind:'op',title:done?'Ficha como el examen':(V.ptest?'Prueba: ':'')+MSTAGES[p.st].n,items:done?fichaItems():mItems(MSTAGES[p.st].k,10),i:0,score:0};resetW();go('write');return}
  if(!done&&STG()[p.st].mc){T={qs:Array.from({length:10},()=>pItem(STG()[p.st].k,used)),i:0,score:0,done:false};go('test');return}
  const ks=done?STG().filter(x=>!x.mc).map(x=>x.k):[STG()[p.st].k];
