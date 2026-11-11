@@ -213,7 +213,7 @@ button{font:inherit;color:inherit}
 .pcard{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:18px 20px;display:flex;flex-direction:column;gap:12px;align-items:flex-start}
 .pcard h2,.pcard label{font-family:var(--f-display);font-weight:800;font-size:1.3rem;margin:0}
 .psheet{align-items:stretch}.plist{margin:0;padding-left:1.6em;display:flex;flex-direction:column;gap:14px}.plist li{font-size:1.15rem;line-height:1.5}.plist li::marker{font-family:var(--f-display);font-weight:800;color:var(--accent)}
-.pst{display:block;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.pq{margin:2px 0;white-space:pre-line}.pex{margin:2px 0;color:var(--muted)}.psol{margin:4px 0 0;color:#2a8a5a}
+.pst{display:block;font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}.pq{margin:2px 0;white-space:pre-line}.pex{margin:2px 0;color:var(--muted)}.psol{margin:4px 0 0;color:#2a8a5a}.pexp{margin:4px 0 0;padding:10px 12px;border-radius:12px;background:color-mix(in srgb,var(--accent) 8%,var(--card));font-size:1.02rem;line-height:1.5}
 @media print{header,.top,.pcard:not(.psheet),.ptitle,.wrap>p.small,.actions{display:none!important}.psheet{border:none}}
 .pcard input{min-height:54px;border-radius:12px;border:2px solid var(--line);background:var(--paper);color:var(--ink);font:inherit;font-size:1.2rem;padding:0 14px;width:min(320px,100%)}
 .avgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;width:100%;max-width:520px}
@@ -2393,14 +2393,47 @@ function profGen(sub,k){
   if(it.autoSay||it.imgOpts||/pscene/.test(it.img||''))continue;break}}finally{V.sub=prev}
  return it;
 }
+
+const PNAME={U:'unidades',D:'decenas',C:'centenas',UM:'unidades de millar',DM:'decenas de millar',CM:'centenas de millar'};
+function expLeer(n){const m=Math.floor(n/1000),r=n%1000;return m?`Se lee por trozos. Primero lo que va antes del punto, los miles: ${m} → «${numWords(m*1000)}». Después lo que va detrás del punto: ${String(r).padStart(3,'0')} → «${r?w999(r):'nada'}». Todo junto: «${numWords(n)}».`:`Se lee «${numWords(n)}».`}
+function expDes(n,val){const t=terms(n);return 'Cada cifra tiene su sitio. Contando desde la derecha: unidades (U), decenas (D), centenas (C), unidades de millar (UM), decenas de millar (DM). '+(val?'Cada cifra vale según su sitio: ':'En '+nf(n)+': ')+t.map(([d,i])=>val?`el ${d} de las ${PNAME[ABBR[i]]} vale ${nf(d*PV[i])}`:`${d} ${ABBR[i]} (${PNAME[ABBR[i]]})`).join(', ')+'. Los ceros no se escriben.'}
+function expRed(V,q){const d=Math.floor(V/(q/10))%10,r=Math.round(V/q)*q,up=d>=5;return `Redondear a ${PLACEPL[q]} es buscar el número «redondo» más cercano. Miramos la cifra de su derecha, la de las ${PLACE[q/10]}: es un ${d}. ${up?'Como es 5 o más, la cifra de '+PLACEPL[q].replace('las ','las ')+' sube uno':'Como es menor que 5, la cifra de '+PLACEPL[q]+' se queda igual'} y todas las de detrás se cambian por 0: ${nf(r)}.`}
+function expCol(o){const A=+o.ta,B=+o.tb,plus=o.s==='+',names=['Unidades','Decenas','Centenas','Unidades de millar','Decenas de millar','Centenas de millar'];let a=A,b=B,k=0,i=0;const st=[];
+ while(a||b||k&&plus){const x=a%10,y=b%10;if(plus){const t=x+y+k;st.push(`${names[i]}: ${x} + ${y}${k?' + 1 que me llevaba':''} = ${t}${t>9?`, escribo ${t%10} y me llevo 1`:''}`);k=t>9?1:0}else{const yy=y+k;if(!a&&!yy)break;if(x>=yy){st.push(`${names[i]}: ${x} − ${y}${k?' (+1 que me llevaba = '+yy+')':''} = ${x-yy}`);k=0}else{st.push(`${names[i]}: ${x} − ${yy} no se puede, así que pongo un 1 delante: ${x+10} − ${yy} = ${x+10-yy}, y me llevo 1`);k=1}}a=Math.floor(a/10);b=Math.floor(b/10);i++}
+ return `Se colocan los números uno debajo del otro: unidades debajo de unidades, decenas debajo de decenas… (alineados por la derecha). Después se ${plus?'suma':'resta'} de derecha a izquierda. `+st.join('. ')+`. Resultado: ${nf(o.res)}.`}
+function expComb(e){let t=e.replace(/\(/g,'( ').replace(/\)/g,' )').split(' ').filter(Boolean);const out=[],str=()=>t.join(' ').replace(/\( /g,'(').replace(/ \)/g,')');
+ const ev=(a,o,b)=>o==='+'?a+b:o==='−'?a-b:o==='×'?a*b:a/b;
+ const opName={'+':'suma','−':'resta','×':'multiplicación',':':'división'};
+ while(t.includes('(')){const i=t.lastIndexOf('('),j=t.indexOf(')',i);let inner=t.slice(i+1,j);while(inner.length>1){const m=inner.findIndex(x=>x==='×'||x===':');const p=m>0?m:1;const v=ev(+inner[p-1],inner[p],+inner[p+1]);inner.splice(p-1,3,String(v))}out.push(`Primero el paréntesis: ${t.slice(i+1,j).join(' ')} = ${inner[0]}`);t.splice(i,j-i+1,inner[0]);out[out.length-1]+=` → ${str()}`}
+ while(t.some(x=>x==='×'||x===':')){const p=t.findIndex(x=>x==='×'||x===':');const v=ev(+t[p-1],t[p],+t[p+1]);out.push(`Ahora la ${opName[t[p]]}: ${t[p-1]} ${t[p]} ${t[p+1]} = ${v}`);t.splice(p-1,3,String(v));out[out.length-1]+=` → ${str()}`}
+ while(t.length>1){const v=ev(+t[0],t[1],+t[2]);out.push(`De izquierda a derecha: ${t[0]} ${t[1]} ${t[2]} = ${v}`);t.splice(0,3,String(v))}
+ return 'El orden es: 1.º paréntesis, 2.º multiplicaciones y divisiones, 3.º sumas y restas de izquierda a derecha. '+out.join('. ')+'. Resultado: '+t[0]+'.'}
+const OPEXP={'+':'Juntamos o añadimos cantidades, por eso es una SUMA.','−':'Nos preguntan lo que falta o lo que queda, así que quitamos: es una RESTA.','×':'Se repite la misma cantidad varias veces, por eso es una MULTIPLICACIÓN.',':':'Se reparte en partes iguales, por eso es una DIVISIÓN.'};
+function profExp(it,sol){
+ if(it.exp)return it.exp;
+ if(it.why)return it.why;
+ if(it.sc&&it.V!=null&&it.q)return expRed(it.V,it.q);
+ if(it.lay)return expCol(it);
+ if(it.sec==='Operaciones combinadas'&&it.plain)return expComb(it.plain);
+ if(it.opq)return OPEXP[it.opq]+' '+String(it.show).replace(/^[^:]*: /,'Operación: ')+(it.rd?'. Para pasar de metros a kilómetros se divide entre 1.000: la coma se pone tres cifras a la izquierda (1.000 m = 1 km).':'.');
+ if(it.sec==='¿Cómo se leen estos números?'){const n=it.res!=null?it.res:+String(it.p).match(/([\d.]+)$/)[1].replace(/\./g,'');return expLeer(n)}
+ if(/según (la|el) (POSICIÓN|VALOR)/.test(it.p||'')){const n=+it.p.match(/Descompón ([\d.]+)/)[1].replace(/\./g,'');return expDes(n,/VALOR/.test(it.p))}
+ const solT=String(sol).replace(/^[a-d]\) /,'').trim(),w=U1by(solT.toLowerCase())||solT.toLowerCase().replace(/[.,!?]/g,'').split(' ').map(x=>U1by(x)).find(Boolean);
+ if(w){const h=stripH(it.hint||'').replace(/^Pista: ?/,''),useH=h&&!/significa|empieza por/.test(h);const full=it.say&&it.say!==solT?` La frase completa es: «${it.say.replace(/\.$/,'')}».`:'';
+  return `«${w.en}» significa «${w.es}».`+full+(/ is | are /.test(' '+solT+' ')?' En inglés se dice: quién + is/are + cómo es (adjetivo).':'')+(useH?' '+h.charAt(0).toUpperCase()+h.slice(1):'')}
+ const h=stripH(it.hint||'').replace(/^Pista: ?/,'');if(h)return h;
+ const ans=String(sol).replace(/^[a-d]\) /,'').trim(),q=String(it.q||it.p||''),filled=/\([^)]*\)/.test(q)?q.replace(/^Read and circle: /,'').replace(/\([^)]*\)/,ans):'';
+ let g='';if(/^(who|where|which|what|when)$/i.test(ans))g='«who» se usa para personas, «where» para lugares y «which» o «what» para cosas.';else if(/er$/.test(ans)&&/than/.test(q))g='Para comparar dos cosas se añade «-er» al adjetivo y después «than»: bigger than, quieter than…';else if(/^(is|are|am)$/.test(ans))g='Con una persona o cosa usamos «is»; con varias, «are»; con «I», «am».';
+ return (filled?`La frase correcta es: «${filled.trim().replace(/\.$/,'')}». `:`La respuesta correcta es «${ans}». `)+g;
+}
 function profFmt(it){
  let q='',ex='',sol='';
  if(it.p){q=it.p;sol=it.show||(it.ans||[])[0]||''}
  else if(it.opts){q=String(it.q).replace(/^Repaso · /,'');const L='abcd';ex=it.opts.map((o,i)=>`${L[i]}) ${o}`).join('   ');sol=`${L[it.a]}) ${it.opts[it.a]}`}
  else if(it.s==='txt'){q=it.kind==='pro'&&it.plain?it.plain:stripH(it.prompt);sol=String(it.show)+(it.unit&&!/[a-zA-Záéíóú€]/.test(String(it.show))?' '+it.unit:'')}
  else if(it.s){q=it.lay?`Coloca y resuelve: ${it.lay}`:`Resuelve: ${it.ta} ${it.s} ${it.tb}`;sol=it.s===':'&&it.q!=null?`${nf(it.q)}${it.r?' (resto '+it.r+')':''}`:nf(it.res,it.rd||0)}
- const txt=it.img?stripH(it.img):'';
- return {sec:it.sec,q,ex,sol,txt};
+ const txt=it.img?stripH(it.img):'';let exp='';try{exp=profExp(it,sol)}catch(e){exp=stripH(it.hint||'')}
+ return {sec:it.sec,q,ex,sol,txt,exp};
 }
 function profMake(){const P=V.prof,S=P.sub==='mates'?MSTAGES:P.sub==='lengua'?LSTAGES:ISTAGES,ks=P.ks.length?P.ks:S.map(x=>x.k).filter(k=>!(PROF_SKIP[P.sub]||[]).includes(k));const out=[],seen=new Set();let g=0;
  while(out.length<P.n&&g++<P.n*12){const k=ks[out.length%ks.length],it=profGen(P.sub,k);if(!it)continue;const f=profFmt(it);if(seen.has(f.q+f.txt))continue;seen.add(f.q+f.txt);f.st=S.find(x=>x.k===k).n;out.push(f)}
@@ -2413,13 +2446,13 @@ function renderProf(){
  const P=V.prof=V.prof||{sub:'mates',ks:[],n:10,items:null,sol:false};
  const S=P.sub==='mates'?MSTAGES:P.sub==='lengua'?LSTAGES:ISTAGES,skip=PROF_SKIP[P.sub]||[];
  const list=P.items?`<section class="pcard psheet" id="psheet"><h2>Ficha de ${SUBJ[P.sub].name} · ${new Date().toLocaleDateString('es-ES')}</h2>
-  <ol class="plist">${P.items.map(f=>`<li><span class="pst">${esc(f.st)}</span>${f.txt?`<div class="readbox">${esc(f.txt)}</div>`:''}<p class="pq">${esc(f.q)}</p>${f.ex?`<p class="pex">${esc(f.ex)}</p>`:''}${P.sol?`<p class="psol">Solución: <b>${esc(f.sol)}</b></p>`:''}</li>`).join('')}</ol></section>`:'';
+  <ol class="plist">${P.items.map(f=>`<li><span class="pst">${esc(f.st)}</span>${f.txt?`<div class="readbox">${esc(f.txt)}</div>`:''}<p class="pq">${esc(f.q)}</p>${f.ex?`<p class="pex">${esc(f.ex)}</p>`:''}${P.sol?`<p class="psol">Solución: <b>${esc(f.sol)}</b></p>${f.exp?`<p class="pexp"><b>Cómo explicárselo:</b> ${esc(f.exp)}</p>`:''}`:''}</li>`).join('')}</ol></section>`:'';
  app.innerHTML=header('Modo profesor','home')+`<main class="wrap"><h1 class="ptitle">Modo profesor</h1>
  <p class="small">Elige asignatura y apartados, genera la ficha y cópiala en un papel. Pulsa «Ver soluciones» para corregir.</p>
  <section class="pcard"><h2>Asignatura</h2><div class="chips">${['mates','lengua','ingles'].map(x=>`<button class="chip ${P.sub===x?'on':''}" data-act="profsub" data-s="${x}">${SUBJ[x].name}</button>`).join('')}</div>
  <h2>Apartados</h2><p class="small">Si no marcas ninguno, salen de todos.</p><div class="chips">${S.filter(x=>!skip.includes(x.k)).map(x=>`<button class="chip ${P.ks.includes(x.k)?'on':''}" data-act="profk" data-k="${x.k}">${esc(x.n)}</button>`).join('')}</div>
  <h2>Número de ejercicios</h2><div class="chips">${[5,10,15,20].map(n=>`<button class="chip ${P.n===n?'on':''}" data-act="profn" data-n="${n}">${n}</button>`).join('')}</div>
- <div class="actions"><button class="btn primary" data-act="profgo">${P.items?'Otra ficha':'Generar ficha'}</button>${P.items?`<button class="btn ghost" data-act="profsol">${P.sol?'Ocultar soluciones':'Ver soluciones'}</button><button class="btn ghost" data-act="profprint">Imprimir</button>`:''}</div></section>
+ <div class="actions"><button class="btn primary" data-act="profgo">${P.items?'Otra ficha':'Generar ficha'}</button>${P.items?`<button class="btn ghost" data-act="profsol">${P.sol?'Ocultar soluciones':'Ver soluciones y explicaciones'}</button><button class="btn ghost" data-act="profprint">Imprimir</button>`:''}</div></section>
  ${list}</main>`;
 }
 function renderParent(){
@@ -2609,10 +2642,10 @@ const abrNorm=x=>x.trim().replace(/\s+/g,'');
 function abrWrite(mode){
  const r=mode==='w'?.25+Math.random()*.75:Math.random();
  if(r<.25){const X=pick(['de Canarias','Real','del Mar','de la Paz','Mayor','de San Juan','de Telde']),n=rnd(2,90),cp=pick(['35200','35210','35019','35100']),t=pick([[`Calle ${X}, número ${n}`,`C/ ${X}, núm. ${n}`],[`Avenida ${X}, número ${n}, izquierda`,`Avda. ${X}, núm. ${n}, izq.`],[`Plaza ${X}, número ${n}, derecha`,`Pl. ${X}, núm. ${n}, dcha.`],[`Glorieta ${X}, código postal ${cp}`,`gta. ${X}, C. P. ${cp}`]]);
-  return {sec:'Escribe tus datos con abreviaturas',p:`Escribe con abreviaturas:\n${t[0]}`,ans:[t[1]],show:t[1],chk:raw=>{const a=abrNorm(raw).toLowerCase(),b=abrNorm(t[1]).toLowerCase();if(a===b)return true;if(noAcc(a)===noAcc(b))return 'Revisa las tildes: «núm.» lleva tilde, como «número».';if(a.replace(/\./g,'')===b.replace(/\./g,''))return 'Te falta algún punto. Casi todas las abreviaturas terminan en punto (menos C/).';return 'Cambia cada palabra larga por su abreviatura: calle → C/, avenida → Avda., plaza → Pl., número → núm., izquierda → izq., derecha → dcha., glorieta → gta., código postal → C. P.'},hint:'Calle → C/ · Avenida → Avda. · Plaza → Pl. · número → núm. · izquierda → izq. · derecha → dcha. · glorieta → gta. · código postal → C. P.'}}
+  return {sec:'Escribe tus datos con abreviaturas',p:`Escribe con abreviaturas:\n${t[0]}`,ans:[t[1]],show:t[1],exp:'Cambiamos cada palabra larga por su abreviatura: calle → C/, avenida → Avda., plaza → Pl., número → núm., izquierda → izq., derecha → dcha., glorieta → gta., código postal → C. P. Los nombres de las calles y los números se dejan igual.',chk:raw=>{const a=abrNorm(raw).toLowerCase(),b=abrNorm(t[1]).toLowerCase();if(a===b)return true;if(noAcc(a)===noAcc(b))return 'Revisa las tildes: «núm.» lleva tilde, como «número».';if(a.replace(/\./g,'')===b.replace(/\./g,''))return 'Te falta algún punto. Casi todas las abreviaturas terminan en punto (menos C/).';return 'Cambia cada palabra larga por su abreviatura: calle → C/, avenida → Avda., plaza → Pl., número → núm., izquierda → izq., derecha → dcha., glorieta → gta., código postal → C. P.'},hint:'Calle → C/ · Avenida → Avda. · Plaza → Pl. · número → núm. · izquierda → izq. · derecha → dcha. · glorieta → gta. · código postal → C. P.'}}
  const [ab,full]=pick(ABR);
- if(r<.6)return {sec:'Abreviaturas',p:`Escribe la abreviatura de «${full}»`,ans:[ab],show:abrOf(full).join(' o '),chk:raw=>{const a=abrNorm(raw);for(const o of abrOf(full)){const c=abrNorm(o);if(a===c||(!ABR_CAP.includes(o)&&a.toLowerCase()===c.toLowerCase()))return true}const b=abrNorm(ab);if(a.toLowerCase()===b.toLowerCase())return `«${ab}» empieza con mayúscula.`;if(noAcc(a.toLowerCase())===noAcc(b.toLowerCase()))return `Revisa la tilde: «${ab}» la lleva, igual que «${full}».`;if(a.toLowerCase()+'.'===b.toLowerCase())return 'Te falta el punto del final.';return `Pista: empieza por «${ab[0]}» y tiene ${ab.replace(/[ .\/]/g,'').length} letras.`},hint:`Empieza por «${ab[0]}».`};
- return {sec:'Abreviaturas',p:`¿Qué palabra entera es «${ab}»? Escríbela.`,ans:[full],show:full,lax:true,hint:`Empieza por «${full[0]}».`};
+ if(r<.6)return {sec:'Abreviaturas',p:`Escribe la abreviatura de «${full}»`,ans:[ab],show:abrOf(full).join(' o '),exp:`Una abreviatura es una forma corta de escribir una palabra. «${full}» se abrevia «${abrOf(full).join('» o «')}»${/\.$/.test(ab)?': se escriben algunas letras de la palabra y se pone un punto al final':''}${ABR_CAP.includes(ab)?'. Va con mayúscula porque es un título de una persona':''}${/[áéíóú]/.test(ab)?'. Lleva tilde porque la palabra entera la lleva en esa letra':''}.`,chk:raw=>{const a=abrNorm(raw);for(const o of abrOf(full)){const c=abrNorm(o);if(a===c||(!ABR_CAP.includes(o)&&a.toLowerCase()===c.toLowerCase()))return true}const b=abrNorm(ab);if(a.toLowerCase()===b.toLowerCase())return `«${ab}» empieza con mayúscula.`;if(noAcc(a.toLowerCase())===noAcc(b.toLowerCase()))return `Revisa la tilde: «${ab}» la lleva, igual que «${full}».`;if(a.toLowerCase()+'.'===b.toLowerCase())return 'Te falta el punto del final.';return `Pista: empieza por «${ab[0]}» y tiene ${ab.replace(/[ .\/]/g,'').length} letras.`},hint:`Empieza por «${ab[0]}».`};
+ return {sec:'Abreviaturas',p:`¿Qué palabra entera es «${ab}»? Escríbela.`,ans:[full],show:full,lax:true,exp:`«${ab}» es la forma corta (la abreviatura) de «${full}». Fíjate en que empiezan por las mismas letras.`,hint:`Empieza por «${full[0]}».`};
 }
 function enuMC(){
  const k=rnd(0,9);
@@ -2648,25 +2681,26 @@ function concMC(){
 }
 
 const cmpTxt=a=>a.toLowerCase().replace(/[¡!¿?.,«»"]/g,'').replace(/\s+/g,' ').trim();
-function mkW(sec,p,right,hint,extra){return {sec,p,ans:[right],show:right,hint,chk:raw=>{const a=cmpTxt(raw),b=cmpTxt(right);if(!a)return 'Escribe tu respuesta.';if(a===b)return true;if(noAcc(a)===noAcc(b))return 'acc';return (extra&&extra(a))||hint}}}
+function mkW(sec,p,right,hint,extra,exp){return {sec,p,ans:[right],show:right,hint,exp,chk:raw=>{const a=cmpTxt(raw),b=cmpTxt(right);if(!a)return 'Escribe tu respuesta.';if(a===b)return true;if(noAcc(a)===noAcc(b))return 'acc';return (extra&&extra(a))||hint}}}
 function enuW(){
  const r=rnd(0,2),isNo=Math.random()<.5,t=isNo?pick(NOOR):pick(OREX.filter(x=>!x[1].includes(' '))),txt=isNo?t:t[0];
- if(r===0){const words=txt.replace(/[¡!¿?.,]/g,'').toLowerCase().split(' ');return mkW('Enunciados',`Separa las palabras del humo y escríbelas bien:\n«${words.join('')}»`,words.join(' '),`Busca dónde termina cada palabra. Son ${words.length} palabras.`)}
- if(r===1)return mkW('Enunciados',`Si este enunciado tiene verbo, escríbelo. Si no tiene verbo, escribe «no tiene».\n«${txt}»`,isNo?'no tiene':t[1],isNo?'Busca una palabra que indique una acción. ¿La hay?':'Busca la palabra que indica la acción.',a=>isNo?null:a==='no tiene'?'Sí tiene verbo. Busca la palabra que indica una acción.':null);
- return mkW('Enunciados',`¿Es oracional o no oracional? Escribe «oracional» o «no oracional».\n«${txt}»`,isNo?'no oracional':'oracional','Si tiene verbo, es oracional. Si no tiene verbo, es no oracional.',a=>a.replace(/^enunciado /,'')===(isNo?'no oracional':'oracional')||(!isNo&&a==='oracion')?null:null);
+ if(r===0){const words=txt.replace(/[¡!¿?.,]/g,'').toLowerCase().split(' ');return mkW('Enunciados',`Separa las palabras del humo y escríbelas bien:\n«${words.join('')}»`,words.join(' '),`Busca dónde termina cada palabra. Son ${words.length} palabras.`,null,`Leemos despacio buscando palabras que conocemos. Son ${words.length} palabras: ${words.join(' / ')}. Es «${txt}», un enunciado ${isNo?'no oracional, porque no tiene verbo':'oracional, porque tiene verbo («'+t[1]+'»)'}.`)}
+ if(r===1)return mkW('Enunciados',`Si este enunciado tiene verbo, escríbelo. Si no tiene verbo, escribe «no tiene».\n«${txt}»`,isNo?'no tiene':t[1],isNo?'Busca una palabra que indique una acción. ¿La hay?':'Busca la palabra que indica la acción.',a=>isNo?null:a==='no tiene'?'Sí tiene verbo. Busca la palabra que indica una acción.':null,isNo?`«${txt}» no tiene ninguna palabra que diga una acción (algo que se hace), así que no tiene verbo: es un enunciado no oracional.`:`El verbo es la palabra que dice la acción: «${t[1]}». Como tiene verbo, es una oración.`);
+ return mkW('Enunciados',`¿Es oracional o no oracional? Escribe «oracional» o «no oracional».\n«${txt}»`,isNo?'no oracional':'oracional','Si tiene verbo, es oracional. Si no tiene verbo, es no oracional.',null,isNo?`Buscamos el verbo y no hay ninguno. Sin verbo es un enunciado NO oracional, como «¡Hola!» o «Muchas gracias».`:`Tiene verbo («${t[1]}»). Si tiene verbo, es un enunciado oracional u oración.`);
 }
 function verboW(){const r=Math.random();let t,v,su=null;if(r<.7){const x=pick(SB);t=sbSent(x);v=x[1];su=x[0]}else if(r<.85){const x=pick(SBI);t=x[0];v=x[2];su=x[1]}else{[t,v]=pick(OREX.filter(x=>!x[1].includes(' ')))}
- return mkW('Busca el verbo',`Escribe el verbo de esta oración:\n«${t}»`,v,'El verbo es la palabra que indica la acción: ¿qué se hace?',a=>su&&a===cmpTxt(su)?'Eso es el sujeto. El verbo es la palabra que indica la acción.':a.split(' ').length>1?'Escribe solo una palabra: el verbo.':null)}
+ return mkW('Busca el verbo',`Escribe el verbo de esta oración:\n«${t}»`,v,'El verbo es la palabra que indica la acción: ¿qué se hace?',a=>su&&a===cmpTxt(su)?'Eso es el sujeto. El verbo es la palabra que indica la acción.':a.split(' ').length>1?'Escribe solo una palabra: el verbo.':null,`Preguntamos: ¿qué se hace? → «${v}». Esa es la acción, el verbo. Un truco: si cambias el tiempo (ayer, mañana), la palabra que cambia es el verbo.`)}
+const qn=x=>/^(los|las|mis|tus|sus)\b/i.test(x)||/ y /.test(x)?'quiénes':'quién';
 function sujW(){
  const r=rnd(0,9);
- if(r<5){const x=pick(SB),t=sbSent(x);return mkW('Sujeto y predicado',`Escribe el SUJETO de esta oración:\n«${t}»`,x[0],`Primero busca el verbo («${x[1]}»). Después pregunta: ¿quién ${x[1]}?`,a=>a===cmpTxt(sbPred(x))?'Eso es el predicado. El sujeto es quien hace la acción.':a===cmpTxt(x[1])?'Eso es el verbo. Pregunta: ¿quién '+x[1]+'?':a===cmpTxt(x[5]||'-')?`«${x[5]}» no hace la acción. Pregunta: ¿quién ${x[1]}?`:null)}
- if(r<8){const x=pick(SB),t=sbSent(x);return mkW('Sujeto y predicado',`Escribe el PREDICADO de esta oración:\n«${t}»`,sbPred(x),`El sujeto es «${x[0]}». Todo lo demás es el predicado.`,a=>a===cmpTxt(x[0])?'Eso es el sujeto. El predicado es todo lo demás.':a===cmpTxt(x[4])?'Casi: el verbo también forma parte del predicado.':null)}
- const x=pick(SBI.filter(y=>y[1]));return mkW('Sujeto y predicado',`¡Ojo, el sujeto no va al principio! Escribe el SUJETO:\n«${x[0]}»`,x[1],`El verbo es «${x[2]}». Pregunta: ¿quién ${x[2]}?`);
+ if(r<5){const x=pick(SB),t=sbSent(x);return mkW('Sujeto y predicado',`Escribe el SUJETO de esta oración:\n«${t}»`,x[0],`Primero busca el verbo («${x[1]}»). Después pregunta: ¿${qn(x[0])} ${x[1]}?`,a=>a===cmpTxt(sbPred(x))?'Eso es el predicado. El sujeto es quien hace la acción.':a===cmpTxt(x[1])?'Eso es el verbo. Pregunta: ¿'+qn(x[0])+' '+x[1]+'?':a===cmpTxt(x[5]||'-')?`«${x[5]}» no hace la acción. Pregunta: ¿${qn(x[0])} ${x[1]}?`:null,`1.º Buscamos el verbo: «${x[1]}». 2.º Preguntamos ¿${qn(x[0])} ${x[1]}? → «${x[0]}». Ese es el sujeto. Para comprobarlo, cambia a ${/s$/.test(x[0].split(' ')[0])||/ y /.test(x[0])?'singular':'plural'}: si cambias el sujeto, el verbo también cambia${x[3]?` («${x[3]} ${x[2]}»)`:''}.`)}
+ if(r<8){const x=pick(SB),t=sbSent(x);return mkW('Sujeto y predicado',`Escribe el PREDICADO de esta oración:\n«${t}»`,sbPred(x),`El sujeto es «${x[0]}». Todo lo demás es el predicado.`,a=>a===cmpTxt(x[0])?'Eso es el sujeto. El predicado es todo lo demás.':a===cmpTxt(x[4])?'Casi: el verbo también forma parte del predicado.':null,`1.º Verbo: «${x[1]}». 2.º Sujeto (¿${qn(x[0])} ${x[1]}?): «${x[0]}». 3.º Todo lo que NO es el sujeto es el predicado: «${sbPred(x)}». ¡El verbo siempre va en el predicado!`)}
+ const x=pick(SBI.filter(y=>y[1]));return mkW('Sujeto y predicado',`¡Ojo, el sujeto no va al principio! Escribe el SUJETO:\n«${x[0]}»`,x[1],`El verbo es «${x[2]}». Pregunta: ¿${qn(x[1])} ${x[2]}?`,null,`El sujeto no siempre va al principio. Verbo: «${x[2]}». ¿Quién ${x[2]}? → «${x[1]}». Ese es el sujeto, aunque esté al final.`);
 }
 function concW(){
  const C=SB.filter(x=>x[2]&&x[3]),x=pick(C);
- if(Math.random()<.55){const right=`${x[3]} ${x[2]} ${x[4]}.`;return mkW('Concordancia',`Cambia «${x[0]}» por «${x[3]}» y escribe la oración entera:\n«${sbSent(x)}»`,right,`El verbo tiene que cambiar para concordar con «${x[3]}».`,a=>a.includes(' '+cmpTxt(x[1])+' ')||a.endsWith(' '+cmpTxt(x[1]))?`¡Cuidado! «${x[3]}» y «${x[1]}» no concuerdan. Cambia también el verbo.`:null)}
- const opts=shuffle([x[1],x[2]]);return mkW('Concordancia',`Escribe la forma del verbo que concuerda (${opts.join(' / ')}):\n«${x[0]} ___ ${x[4]}.»`,x[1],`El sujeto es «${x[0]}». ¿Es singular o plural?`,a=>a===cmpTxt(x[2])?`«${x[0]}» y «${x[2]}» no concuerdan en número.`:null);
+ if(Math.random()<.55){const right=`${x[3]} ${x[2]} ${x[4]}.`;return mkW('Concordancia',`Cambia «${x[0]}» por «${x[3]}» y escribe la oración entera:\n«${sbSent(x)}»`,right,`El verbo tiene que cambiar para concordar con «${x[3]}».`,a=>a.includes(' '+cmpTxt(x[1])+' ')||a.endsWith(' '+cmpTxt(x[1]))?`¡Cuidado! «${x[3]}» y «${x[1]}» no concuerdan. Cambia también el verbo.`:null,`El sujeto y el verbo concuerdan: si uno es singular (uno), el otro también; si uno es plural (varios), el otro también. Al cambiar «${x[0]}» por «${x[3]}», el verbo «${x[1]}» pasa a «${x[2]}». El resto de la oración se queda igual.`)}
+ const opts=shuffle([x[1],x[2]]);return mkW('Concordancia',`Escribe la forma del verbo que concuerda (${opts.join(' / ')}):\n«${x[0]} ___ ${x[4]}.»`,x[1],`El sujeto es «${x[0]}». ¿Es singular o plural?`,a=>a===cmpTxt(x[2])?`«${x[0]}» y «${x[2]}» no concuerdan en número.`:null,`«${x[0]}» es ${/s$/.test(x[0].split(' ')[0])||/ y /.test(x[0])?'plural (varios)':'singular (uno)'}, así que el verbo también tiene que ser ${/s$/.test(x[0].split(' ')[0])||/ y /.test(x[0])?'plural':'singular'}: «${x[1]}».`);
 }
 const LW={abrmc:()=>abrWrite('w'),abrw:abrWrite,enu:enuW,verbo:verboW,suj:sujW,conc:concW};
 function lItemsW(k,n){const out=[],seen=new Set();let g=0;while(out.length<n&&g++<300){const it=LW[k]();if(seen.has(it.p))continue;seen.add(it.p);out.push(it)}return out}
