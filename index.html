@@ -311,6 +311,21 @@ button{font:inherit;color:inherit}
 .opt.wrong{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--card))}
 .opt.wrong .letter{background:var(--bad);color:var(--card)}
 .fb{padding:14px 18px;border-radius:14px;font-weight:700;font-size:1.12rem}
+.projbtn{margin-top:14px;background:linear-gradient(135deg,#3C3B6E,#5a59a0);color:#fff}.projbtn .pflagic{width:64px;flex:0 0 64px;background:none;box-shadow:none}.pflagic svg{width:64px;height:auto;border-radius:6px;display:block}
+.projhero{display:flex;gap:18px;align-items:center;background:var(--card);border:2px solid var(--line);border-radius:22px;padding:18px}.projhero>svg{width:140px;flex:0 0 140px;border-radius:10px;box-shadow:0 3px 10px #0002}.projhero h1{margin:0 0 6px;font-family:var(--f-display);font-size:1.6rem}.projhero p{margin:0 0 8px}
+@media (max-width:560px){.projhero{flex-direction:column;text-align:center}}
+.pstops{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0}
+.pstop{display:flex;flex-direction:column;align-items:flex-start;gap:4px;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:20px;padding:14px 16px;cursor:pointer;color:var(--ink);font:inherit}.pstop b{font-family:var(--f-display);font-size:1.2rem}.pstop .pic{font-size:2rem;line-height:1}.pnum{font-size:.8rem;font-weight:800;color:var(--accent);letter-spacing:.05em}.pstop.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--card))}
+.ppic{max-width:520px;margin:0 auto 14px;text-align:center}.ppic svg{width:100%;height:auto;border-radius:14px}.ppic.small{max-width:300px}
+.pfacts{display:grid;gap:12px}.pfact{border:2px solid var(--line);border-radius:16px;padding:12px 14px;background:var(--card)}.pfact.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,var(--card))}.pfact h3{margin:0 0 4px;font-family:var(--f-display);font-size:1.15rem}.pfact p{margin:0 0 8px;font-size:1.1rem;line-height:1.5}.pfbtns{display:flex;gap:8px;flex-wrap:wrap}
+.plab{display:block;font-weight:800;margin:12px 0 6px}.pown{width:100%;box-sizing:border-box;border:2px solid var(--line);border-radius:14px;padding:10px 12px;font:inherit;font-size:1.1rem;background:var(--card);color:var(--ink);resize:vertical}
+.pqq{font-size:1.15rem}.pqres{font-size:1.15rem}.okb{font-size:.9rem;color:var(--ok);margin-left:8px}
+.pshead{display:flex;justify-content:space-between;align-items:center;gap:10px}.pshead h2{margin:0}
+.mini{min-width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-size:1.1rem;cursor:pointer;margin-left:6px}.mini:disabled{opacity:.35}.mini.del{color:var(--bad)}
+.psel{padding-left:1.4em;display:flex;flex-direction:column;gap:8px}.psel li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pfx{display:flex;flex:0 0 auto}.pownv{background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:12px;padding:10px 12px}.warn{color:var(--bad)}
+.pfact.found{border-color:#f0a500;box-shadow:0 0 0 4px #ffd34d88;animation:pfound 1s ease 2}@keyframes pfound{50%{transform:scale(1.02)}}
+.dsteps{margin:6px 0 12px;padding-left:1.4em;line-height:1.6}.detq{border:2px dashed var(--accent);border-radius:16px;padding:14px;margin-top:10px}.detqt{font-family:var(--f-display);font-size:1.4rem;font-weight:800;margin:4px 0 10px}.detty{display:flex;gap:8px;margin:10px 0}.detty input{flex:1;min-width:0;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:1.1rem;background:var(--card);color:var(--ink)}
+.pshow{background:var(--card);border:3px solid var(--accent);border-radius:24px;padding:24px;min-height:50vh}.pshow h1{font-family:var(--f-display);font-size:2rem;margin:4px 0 14px}.pshow li{font-size:1.35rem;line-height:1.5;margin-bottom:10px}
 .fb.ok{background:color-mix(in srgb,var(--ok) 15%,var(--card));color:var(--ok)}
 .fb.bad{background:color-mix(in srgb,var(--bad) 13%,var(--card));color:var(--bad)}
 .fb b{color:var(--ink)}
@@ -2487,12 +2502,12 @@ function penaltyNotice(){if(!D.penaltyNew)return;D.penaltyNew=false;save();setTi
 let V={view:'intro',sub:null,mode:null,res:null},T,C,W;
 function go(view,sub){if(V.view==='parent'&&view!=='parent')V.pinOk=false;if(V.view==='prof'&&view!=='prof')V.profOk=false;if(CLEAN){try{CLEAN()}catch(e){}CLEAN=null}V.view=view;if(sub)V.sub=sub;render();window.scrollTo(0,0)}
 function render(){
- document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who','vales','parent','prof'].includes(V.view)?'':V.sub;applyFav();
- ({prof:renderProf,parent:renderParent,sgames:renderSGames,sgame:renderSG,vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
+ document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who','vales','parent','prof','projhome','projstop','projpres','projshow'].includes(V.view)?'':V.sub;applyFav();
+ ({projhome:renderProjHome,projstop:renderProjStop,projpres:renderProjPres,projshow:renderProjShow,prof:renderProf,parent:renderParent,sgames:renderSGames,sgame:renderSG,vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
 }
 function header(title,back){
  const tot=totalStars();
- const chip=['home','subject','profile','stickers','prizes','vales','result','examres','over','parent','prof'].includes(V.view);
+ const chip=['home','subject','profile','stickers','prizes','vales','result','examres','over','parent','prof','projhome'].includes(V.view);
  return `<header class="top"><div class="top-in">${back?`<button class="back" data-act="${back}" aria-label="Volver">${ICON.back}</button>`:''}<span class="top-title">${esc(title)}</span><span class="starcount" title="Estrellas conseguidas">${ICON.star}<b>${tot}</b></span>${chip?`<button class="whochip" data-act="who" aria-label="Cambiar de perfil. Ahora: ${esc(D.name.trim())}"><span class="wcav">${avatarSVG(D.avatar)}</span><span class="wcn">${esc(D.name.trim())}</span><svg class="wcsw" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 7h11l-3-3M17 17H6l3 3"/></svg></button>`:''}</div></header>`;
 }
 const sayBtn=(t,label)=>('speechSynthesis' in window)?`<button class="say" data-act="say" data-t="${esc(t)}">${ICON.sound}<span>${label||'Escuchar'}</span></button>`:'';
@@ -2500,6 +2515,206 @@ function speak(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUttera
 const metaBar=(label,done,total)=>`<div class="meta"><div class="metarow"><p class="qnum">${label}</p>${V.view!=='cards'&&!V.exam?`<span class="lives" id="lives" role="img" aria-label="Te quedan ${lives} vidas">${hearts()}</span>`:''}</div><div class="bar"><i style="width:${Math.round(done/total*100)}%"></i></div></div>`;
 
 /* ---------- portada ---------- */
+/* ===== Proyecto: guía turística de Estados Unidos ===== */
+function flagUSA(){let s='<svg viewBox="0 0 190 100" class="pflag" role="img" aria-label="Bandera de Estados Unidos"><rect width="190" height="100" fill="#fff"/>';
+ for(let i=0;i<13;i+=2)s+=`<rect y="${(i*100/13).toFixed(2)}" width="190" height="${(100/13).toFixed(2)}" fill="#B22234"/>`;
+ s+='<rect width="76" height="53.85" fill="#3C3B6E"/>';
+ const star=(cx,cy,r)=>{let p=[];for(let k=0;k<10;k++){const a=Math.PI/2+k*Math.PI/5,rr=k%2?r*.4:r;p.push((cx+rr*Math.cos(a)).toFixed(2)+','+(cy-rr*Math.sin(a)).toFixed(2))}return `<polygon points="${p.join(' ')}" fill="#fff"/>`};
+ for(let row=0;row<9;row++){const n=row%2?5:6;for(let c=0;c<n;c++){const x=6.3+(row%2?6.3:0)+c*12.6,y=5.4+row*5.4;s+=star(x,y,2.1)}}
+ return s+'</svg>'}
+const MAP_USA=`<svg viewBox="0 0 400 300" class="pmap" role="img" aria-label="Mapa sencillo de América del Norte"><rect width="400" height="300" rx="16" fill="#cfe8f7"/>
+<polygon points="40,18 382,18 382,92 300,98 250,84 180,88 60,88 40,60" fill="#f4d9a6" stroke="#8a6d3b" stroke-width="1.5"/>
+<polygon points="4,22 40,18 40,62 24,80 6,64" fill="#e94f4f" stroke="#8a3b3b" stroke-width="1.5"/>
+<polygon points="60,88 180,88 250,84 300,98 342,94 356,120 330,150 322,190 302,212 270,200 232,214 202,236 172,216 122,206 90,196 70,160 56,120" fill="#e94f4f" stroke="#8a3b3b" stroke-width="1.5"/>
+<polygon points="90,196 122,206 172,216 202,236 216,252 206,278 182,292 150,272 130,242 102,216" fill="#9fd39a" stroke="#4d7c49" stroke-width="1.5"/>
+<circle cx="36" cy="246" r="4" fill="#e94f4f"/><circle cx="48" cy="253" r="3" fill="#e94f4f"/><circle cx="58" cy="261" r="5" fill="#e94f4f"/>
+<text x="210" y="58" font-size="20" font-weight="800" fill="#6b5326" text-anchor="middle">CANADÁ</text>
+<text x="200" y="150" font-size="22" font-weight="800" fill="#fff" text-anchor="middle">EE. UU.</text>
+<text x="160" y="250" font-size="15" font-weight="800" fill="#2f5a2c" text-anchor="middle">MÉXICO</text>
+<text x="22" y="98" font-size="11" font-weight="700" fill="#8a3b3b" text-anchor="middle">Alaska</text>
+<text x="50" y="282" font-size="11" font-weight="700" fill="#8a3b3b" text-anchor="middle">Hawái</text>
+<text x="34" y="180" font-size="12" font-weight="700" fill="#2a6f9c" text-anchor="middle" transform="rotate(-90 34 180)">Océano Pacífico</text>
+<text x="372" y="190" font-size="12" font-weight="700" fill="#2a6f9c" text-anchor="middle" transform="rotate(90 372 190)">Océano Atlántico</text>
+<polygon points="318,122 321,130 330,130 323,135 326,143 318,138 310,143 313,135 306,130 315,130" fill="#ffd34d" stroke="#8a6d00"/>
+<text x="318" y="160" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">Washington D. C.</text></svg>`;
+const PROJ={country:'Estados Unidos',stops:[
+ {id:'p1',n:'¿Dónde estamos?',ic:'📍',pic:()=>MAP_USA+'<p class="small">Dibujo sencillo, no es un mapa exacto.</p>',facts:[
+  ['f1','País','Se llama Estados Unidos de América. Lo abreviamos EE. UU. (en inglés, USA).'],
+  ['f2','Capital','Su capital es Washington D. C. Allí está la Casa Blanca, donde vive y trabaja el presidente.'],
+  ['f3','Continente','Está en América del Norte.'],
+  ['f4','Países vecinos','Al norte tiene a Canadá y al sur, a México.'],
+  ['f5','Océanos','Al este está el océano Atlántico y al oeste, el océano Pacífico.'],
+  ['f6','50 estados','Tiene 50 estados. Dos están separados del resto: Alaska, junto a Canadá, y Hawái, unas islas en mitad del océano Pacífico.'],
+  ['f7','Tamaño','Es uno de los países más grandes del mundo. Viven unos 340 millones de personas.']],
+  quiz:[['¿Cuál es la capital de Estados Unidos?',['Washington D. C.','Nueva York','Los Ángeles']],['¿Qué país tiene al sur?',['México','Canadá','Brasil']],['¿Cuántos estados tiene?',['50','13','17']],['¿Qué océano tiene al oeste?',['El Pacífico','El Atlántico','El Índico']],['¿En qué continente está?',['América del Norte','Europa','América del Sur']]],
+  own:[['p1a','Explica con tus palabras dónde está Estados Unidos.','Estados Unidos está en…']]},
+ {id:'p2',n:'Sus símbolos e identidad',ic:'🏳️',pic:()=>flagUSA(),facts:[
+  ['f1','La bandera','La llaman «barras y estrellas». Tiene 13 franjas rojas y blancas y 50 estrellas blancas sobre un fondo azul.'],
+  ['f2','¿Qué significa?','Cada estrella es uno de los 50 estados. Las 13 franjas recuerdan las 13 primeras colonias que formaron el país.'],
+  ['f3','La moneda','La moneda es el dólar ($). Un dólar tiene 100 centavos. Casi todos los billetes son de color verde.'],
+  ['f4','Idiomas','El idioma más hablado es el inglés. El segundo es el español: ¡más de 40 millones de personas lo hablan en casa!'],
+  ['f5','¿Cómo se saluda?','Dicen «Hello!» o «Hi!» y preguntan «How are you?» (¿cómo estás?). Cuando no se conocen se dan la mano; no suelen darse dos besos como nosotros.']],
+  quiz:[['¿Cuántas franjas tiene la bandera?',['13','50','7']],['¿Qué representa cada estrella de la bandera?',['Un estado','Un presidente','Una ciudad']],['¿Cuál es su moneda?',['El dólar','El euro','La libra']],['¿Cuál es el idioma más hablado?',['El inglés','El español','El francés']],['¿Cómo saludan normalmente?',['«Hello!» y dándose la mano','Con dos besos','Con una reverencia']]],
+  say:['Hello! How are you?','Hi! Nice to meet you!','Welcome to the United States!'],
+  own:[['p2a','¿Cómo saludarías a tu clase en inglés?','Hello, everybody! …']]},
+ {id:'p3',n:'Sus lugares más famosos',ic:'🗽',facts:[
+  ['f1','Nueva York','La ciudad con más habitantes, llena de rascacielos. Allí están la Estatua de la Libertad y Times Square, con sus pantallas gigantes.'],
+  ['f2','Los Ángeles','La ciudad del cine: en el barrio de Hollywood se hacen muchísimas películas.'],
+  ['f3','San Francisco','Famosa por el puente Golden Gate, de color rojo, y por sus tranvías que suben cuestas.'],
+  ['f4','Washington D. C.','La capital: allí están la Casa Blanca y el Capitolio.'],
+  ['f5','Estatua de la Libertad','Fue un regalo de Francia en 1886. Sostiene una antorcha y mide 93 metros contando su pedestal.'],
+  ['f6','Monte Rushmore','Las caras de cuatro presidentes talladas en la roca de una montaña.'],
+  ['f7','El Gran Cañón','Un valle gigantesco que el río Colorado fue excavando durante millones de años.'],
+  ['f8','Cataratas del Niágara','Enormes cascadas en la frontera con Canadá.'],
+  ['f9','Parque de Yellowstone','Tiene géiseres que lanzan chorros de agua caliente hacia el cielo, como el «Old Faithful».'],
+  ['f10','Ríos y montañas','El río Misisipi es uno de los más largos del mundo. Las Montañas Rocosas cruzan el oeste del país.'],
+  ['f11','Playas','Las de Florida (Miami) y las de Hawái, unas islas con volcanes, ¡como Canarias!']],
+  quiz:[['¿En qué ciudad está el puente rojo Golden Gate?',['San Francisco','Nueva York','Chicago']],['¿Qué país regaló la Estatua de la Libertad?',['Francia','España','Inglaterra']],['¿Qué río excavó el Gran Cañón?',['El Colorado','El Misisipi','El Niágara']],['¿Dónde hay géiseres que lanzan agua caliente?',['En Yellowstone','En Times Square','En Hollywood']],['¿Qué hay en el Monte Rushmore?',['Las caras de cuatro presidentes','Un volcán','Una cascada']]],
+  own:[['p3pick','¿Qué lugar recomendarías visitar?','',['Nueva York','La Estatua de la Libertad','El Gran Cañón','Las cataratas del Niágara','Yellowstone','San Francisco y el Golden Gate','Hollywood','Las playas de Hawái','El Monte Rushmore']],['p3a','¿Por qué lo recomiendas?','Lo recomiendo porque…']]},
+ {id:'p4',n:'Cultura y tradiciones',ic:'🎭',facts:[
+  ['f1','Vestimenta','No hay un único traje típico. El más famoso es el del vaquero (cowboy) del Oeste: sombrero, botas y pañuelo.'],
+  ['f2','Pueblos nativos','Los pueblos nativos americanos vivían allí antes que nadie. En sus fiestas usan trajes tradicionales con flecos, cuentas de colores y plumas.'],
+  ['f3','4 de julio','Día de la Independencia (desde 1776): hay desfiles, barbacoas y fuegos artificiales.'],
+  ['f4','Acción de Gracias','Thanksgiving: el cuarto jueves de noviembre las familias se reúnen para comer pavo y dar las gracias.'],
+  ['f5','Halloween','El 31 de octubre los niños se disfrazan y van por las casas pidiendo caramelos: «Trick or treat!» (¡truco o trato!).'],
+  ['f6','Costumbres curiosas','Los niños van al cole en un autobús amarillo, en los restaurantes se deja propina y muchas familias cenan sobre las 6 de la tarde.'],
+  ['f7','Música','Allí nacieron el jazz, el blues, el rock and roll, el country y el hip hop.'],
+  ['f8','Bailes','Un baile típico es el baile en línea (line dance) de la música country: todos bailan los mismos pasos en filas.']],
+  quiz:[['¿Qué se celebra el 4 de julio?',['El Día de la Independencia','Halloween','Acción de Gracias']],['¿Qué se come en Acción de Gracias?',['Pavo','Paella','Pizza']],['¿De qué color es el autobús escolar?',['Amarillo','Rojo','Azul']],['¿Qué música nació en Estados Unidos?',['El jazz','El flamenco','El tango']],['¿Qué dicen los niños en Halloween?',['«Trick or treat!»','«Happy birthday!»','«Good morning!»']]],
+  own:[['p4a','¿Qué fiesta te gustaría celebrar allí? ¿Por qué?','Me gustaría celebrar… porque…']]},
+ {id:'p5',n:'¡A comer!',ic:'🍔',facts:[
+  ['f1','Hamburguesa','Pan redondo, carne picada, queso, lechuga, tomate y kétchup.'],
+  ['f2','Perrito caliente','Hot dog: una salchicha en un pan alargado con mostaza. Muy típico en los partidos de béisbol.'],
+  ['f3','Tortitas','Pancakes: harina, huevos, leche y mantequilla. Se desayunan con sirope de arce.'],
+  ['f4','Tarta de manzana','Apple pie: masa crujiente rellena de manzana y canela.'],
+  ['f5','Macarrones con queso','Mac and cheese: pasta con una salsa de queso muy cremosa.'],
+  ['f6','Pavo asado','El plato de Acción de Gracias, con puré de patatas y salsa de arándanos.'],
+  ['f7','Galletas con chocolate','Las chocolate chip cookies, con trocitos de chocolate, se inventaron allí.']],
+  quiz:[['¿Con qué se desayunan las tortitas (pancakes)?',['Con sirope de arce','Con aceite','Con mojo']],['¿Qué lleva un hot dog?',['Una salchicha','Pescado','Pollo frito']],['¿Qué ingredientes lleva la tarta de manzana?',['Manzana y canela','Plátano y miel','Fresa y nata']],['¿Cuál es el plato de Acción de Gracias?',['El pavo asado','La hamburguesa','Las tortitas']]],
+  own:[['p5pick','¿Qué plato recomendarías probar?','',['La hamburguesa','El perrito caliente','Las tortitas con sirope','La tarta de manzana','Los macarrones con queso','El pavo asado','Las galletas con chocolate']],['p5a','¿Por qué lo recomiendas?','Lo recomiendo porque…']]},
+ {id:'p6',n:'Curiosidades sorprendentes',ic:'🦅',facts:[
+  ['f1','Águila calva','Es el animal símbolo del país. ¡No es calva! Tiene la cabeza cubierta de plumas blancas.'],
+  ['f2','El bisonte','Es el mamífero nacional. Hace mucho tiempo había millones en las praderas.'],
+  ['f3','¡A la Luna!','En 1969, los astronautas estadounidenses Neil Armstrong y Buzz Aldrin fueron las primeras personas en pisar la Luna.'],
+  ['f4','Árboles gigantes','En California crecen las secuoyas, los árboles más altos del mundo: ¡algunas miden más de 100 metros!'],
+  ['f5','Varias horas','Es tan ancho que tiene varias horas: cuando en Nueva York son las 12 del mediodía, en Los Ángeles son las 9 de la mañana.'],
+  ['f6','Mucho calor','El Valle de la Muerte, en California, es uno de los lugares más calurosos de la Tierra.'],
+  ['f7','Parques de atracciones','El primer Disneyland abrió en California en 1955.']],
+  quiz:[['¿Cuál es el animal símbolo del país?',['El águila calva','El león','El oso panda']],['¿En qué año pisaron la Luna por primera vez?',['1969','1492','2001']],['¿Cuáles son los árboles más altos del mundo?',['Las secuoyas','Los pinos canarios','Las palmeras']],['Si en Nueva York son las 12, ¿qué hora es en Los Ángeles?',['Las 9','Las 12','Las 3']]],
+  own:[['p6a','¿Qué te ha sorprendido más?','Me ha sorprendido…'],['p6b','¿Qué hace especial a Estados Unidos?','Estados Unidos es especial porque…']]}]};
+const PRJ_OWN0=[['intro','Tu frase de bienvenida','¡Hola! Soy [tu nombre] y hoy seré vuestra guía turística. ¡Nos vamos de viaje a Estados Unidos!'],['bye','Tu despedida','Gracias por viajar conmigo. Goodbye!']];
+function PJ(){D.proj=D.proj||{};const P=D.proj;P.sel=P.sel||{};P.order=P.order||PROJ.stops.map(s=>s.id);P.own=P.own||{};P.done=P.done||{};return P}
+const projStop=id=>PROJ.stops.find(s=>s.id===id);
+const factOf=(sid,fid)=>projStop(sid).facts.find(f=>f[0]===fid);
+function speakES(t){try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);u.lang='es-ES';u.rate=.95;speechSynthesis.speak(u)}catch(e){}}
+function ownField(o){const P=PJ(),v=P.own[o[0]]||'';
+ if(o[3])return `<label class="plab">${esc(o[1])}</label><div class="chips">${o[3].map(c=>`<button class="chip ${v===c?'on':''}" data-act="projpick" data-k="${o[0]}" data-v="${esc(c)}">${esc(c)}</button>`).join('')}</div>`;
+ return `<label class="plab" for="own_${o[0]}">${esc(o[1])}</label><textarea id="own_${o[0]}" class="pown" data-own="${o[0]}" rows="3" placeholder="${esc(o[2].replace('[tu nombre]',D.name.trim()||'…'))}">${esc(v)}</textarea>`}
+function renderProjHome(){const P=PJ(),nd=Object.keys(P.done).length,nsel=Object.values(P.sel).reduce((a,b)=>a+b.length,0);
+ app.innerHTML=header('Mi proyecto','home')+`<main class="wrap">
+ <section class="projhero">${flagUSA()}<div><h1>Guía turística: ${PROJ.country}</h1><p>Explora, descubre, investiga y comparte. Recorre las 6 paradas, aprende, comprueba lo que sabes y prepara tu presentación.</p>
+ <div class="bar"><i style="width:${Math.round(nd/6*100)}%"></i></div><p class="small">${nd} de 6 paradas superadas · ${nsel} datos elegidos para tu presentación</p></div></section>
+ <section class="pstops">${PROJ.stops.map((s,i)=>{const n=(P.sel[s.id]||[]).length;return `<button class="pstop ${P.done[s.id]?'ok':''}" data-act="projstop" data-i="${i}"><span class="pnum">Parada ${String(i+1).padStart(2,'0')}</span><span class="pic">${s.ic}</span><b>${esc(s.n)}</b><span class="small">${P.done[s.id]?'✓ Superada':'Por descubrir'}${n?` · ${n} datos elegidos`:''}</span></button>`}).join('')}</section>
+ <section class="actions two"><button class="btn primary" data-act="projpres">Mi presentación</button><button class="btn ghost" data-act="projshow">Ensayar la exposición</button></section></main>`}
+function renderProjStop(){const P=PJ(),s=PROJ.stops[V.ps],sel=P.sel[s.id]||[],Q=V.pq&&V.pq.sid===s.id?V.pq:null;
+ const quiz=Q?(Q.i<Q.qs.length?(()=>{const q=Q.qs[Q.i];return `<p class="pqq"><b>Pregunta ${Q.i+1} de ${Q.qs.length}:</b> ${esc(q.q)}</p><div class="opts">${q.o.map((o,j)=>`<button class="opt ${Q.ans!=null?(j===q.a?'right':j===Q.ans?'wrong':''):''}" data-act="projans" data-j="${j}" ${Q.ans!=null?'disabled':''}><span>${esc(o)}</span></button>`).join('')}</div>${Q.ans!=null?`<p class="fb ${Q.ans===q.a?'ok':'bad'}">${Q.ans===q.a?'¡Correcto!':'La respuesta correcta es: <b>'+esc(q.o[q.a])+'</b>'}</p><button class="btn primary" data-act="projqn">${Q.i+1<Q.qs.length?'Siguiente':'Ver resultado'}</button>`:''}`})():`<p class="pqres">Has acertado <b>${Q.ok} de ${Q.qs.length}</b>. ${Q.ok>=Q.qs.length-1?(Q.won?'¡Parada superada! Ganas 10 estrellas.':'¡Parada superada!'):'Vuelve a leer la información e inténtalo otra vez: necesitas fallar como mucho una.'}</p><button class="btn ghost" data-act="projquiz">Repetir preguntas</button>`):`<button class="btn primary" data-act="projquiz">Empezar las preguntas</button>`;
+ app.innerHTML=header(`Parada ${String(V.ps+1).padStart(2,'0')}`,'projopen')+`<main class="wrap">
+ <h1 class="ptitle">${s.ic} ${esc(s.n)}</h1>
+ ${s.pic?`<div class="ppic">${s.pic()}</div>`:''}
+ <section class="pcard"><h2>1. Aprende</h2><p class="small">Lee cada dato. Pulsa «Para mi presentación» en los que quieras contar a tu clase.</p>
+ <div class="pfacts">${s.facts.map(f=>{const on=sel.includes(f[0]);return `<article class="pfact ${on?'on':''}" data-f="${f[0]}"><h3>${esc(f[1])}</h3><p>${esc(f[2])}</p><div class="pfbtns"><button class="btn ghost small" data-act="projread" data-t="${esc(f[1]+'. '+f[2])}">🔊 Escuchar</button><button class="btn ${on?'primary':'ghost'} small" data-act="projfact" data-f="${f[0]}">${on?'✓ En mi presentación':'＋ Para mi presentación'}</button></div></article>`}).join('')}</div></section>
+ <section class="pcard"><h2>2. Detective de datos 🔎</h2><p class="small">Te hago preguntas en voz alta. Tú buscas la respuesta en las tarjetas y me contestas hablando.</p><div id="detbox">${detHTML()}</div></section>
+ ${s.say?`<section class="pcard"><h2>Practica el saludo</h2><div class="chips">${s.say.map(t=>`<button class="chip" data-act="say" data-t="${esc(t)}">🔊 ${esc(t)}</button>`).join('')}</div></section>`:''}
+ <section class="pcard"><h2>3. Tus ideas</h2><p class="small">Escribe con tus palabras. Se guarda solo y aparecerá en tu presentación.</p>${s.own.map(ownField).join('')}</section>
+ <section class="pcard" id="pquiz"><h2>4. Comprueba lo que sabes ${P.done[s.id]?'<span class="okb">✓ Superada</span>':''}</h2>${quiz}</section>
+ <div class="actions two">${V.ps>0?`<button class="btn ghost" data-act="projstop" data-i="${V.ps-1}">← Parada anterior</button>`:'<span></span>'}${V.ps<5?`<button class="btn primary" data-act="projstop" data-i="${V.ps+1}">Siguiente parada →</button>`:`<button class="btn primary" data-act="projpres">Ir a mi presentación</button>`}</div></main>`}
+function presSlides(){const P=PJ(),out=[{k:'intro',t:`¡Bienvenidos a ${PROJ.country}!`,ic:'✈️',lines:[P.own.intro||PRJ_OWN0[0][2].replace('[tu nombre]',D.name.trim()||'vuestra guía')]}];
+ for(const id of P.order){const s=projStop(id),i=PROJ.stops.indexOf(s);const lines=(P.sel[id]||[]).map(f=>{const x=factOf(id,f);return x?`${x[1]}: ${x[2]}`:''}).filter(Boolean);
+  for(const o of s.own){const v=P.own[o[0]];if(v&&v.trim())lines.push(o[3]?`Os recomiendo: ${v}`:v.trim())}
+  out.push({k:id,t:`Parada ${String(i+1).padStart(2,'0')}: ${s.n}`,ic:s.ic,lines,pic:id==='p1'?MAP_USA:id==='p2'?flagUSA():''})}
+ out.push({k:'bye',t:'¡Fin del viaje!',ic:'👋',lines:[P.own.bye||PRJ_OWN0[1][2]]});return out}
+function renderProjPres(){const P=PJ();
+ app.innerHTML=header('Mi presentación','projopen')+`<main class="wrap"><h1 class="ptitle">Mi presentación</h1>
+ <p class="small">Ordena las paradas con las flechas como quieras contarlas. Dentro de cada parada puedes ordenar o quitar los datos. Para añadir más datos, entra en la parada.</p>
+ <section class="pcard"><h2>✈️ Portada</h2>${ownField(PRJ_OWN0[0])}</section>
+ ${P.order.map((id,oi)=>{const s=projStop(id),sel=P.sel[id]||[],own=s.own.filter(o=>(P.own[o[0]]||'').trim());return `<section class="pcard pslide"><div class="pshead"><h2>${s.ic} ${esc(s.n)}</h2><span><button class="mini" data-act="projmv" data-i="${oi}" data-d="-1" ${oi?'':'disabled'} aria-label="Subir parada">▲</button><button class="mini" data-act="projmv" data-i="${oi}" data-d="1" ${oi<P.order.length-1?'':'disabled'} aria-label="Bajar parada">▼</button></span></div>
+  ${sel.length?`<ol class="psel">${sel.map((f,fi)=>{const x=factOf(id,f);return `<li><span><b>${esc(x[1])}:</b> ${esc(x[2])}</span><span class="pfx"><button class="mini" data-act="projfmv" data-s="${id}" data-i="${fi}" data-d="-1" ${fi?'':'disabled'} aria-label="Subir">▲</button><button class="mini" data-act="projfmv" data-s="${id}" data-i="${fi}" data-d="1" ${fi<sel.length-1?'':'disabled'} aria-label="Bajar">▼</button><button class="mini del" data-act="projfdel" data-s="${id}" data-f="${f}" aria-label="Quitar">✕</button></span></li>`}).join('')}</ol>`:`<p class="small warn">Todavía no has elegido datos de esta parada.</p>`}
+  ${own.length?`<p class="pownv">${own.map(o=>`<b>${esc(o[1])}</b> ${esc(P.own[o[0]])}`).join('<br>')}</p>`:''}
+  <button class="btn ghost small" data-act="projstop" data-i="${PROJ.stops.indexOf(s)}">Ir a la parada</button></section>`}).join('')}
+ <section class="pcard"><h2>👋 Despedida</h2>${ownField(PRJ_OWN0[1])}</section>
+ <section class="actions two"><button class="btn primary" data-act="projshow">Ensayar la exposición</button><button class="btn ghost" data-act="projscript">Ver guion para la cartulina</button></section>
+ ${V.pscript?`<section class="pcard psheet" id="pscript"><h2>Guion de mi exposición</h2>${presSlides().map((sl,i)=>`<h3>${i+1}. ${esc(sl.t)}</h3><ul>${sl.lines.map(l=>`<li>${esc(l)}</li>`).join('')||'<li>(vacío)</li>'}</ul>`).join('')}<button class="btn ghost" data-act="profprint">Imprimir</button></section>`:''}</main>`}
+function renderProjShow(){const sl=presSlides(),i=Math.min(V.pi||0,sl.length-1),x=sl[i],sec=V.pt0?Math.floor((Date.now()-V.pt0)/1000):0;
+ app.innerHTML=header('Ensayar la exposición','projpres')+`<main class="wrap"><section class="pshow">
+ <p class="small">Diapositiva ${i+1} de ${sl.length} · ⏱ <span id="ptime">${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}</span></p>
+ <h1>${x.ic} ${esc(x.t)}</h1>${x.pic?`<div class="ppic small">${x.pic}</div>`:''}
+ ${x.lines.length?`<ul>${x.lines.map(l=>`<li>${esc(l)}</li>`).join('')}</ul>`:'<p class="small warn">Aquí todavía no hay nada. Elige datos en esta parada.</p>'}
+ <p class="small">Consejo: mira a tu clase, habla despacio y en voz alta, y cuenta los datos con tus palabras.</p></section>
+ <div class="actions two"><button class="btn ghost" data-act="projprev" ${i?'':'disabled'}>← Anterior</button><button class="btn ghost" data-act="projread" data-t="${esc(x.t+'. '+x.lines.join('. '))}">🔊 Escuchar</button><button class="btn primary" data-act="projnext">${i<sl.length-1?'Siguiente →':'Terminar'}</button></div></main>`}
+let PTIMER=null;
+document.addEventListener('input',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.own;if(!k)return;PJ().own[k]=e.target.value;save()});
+const PROJ_ACTS={
+ projopen:()=>{V.pq=null;go('projhome')},
+ projstop:el=>{V.ps=+el.dataset.i;V.pq=null;V.det=null;go('projstop');window.scrollTo(0,0)},
+ projfact:el=>{const P=PJ(),s=PROJ.stops[V.ps],a=P.sel[s.id]=P.sel[s.id]||[],f=el.dataset.f,i=a.indexOf(f);if(i>=0)a.splice(i,1);else a.push(f);save();const y=window.scrollY;renderProjStop();window.scrollTo(0,y)},
+ projread:el=>speakES(el.dataset.t),
+ projpick:el=>{PJ().own[el.dataset.k]=el.dataset.v;save();const y=window.scrollY;render();window.scrollTo(0,y)},
+ projquiz:()=>{const s=PROJ.stops[V.ps];V.pq={sid:s.id,i:0,ok:0,ans:null,qs:shuffle(s.quiz).map(([q,o])=>{const op=shuffle(o);return {q,o:op,a:op.indexOf(o[0])}})};renderProjStop();setTimeout(()=>{const e=$('#pquiz');if(e)e.scrollIntoView({behavior:'smooth',block:'center'})},50)},
+ projans:el=>{const Q=V.pq;if(!Q||Q.ans!=null)return;Q.ans=+el.dataset.j;const ok=Q.ans===Q.qs[Q.i].a;if(ok)Q.ok++;try{sfx(ok?'ok':'bad')}catch(e){}const y=window.scrollY;renderProjStop();window.scrollTo(0,y)},
+ projqn:()=>{const Q=V.pq,P=PJ(),s=PROJ.stops[V.ps];Q.i++;Q.ans=null;if(Q.i>=Q.qs.length&&Q.ok>=Q.qs.length-1&&!P.done[s.id]){P.done[s.id]=true;D.stars.proy=(D.stars.proy||0)+10;Q.won=true;save()}const y=window.scrollY;renderProjStop();window.scrollTo(0,y)},
+ projpres:()=>{V.pscript=false;go('projpres');window.scrollTo(0,0)},
+ projmv:el=>{const P=PJ(),i=+el.dataset.i,j=i+ +el.dataset.d;[P.order[i],P.order[j]]=[P.order[j],P.order[i]];save();const y=window.scrollY;renderProjPres();window.scrollTo(0,y)},
+ projfmv:el=>{const a=PJ().sel[el.dataset.s],i=+el.dataset.i,j=i+ +el.dataset.d;[a[i],a[j]]=[a[j],a[i]];save();const y=window.scrollY;renderProjPres();window.scrollTo(0,y)},
+ projfdel:el=>{const P=PJ(),a=P.sel[el.dataset.s];a.splice(a.indexOf(el.dataset.f),1);save();const y=window.scrollY;renderProjPres();window.scrollTo(0,y)},
+ projscript:()=>{V.pscript=!V.pscript;renderProjPres();setTimeout(()=>{const e=$('#pscript');if(e)e.scrollIntoView({behavior:'smooth'})},50)},
+ projshow:()=>{V.pi=0;V.pt0=Date.now();clearInterval(PTIMER);PTIMER=setInterval(()=>{const t=$('#ptime');if(!t||V.view!=='projshow'){clearInterval(PTIMER);return}const s=Math.floor((Date.now()-V.pt0)/1000);t.textContent=Math.floor(s/60)+':'+String(s%60).padStart(2,'0')},1000);go('projshow')},
+ projprev:()=>{V.pi=Math.max(0,(V.pi||0)-1);renderProjShow()},
+ projnext:()=>{const n=presSlides().length;if((V.pi||0)<n-1){V.pi++;renderProjShow()}else{clearInterval(PTIMER);go('projpres')}}};
+
+/* Detective de datos: pregunta por voz, ella busca y responde por voz */
+const DET={
+ p1:[['¿Cuál es la capital de Estados Unidos?','capital',['washington'],'f2'],['¿Qué país está al norte de Estados Unidos?','norte',['canada'],'f4'],['¿Y qué país está al sur?','sur',['mexico'],'f4'],['¿Cuántos estados tiene?','estados',['50','cincuenta'],'f6'],['¿Qué océano está al este?','océano',['atlantico'],'f5'],['¿En qué continente está?','continente',['norte'],'f3'],['¿Cuántas personas viven allí, más o menos?','personas',['340','trescientos cuarenta'],'f7']],
+ p2:[['¿Cómo llaman a su bandera?','bandera',['barras','estrellas'],'f1'],['¿Cuántas estrellas tiene la bandera?','estrellas',['50','cincuenta'],'f1'],['¿Qué significa cada estrella de la bandera?','significa',['estado'],'f2'],['¿Cuál es su moneda?','moneda',['dolar'],'f3'],['¿Cuántos centavos tiene un dólar?','centavos',['100','cien'],'f3'],['¿Cuál es el segundo idioma más hablado?','idioma',['espanol'],'f4'],['¿Qué palabra dicen para saludar?','saludar',['hello','hi','jelou','helo','halo'],'f5']],
+ p3:[['¿En qué ciudad está el puente Golden Gate?','Golden Gate',['san francisco'],'f3'],['¿Qué país regaló la Estatua de la Libertad?','Estatua de la Libertad',['francia'],'f5'],['¿Cuántos metros mide la Estatua de la Libertad con su pedestal?','Estatua de la Libertad',['93','noventa y tres'],'f5'],['¿Qué río excavó el Gran Cañón?','Gran Cañón',['colorado'],'f7'],['¿Cómo se llama el barrio del cine de Los Ángeles?','Los Ángeles',['hollywood','holiwood','jolibud','joliwood','holywood'],'f2'],['¿Qué lanzan los géiseres de Yellowstone?','Yellowstone',['agua'],'f9'],['¿Cuál es uno de los ríos más largos del mundo?','ríos',['misisipi','mississippi','misisipí'],'f10']],
+ p4:[['¿Qué se celebra el 4 de julio?','4 de julio',['independencia'],'f3'],['¿Qué comen las familias en Acción de Gracias?','Acción de Gracias',['pavo'],'f4'],['¿Qué día es Halloween?','Halloween',['31','treinta y uno','octubre'],'f5'],['¿De qué color es el autobús del cole?','autobús',['amarillo'],'f6'],['¿Qué lleva puesto un vaquero?','vaquero',['sombrero','botas','panuelo'],'f1'],['Di un tipo de música que nació allí.','música',['jazz','yas','yass','blues','rock','country','hip hop','jip jop'],'f7']],
+ p5:[['¿Qué lleva una hamburguesa?','hamburguesa',['pan','carne','queso','lechuga','tomate','ketchup','kétchup'],'f1'],['¿Con qué se desayunan las tortitas?','tortitas',['sirope','arce'],'f3'],['¿Qué especia lleva la tarta de manzana?','tarta de manzana',['canela'],'f4'],['¿En qué partidos se comen muchos perritos calientes?','perrito caliente',['beisbol'],'f2'],['¿Qué se come con el pavo en Acción de Gracias?','pavo',['pure','arandanos','patata'],'f6']],
+ p6:[['¿Cuál es el animal símbolo del país?','animal',['aguila'],'f1'],['¿En qué año pisaron la Luna por primera vez?','Luna',['1969','mil novecientos sesenta y nueve','sesenta y nueve'],'f3'],['¿Quién fue el primero en pisar la Luna?','Luna',['armstrong','amstrong','armstron'],'f3'],['¿Cómo se llaman los árboles más altos del mundo?','árboles',['secuoya'],'f4'],['Si en Nueva York son las 12, ¿qué hora es en Los Ángeles?','Los Ángeles',['9','nueve'],'f5'],['¿Cuál es el mamífero nacional?','mamífero',['bisonte'],'f2']]};
+const detNorm=t=>noAcc(String(t).toLowerCase()).replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim();
+function detOk(heard,acc){const h=' '+detNorm(heard)+' ';return acc.some(a=>{const x=detNorm(a);return /^\d+$/.test(x)||x.length<=3?h.includes(' '+x+' '):h.includes(x)})}
+function detHTML(){const s=PROJ.stops[V.ps],X=V.det&&V.det.sid===s.id?V.det:null,hasSR=!!(window.SpeechRecognition||window.webkitSpeechRecognition);
+ const steps=`<ol class="dsteps"><li><b>Escucha</b> la pregunta.</li><li>Piensa cuál es la <b>palabra importante</b>.</li><li><b>Busca</b> esa palabra en los títulos y textos de las tarjetas de arriba.</li><li><b>Lee</b> la tarjeta y <b>responde con tu voz</b>.</li></ol>`;
+ if(!X)return `${steps}<button class="btn primary" data-act="detgo">🔎 Empezar el detective</button>`;
+ if(X.i>=X.qs.length)return `<p class="pqres">¡Detective terminado! Has encontrado <b>${X.ok} de ${X.qs.length}</b> respuestas${X.ok?` y ganas ${X.ok} estrella${X.ok>1?'s':''}`:''}.</p><button class="btn ghost" data-act="detgo">Jugar otra vez</button>`;
+ const q=X.qs[X.i];
+ return `${steps}<div class="detq"><p class="small">Pregunta ${X.i+1} de ${X.qs.length}</p><p class="detqt">${esc(q[0])}</p>
+  <div class="pfbtns"><button class="btn ghost small" data-act="detsay">🔊 Oír otra vez</button>${X.done?'':(hasSR?`<button class="btn primary" data-act="detmic" ${X.listen?'disabled':''}>${X.listen?'🎙️ Te escucho…':'🎤 Responder con mi voz'}</button>`:'')}</div>
+  ${X.done?'':`<div class="detty"><input id="detin" type="text" autocomplete="off" placeholder="${hasSR?'O escribe aquí tu respuesta':'Escribe aquí tu respuesta'}"><button class="btn ghost small" data-act="detchk">Comprobar</button></div>`}
+  ${X.heard?`<p class="small">He oído: «${esc(X.heard)}»</p>`:''}
+  ${X.msg?`<p class="fb ${X.good?'ok':'bad'}">${X.msg}</p>`:''}
+  ${X.done?`<button class="btn primary" data-act="detnext">${X.i+1<X.qs.length?'Siguiente pregunta':'Ver resultado'}</button>`:(X.tries?`<button class="btn ghost small" data-act="detskip">Ver la respuesta</button>`:'')}
+  ${hasSR?'':'<p class="small">El micrófono no funciona en esta versión. En la app de la tablet sí podrás responder con la voz.</p>'}</div>`}
+function detMark(fid){document.querySelectorAll('.pfact').forEach(e=>e.classList.toggle('found',e.dataset.f===fid));const e=document.querySelector(`.pfact[data-f="${fid}"]`);if(e)e.scrollIntoView({behavior:'smooth',block:'center'})}
+function detRedraw(){const box=$('#detbox');if(box)box.innerHTML=detHTML()}
+function detCheck(heard){const X=V.det,q=X.qs[X.i],s=PROJ.stops[V.ps],f=factOf(s.id,q[3]);X.heard=heard;
+ if(detOk(heard,q[2])){X.good=true;X.done=true;if(!X.tries){X.ok++;D.stars.proy=(D.stars.proy||0)+1;save()}X.msg=`¡Muy bien, detective! Lo encontraste en la tarjeta «${esc(f[1])}».`;try{sfx('ok')}catch(e){}speakES('¡Muy bien! Lo has encontrado.');detMark(q[3])}
+ else{X.tries++;X.good=false;try{sfx('bad')}catch(e){}
+  if(X.tries===1){X.msg=`Casi. La palabra importante de la pregunta es «${esc(q[1])}». Busca esa palabra en las tarjetas.`;speakES(`Casi. La palabra importante es ${q[1]}. Búscala en las tarjetas.`)}
+  else{X.msg=`Mira la tarjeta «${esc(f[1])}» que he marcado. Léela con calma y vuelve a responder.`;speakES(`Lee la tarjeta ${f[1]} y vuelve a responder.`);setTimeout(()=>detMark(q[3]),60)}}
+ detRedraw()}
+let DET_REC=null;
+Object.assign(PROJ_ACTS,{
+ detgo:()=>{const s=PROJ.stops[V.ps];V.det={sid:s.id,i:0,ok:0,tries:0,qs:shuffle(DET[s.id]).slice(0,5)};detRedraw();speakES(V.det.qs[0][0]);document.querySelectorAll('.pfact.found').forEach(e=>e.classList.remove('found'))},
+ detsay:()=>speakES(V.det.qs[V.det.i][0]),
+ detmic:()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;try{speechSynthesis.cancel()}catch(e){}
+  try{DET_REC&&DET_REC.abort()}catch(e){}const r=DET_REC=new SR();r.lang='es-ES';r.interimResults=false;r.maxAlternatives=3;
+  r.onresult=e=>{const alts=[...e.results[0]].map(a=>a.transcript);const X=V.det,q=X.qs[X.i];X.listen=false;const hit=alts.find(a=>detOk(a,q[2]));detCheck(hit||alts[0])};
+  r.onerror=e=>{V.det.listen=false;V.det.msg=e.error==='not-allowed'?'Necesito permiso para usar el micrófono. Pídeselo a mamá o papá.':'No te he oído bien. Pulsa otra vez el micrófono y habla cerca de la tablet.';V.det.good=false;detRedraw()};
+  r.onend=()=>{if(V.det&&V.det.listen){V.det.listen=false;detRedraw()}};
+  V.det.listen=true;V.det.msg='';detRedraw();try{r.start()}catch(e){V.det.listen=false;detRedraw()}},
+ detchk:()=>{const v=($('#detin')||{}).value||'';if(v.trim())detCheck(v)},
+ detskip:()=>{const X=V.det,q=X.qs[X.i],f=factOf(X.sid,q[3]);X.done=true;X.good=false;X.msg=`La respuesta está en la tarjeta «${esc(f[1])}»: ${esc(f[2])}`;detRedraw();detMark(q[3])},
+ detnext:()=>{const X=V.det;X.i++;X.tries=0;X.done=false;X.msg='';X.heard='';X.good=false;detRedraw();document.querySelectorAll('.pfact.found').forEach(e=>e.classList.remove('found'));if(X.i<X.qs.length){speakES(X.qs[X.i][0]);const b=$('#detbox');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}}});
+
 function renderHome(){
  penaltyNotice();
  checkUnlocks();const n=D.name.trim(),tot=lifetime(),L=levelInfo(tot),done=D.daily===today(),got=Math.min(STICKERS.length,Math.floor(tot/ST_EVERY));
@@ -2515,6 +2730,7 @@ function renderHome(){
  <button class="reto" data-act="reto" ${done?'disabled':''}><span class="ic">${done?ICON.test:ICON.star}</span><span><b>${done?'¡Reto del día hecho!':'Reto del día'}</b><span>${done?'Vuelve mañana para un reto nuevo.':'6 preguntas de todas las materias. ¡Estrellas dobles!'}</span></span>${done?'':'<span class="go">¡Vamos!</span>'}</button>
  <h2 class="sec">¿Qué estudiamos hoy?</h2>
  <section class="subjects">${['mates','lengua','ingles'].map(k=>`<button class="subj s-${k}" data-act="subj" data-s="${k}"><span class="subj-ic">${ICON_SUBJ[k]}</span><span class="subj-name">${SUBJ[k].name}</span><span class="subj-topics">${SUBJ[k].topics}</span><span class="subj-stars">${ICON.star} ${D.stars[k]} ${D.stars[k]===1?'estrella':'estrellas'}</span></button>`).join('')}</section>
+ <button class="reto projbtn" data-act="projopen"><span class="ic pflagic">${flagUSA()}</span><span><b>Mi proyecto: guía turística de Estados Unidos</b><span>Aprende las 6 paradas y prepara tu exposición para la clase.</span></span></button>
  <section class="extras">
   <button class="extra" data-act="stickers"><span class="ei">${stSVG(got?got-1:0)}</span><span><b>Mis pegatinas</b><span>${got} de ${STICKERS.length}. Ganas una cada ${ST_EVERY} estrellas.</span></span></button>
   <button class="extra" data-act="prizes"><span class="ei">${PICON.gift}</span><span><b>Premios</b><span>Minijuegos, personajes, colores, fondos y planes con papá y mamá. ¡Cada canje descubre uno nuevo!${(D.coupons||[]).some(c=>!c.used)?' ¡Tienes vales!':''}</span></span></button>
@@ -3336,6 +3552,7 @@ document.addEventListener('keydown',e=>{
  else if(e.key==='Tab'&&W.items[W.i].s===':'&&W.state==='ask'){e.preventDefault();W.field=W.field==='c'?'r':'c';updSheet()}
 });
 
+Object.assign(ACT,PROJ_ACTS);
 render();
 </script>
 
