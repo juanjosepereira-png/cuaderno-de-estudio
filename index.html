@@ -323,6 +323,7 @@ button{font:inherit;color:inherit}
 .pshead{display:flex;justify-content:space-between;align-items:center;gap:10px}.pshead h2{margin:0}
 .mini{min-width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-size:1.1rem;cursor:pointer;margin-left:6px}.mini:disabled{opacity:.35}.mini.del{color:var(--bad)}
 .psel{padding-left:1.4em;display:flex;flex-direction:column;gap:8px}.psel li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pfx{display:flex;flex:0 0 auto}.pownv{background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:12px;padding:10px 12px}.warn{color:var(--bad)}
+.ptextbox{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px 16px;margin:10px 0}.ptext{font-size:1.2rem;line-height:1.75;margin:10px 0}.psent{cursor:pointer;border-radius:6px;padding:1px 2px;transition:background .2s}.psent:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}.psent.on{background:color-mix(in srgb,var(--accent) 20%,transparent);box-shadow:inset 0 -3px 0 var(--accent)}.psent.found{background:#ffe27a;color:#222}
 .pfact.found{border-color:#f0a500;box-shadow:0 0 0 4px #ffd34d88;animation:pfound 1s ease 2}@keyframes pfound{50%{transform:scale(1.02)}}
 .dsteps{margin:6px 0 12px;padding-left:1.4em;line-height:1.6}.detq{border:2px dashed var(--accent);border-radius:16px;padding:14px;margin-top:10px}.detqt{font-family:var(--f-display);font-size:1.4rem;font-weight:800;margin:4px 0 10px}.detty{display:flex;gap:8px;margin:10px 0}.detty input{flex:1;min-width:0;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:1.1rem;background:var(--card);color:var(--ink)}
 .pshow{background:var(--card);border:3px solid var(--accent);border-radius:24px;padding:24px;min-height:50vh}.pshow h1{font-family:var(--f-display);font-size:2rem;margin:4px 0 14px}.pshow li{font-size:1.35rem;line-height:1.5;margin-bottom:10px}
@@ -2538,68 +2539,68 @@ const MAP_USA=`<svg viewBox="0 0 400 300" class="pmap" role="img" aria-label="Ma
 <polygon points="318,122 321,130 330,130 323,135 326,143 318,138 310,143 313,135 306,130 315,130" fill="#ffd34d" stroke="#8a6d00"/>
 <text x="318" y="160" font-size="10" font-weight="800" fill="#fff" text-anchor="middle">Washington D. C.</text></svg>`;
 const PROJ={country:'Estados Unidos',stops:[
- {id:'p1',n:'¿Dónde estamos?',ic:'📍',pic:()=>MAP_USA+'<p class="small">Dibujo sencillo, no es un mapa exacto.</p>',facts:[
-  ['f1','País','Se llama Estados Unidos de América. Lo abreviamos EE. UU. (en inglés, USA).'],
-  ['f2','Capital','Su capital es Washington D. C. Allí está la Casa Blanca, donde vive y trabaja el presidente.'],
-  ['f3','Continente','Está en América del Norte.'],
-  ['f4','Países vecinos','Al norte tiene a Canadá y al sur, a México.'],
-  ['f5','Océanos','Al este está el océano Atlántico y al oeste, el océano Pacífico.'],
-  ['f6','50 estados','Tiene 50 estados. Dos están separados del resto: Alaska, junto a Canadá, y Hawái, unas islas en mitad del océano Pacífico.'],
-  ['f7','Tamaño','Es uno de los países más grandes del mundo. Viven unos 340 millones de personas.']],
+ {id:'p1',para:[["f1", "f2", "f3", "f4", "f5"], ["f6", "f7"]],n:'¿Dónde estamos?',ic:'📍',pic:()=>MAP_USA+'<p class="small">Dibujo sencillo, no es un mapa exacto.</p>',facts:[
+  ['f1','País',"Nuestro viaje empieza en Estados Unidos de América, que abreviamos EE. UU. (en inglés, USA)."],
+  ['f2','Capital',"Su capital es Washington D. C., la ciudad donde está la Casa Blanca, en la que vive y trabaja el presidente."],
+  ['f3','Continente',"Este país está en el continente de América del Norte."],
+  ['f4','Países vecinos',"Al norte tiene como vecino a Canadá y al sur, a México."],
+  ['f5','Océanos',"Por el este lo baña el océano Atlántico y por el oeste, el océano Pacífico."],
+  ['f6','50 estados',"Está formado por 50 estados, y dos de ellos están separados del resto: Alaska, junto a Canadá, y Hawái, unas islas en mitad del océano Pacífico."],
+  ['f7','Tamaño',"Es uno de los países más grandes del mundo y allí viven unos 340 millones de personas."]],
   quiz:[['¿Cuál es la capital de Estados Unidos?',['Washington D. C.','Nueva York','Los Ángeles']],['¿Qué país tiene al sur?',['México','Canadá','Brasil']],['¿Cuántos estados tiene?',['50','13','17']],['¿Qué océano tiene al oeste?',['El Pacífico','El Atlántico','El Índico']],['¿En qué continente está?',['América del Norte','Europa','América del Sur']]],
   own:[['p1a','Explica con tus palabras dónde está Estados Unidos.','Estados Unidos está en…']]},
- {id:'p2',n:'Sus símbolos e identidad',ic:'🏳️',pic:()=>flagUSA(),facts:[
-  ['f1','La bandera','La llaman «barras y estrellas». Tiene 13 franjas rojas y blancas y 50 estrellas blancas sobre un fondo azul.'],
-  ['f2','¿Qué significa?','Cada estrella es uno de los 50 estados. Las 13 franjas recuerdan las 13 primeras colonias que formaron el país.'],
-  ['f3','La moneda','La moneda es el dólar ($). Un dólar tiene 100 centavos. Casi todos los billetes son de color verde.'],
-  ['f4','Idiomas','El idioma más hablado es el inglés. El segundo es el español: ¡más de 40 millones de personas lo hablan en casa!'],
-  ['f5','¿Cómo se saluda?','Dicen «Hello!» o «Hi!» y preguntan «How are you?» (¿cómo estás?). Cuando no se conocen se dan la mano; no suelen darse dos besos como nosotros.']],
+ {id:'p2',para:[["f1", "f2"], ["f3"], ["f4", "f5"]],n:'Sus símbolos e identidad',ic:'🏳️',pic:()=>flagUSA(),facts:[
+  ['f1','La bandera',"Su bandera es conocida como «barras y estrellas»: tiene 13 franjas rojas y blancas y 50 estrellas blancas sobre un fondo azul."],
+  ['f2','¿Qué significa?',"Cada estrella representa uno de los 50 estados, y las 13 franjas recuerdan las 13 primeras colonias que formaron el país."],
+  ['f3','La moneda',"La moneda es el dólar ($), que se divide en 100 centavos, y casi todos sus billetes son de color verde."],
+  ['f4','Idiomas',"El idioma más hablado es el inglés, pero el segundo es el español: ¡más de 40 millones de personas lo hablan en casa!"],
+  ['f5','¿Cómo se saluda?',"Para saludar dicen «Hello!» o «Hi!» y preguntan «How are you?» (¿cómo estás?). Cuando no se conocen se dan la mano, y no suelen darse dos besos como hacemos nosotros."]],
   quiz:[['¿Cuántas franjas tiene la bandera?',['13','50','7']],['¿Qué representa cada estrella de la bandera?',['Un estado','Un presidente','Una ciudad']],['¿Cuál es su moneda?',['El dólar','El euro','La libra']],['¿Cuál es el idioma más hablado?',['El inglés','El español','El francés']],['¿Cómo saludan normalmente?',['«Hello!» y dándose la mano','Con dos besos','Con una reverencia']]],
   say:['Hello! How are you?','Hi! Nice to meet you!','Welcome to the United States!'],
   own:[['p2a','¿Cómo saludarías a tu clase en inglés?','Hello, everybody! …']]},
- {id:'p3',n:'Sus lugares más famosos',ic:'🗽',facts:[
-  ['f1','Nueva York','La ciudad con más habitantes, llena de rascacielos. Allí están la Estatua de la Libertad y Times Square, con sus pantallas gigantes.'],
-  ['f2','Los Ángeles','La ciudad del cine: en el barrio de Hollywood se hacen muchísimas películas.'],
-  ['f3','San Francisco','Famosa por el puente Golden Gate, de color rojo, y por sus tranvías que suben cuestas.'],
-  ['f4','Washington D. C.','La capital: allí están la Casa Blanca y el Capitolio.'],
-  ['f5','Estatua de la Libertad','Fue un regalo de Francia en 1886. Sostiene una antorcha y mide 93 metros contando su pedestal.'],
-  ['f6','Monte Rushmore','Las caras de cuatro presidentes talladas en la roca de una montaña.'],
-  ['f7','El Gran Cañón','Un valle gigantesco que el río Colorado fue excavando durante millones de años.'],
-  ['f8','Cataratas del Niágara','Enormes cascadas en la frontera con Canadá.'],
-  ['f9','Parque de Yellowstone','Tiene géiseres que lanzan chorros de agua caliente hacia el cielo, como el «Old Faithful».'],
-  ['f10','Ríos y montañas','El río Misisipi es uno de los más largos del mundo. Las Montañas Rocosas cruzan el oeste del país.'],
-  ['f11','Playas','Las de Florida (Miami) y las de Hawái, unas islas con volcanes, ¡como Canarias!']],
+ {id:'p3',para:[["f1", "f5"], ["f2", "f3", "f4"], ["f6", "f7", "f8", "f9"], ["f10", "f11"]],n:'Sus lugares más famosos',ic:'🗽',facts:[
+  ['f1','Nueva York',"Nueva York es la ciudad con más habitantes. Está llena de rascacielos y allí se encuentran la Estatua de la Libertad y Times Square, con sus pantallas gigantes."],
+  ['f2','Los Ángeles',"Los Ángeles es la ciudad del cine, porque en su barrio de Hollywood se hacen muchísimas películas."],
+  ['f3','San Francisco',"San Francisco es famosa por el puente Golden Gate, de color rojo, y por sus tranvías que suben cuestas."],
+  ['f4','Washington D. C.',"En la capital, Washington D. C., se pueden visitar la Casa Blanca y el Capitolio."],
+  ['f5','Estatua de la Libertad',"La Estatua de la Libertad fue un regalo de Francia en 1886: sostiene una antorcha y mide 93 metros contando su pedestal."],
+  ['f6','Monte Rushmore',"En el Monte Rushmore hay cuatro caras de presidentes talladas en la roca de una montaña."],
+  ['f7','El Gran Cañón',"El Gran Cañón es un valle gigantesco que el río Colorado fue excavando durante millones de años."],
+  ['f8','Cataratas del Niágara',"Las cataratas del Niágara son unas enormes cascadas en la frontera con Canadá."],
+  ['f9','Parque de Yellowstone',"En el Parque de Yellowstone hay géiseres que lanzan chorros de agua caliente hacia el cielo, como el famoso «Old Faithful»."],
+  ['f10','Ríos y montañas',"El río Misisipi es uno de los más largos del mundo, y las Montañas Rocosas cruzan todo el oeste del país."],
+  ['f11','Playas',"Si te gusta la playa, puedes ir a Florida (Miami) o a Hawái, unas islas con volcanes, ¡como Canarias!"]],
   quiz:[['¿En qué ciudad está el puente rojo Golden Gate?',['San Francisco','Nueva York','Chicago']],['¿Qué país regaló la Estatua de la Libertad?',['Francia','España','Inglaterra']],['¿Qué río excavó el Gran Cañón?',['El Colorado','El Misisipi','El Niágara']],['¿Dónde hay géiseres que lanzan agua caliente?',['En Yellowstone','En Times Square','En Hollywood']],['¿Qué hay en el Monte Rushmore?',['Las caras de cuatro presidentes','Un volcán','Una cascada']]],
   own:[['p3pick','¿Qué lugar recomendarías visitar?','',['Nueva York','La Estatua de la Libertad','El Gran Cañón','Las cataratas del Niágara','Yellowstone','San Francisco y el Golden Gate','Hollywood','Las playas de Hawái','El Monte Rushmore']],['p3a','¿Por qué lo recomiendas?','Lo recomiendo porque…']]},
- {id:'p4',n:'Cultura y tradiciones',ic:'🎭',facts:[
-  ['f1','Vestimenta','No hay un único traje típico. El más famoso es el del vaquero (cowboy) del Oeste: sombrero, botas y pañuelo.'],
-  ['f2','Pueblos nativos','Los pueblos nativos americanos vivían allí antes que nadie. En sus fiestas usan trajes tradicionales con flecos, cuentas de colores y plumas.'],
-  ['f3','4 de julio','Día de la Independencia (desde 1776): hay desfiles, barbacoas y fuegos artificiales.'],
-  ['f4','Acción de Gracias','Thanksgiving: el cuarto jueves de noviembre las familias se reúnen para comer pavo y dar las gracias.'],
-  ['f5','Halloween','El 31 de octubre los niños se disfrazan y van por las casas pidiendo caramelos: «Trick or treat!» (¡truco o trato!).'],
-  ['f6','Costumbres curiosas','Los niños van al cole en un autobús amarillo, en los restaurantes se deja propina y muchas familias cenan sobre las 6 de la tarde.'],
-  ['f7','Música','Allí nacieron el jazz, el blues, el rock and roll, el country y el hip hop.'],
-  ['f8','Bailes','Un baile típico es el baile en línea (line dance) de la música country: todos bailan los mismos pasos en filas.']],
+ {id:'p4',para:[["f1", "f2"], ["f3", "f4", "f5"], ["f6"], ["f7", "f8"]],n:'Cultura y tradiciones',ic:'🎭',facts:[
+  ['f1','Vestimenta',"En Estados Unidos no hay un único traje típico. El más famoso es el del vaquero (cowboy) del Oeste, con sombrero, botas y pañuelo."],
+  ['f2','Pueblos nativos',"Los pueblos nativos americanos, que vivían allí antes que nadie, usan en sus fiestas trajes tradicionales con flecos, cuentas de colores y plumas."],
+  ['f3','4 de julio',"La fiesta más importante es el 4 de julio, el Día de la Independencia (desde 1776), con desfiles, barbacoas y fuegos artificiales."],
+  ['f4','Acción de Gracias',"En Acción de Gracias (Thanksgiving), el cuarto jueves de noviembre, las familias se reúnen para comer pavo y dar las gracias."],
+  ['f5','Halloween',"El 31 de octubre es Halloween: los niños se disfrazan y van por las casas pidiendo caramelos con la frase «Trick or treat!» (¡truco o trato!)."],
+  ['f6','Costumbres curiosas',"Algunas costumbres curiosas son que los niños van al cole en un autobús amarillo, que en los restaurantes se deja propina y que muchas familias cenan sobre las 6 de la tarde."],
+  ['f7','Música',"Allí nacieron estilos de música como el jazz, el blues, el rock and roll, el country y el hip hop."],
+  ['f8','Bailes',"Un baile típico es el baile en línea (line dance) de la música country, en el que todos bailan los mismos pasos en filas."]],
   quiz:[['¿Qué se celebra el 4 de julio?',['El Día de la Independencia','Halloween','Acción de Gracias']],['¿Qué se come en Acción de Gracias?',['Pavo','Paella','Pizza']],['¿De qué color es el autobús escolar?',['Amarillo','Rojo','Azul']],['¿Qué música nació en Estados Unidos?',['El jazz','El flamenco','El tango']],['¿Qué dicen los niños en Halloween?',['«Trick or treat!»','«Happy birthday!»','«Good morning!»']]],
   own:[['p4a','¿Qué fiesta te gustaría celebrar allí? ¿Por qué?','Me gustaría celebrar… porque…']]},
- {id:'p5',n:'¡A comer!',ic:'🍔',facts:[
-  ['f1','Hamburguesa','Pan redondo, carne picada, queso, lechuga, tomate y kétchup.'],
-  ['f2','Perrito caliente','Hot dog: una salchicha en un pan alargado con mostaza. Muy típico en los partidos de béisbol.'],
-  ['f3','Tortitas','Pancakes: harina, huevos, leche y mantequilla. Se desayunan con sirope de arce.'],
-  ['f4','Tarta de manzana','Apple pie: masa crujiente rellena de manzana y canela.'],
-  ['f5','Macarrones con queso','Mac and cheese: pasta con una salsa de queso muy cremosa.'],
-  ['f6','Pavo asado','El plato de Acción de Gracias, con puré de patatas y salsa de arándanos.'],
-  ['f7','Galletas con chocolate','Las chocolate chip cookies, con trocitos de chocolate, se inventaron allí.']],
+ {id:'p5',para:[["f1", "f2"], ["f3", "f4", "f5"], ["f6", "f7"]],n:'¡A comer!',ic:'🍔',facts:[
+  ['f1','Hamburguesa',"La comida más famosa es la hamburguesa: pan redondo, carne picada, queso, lechuga, tomate y kétchup."],
+  ['f2','Perrito caliente',"También es muy típico el perrito caliente (hot dog), una salchicha en un pan alargado con mostaza que se come mucho en los partidos de béisbol."],
+  ['f3','Tortitas',"Para desayunar toman tortitas (pancakes), hechas con harina, huevos, leche y mantequilla, y las cubren con sirope de arce."],
+  ['f4','Tarta de manzana',"De postre es muy popular la tarta de manzana (apple pie), una masa crujiente rellena de manzana y canela."],
+  ['f5','Macarrones con queso',"A los niños les encantan los macarrones con queso (mac and cheese), pasta con una salsa de queso muy cremosa."],
+  ['f6','Pavo asado',"El plato de Acción de Gracias es el pavo asado, que se sirve con puré de patatas y salsa de arándanos."],
+  ['f7','Galletas con chocolate',"Además, allí se inventaron las galletas con trocitos de chocolate (chocolate chip cookies)."]],
   quiz:[['¿Con qué se desayunan las tortitas (pancakes)?',['Con sirope de arce','Con aceite','Con mojo']],['¿Qué lleva un hot dog?',['Una salchicha','Pescado','Pollo frito']],['¿Qué ingredientes lleva la tarta de manzana?',['Manzana y canela','Plátano y miel','Fresa y nata']],['¿Cuál es el plato de Acción de Gracias?',['El pavo asado','La hamburguesa','Las tortitas']]],
   own:[['p5pick','¿Qué plato recomendarías probar?','',['La hamburguesa','El perrito caliente','Las tortitas con sirope','La tarta de manzana','Los macarrones con queso','El pavo asado','Las galletas con chocolate']],['p5a','¿Por qué lo recomiendas?','Lo recomiendo porque…']]},
- {id:'p6',n:'Curiosidades sorprendentes',ic:'🦅',facts:[
-  ['f1','Águila calva','Es el animal símbolo del país. ¡No es calva! Tiene la cabeza cubierta de plumas blancas.'],
-  ['f2','El bisonte','Es el mamífero nacional. Hace mucho tiempo había millones en las praderas.'],
-  ['f3','¡A la Luna!','En 1969, los astronautas estadounidenses Neil Armstrong y Buzz Aldrin fueron las primeras personas en pisar la Luna.'],
-  ['f4','Árboles gigantes','En California crecen las secuoyas, los árboles más altos del mundo: ¡algunas miden más de 100 metros!'],
-  ['f5','Varias horas','Es tan ancho que tiene varias horas: cuando en Nueva York son las 12 del mediodía, en Los Ángeles son las 9 de la mañana.'],
-  ['f6','Mucho calor','El Valle de la Muerte, en California, es uno de los lugares más calurosos de la Tierra.'],
-  ['f7','Parques de atracciones','El primer Disneyland abrió en California en 1955.']],
+ {id:'p6',para:[["f1", "f2"], ["f3", "f4"], ["f5", "f6", "f7"]],n:'Curiosidades sorprendentes',ic:'🦅',facts:[
+  ['f1','Águila calva',"El animal símbolo del país es el águila calva, que en realidad no es calva: tiene la cabeza cubierta de plumas blancas."],
+  ['f2','El bisonte',"El bisonte es su mamífero nacional. Hace mucho tiempo había millones en las praderas."],
+  ['f3','¡A la Luna!',"En 1969, los astronautas estadounidenses Neil Armstrong y Buzz Aldrin fueron las primeras personas en pisar la Luna."],
+  ['f4','Árboles gigantes',"En California crecen las secuoyas, los árboles más altos del mundo: ¡algunas miden más de 100 metros!"],
+  ['f5','Varias horas',"El país es tan ancho que tiene varias horas distintas: cuando en Nueva York son las 12 del mediodía, en Los Ángeles son las 9 de la mañana."],
+  ['f6','Mucho calor',"El Valle de la Muerte, también en California, es uno de los lugares más calurosos de la Tierra."],
+  ['f7','Parques de atracciones',"Y el primer parque Disneyland abrió en California en 1955."]],
   quiz:[['¿Cuál es el animal símbolo del país?',['El águila calva','El león','El oso panda']],['¿En qué año pisaron la Luna por primera vez?',['1969','1492','2001']],['¿Cuáles son los árboles más altos del mundo?',['Las secuoyas','Los pinos canarios','Las palmeras']],['Si en Nueva York son las 12, ¿qué hora es en Los Ángeles?',['Las 9','Las 12','Las 3']]],
   own:[['p6a','¿Qué te ha sorprendido más?','Me ha sorprendido…'],['p6b','¿Qué hace especial a Estados Unidos?','Estados Unidos es especial porque…']]}]};
 const PRJ_OWN0=[['intro','Tu frase de bienvenida','¡Hola! Soy [tu nombre] y hoy seré vuestra guía turística. ¡Nos vamos de viaje a Estados Unidos!'],['bye','Tu despedida','Gracias por viajar conmigo. Goodbye!']];
@@ -2621,15 +2622,17 @@ function renderProjStop(){const P=PJ(),s=PROJ.stops[V.ps],sel=P.sel[s.id]||[],Q=
  app.innerHTML=header(`Parada ${String(V.ps+1).padStart(2,'0')}`,'projopen')+`<main class="wrap">
  <h1 class="ptitle">${s.ic} ${esc(s.n)}</h1>
  ${s.pic?`<div class="ppic">${s.pic()}</div>`:''}
- <section class="pcard"><h2>1. Aprende</h2><p class="small">Lee cada dato. Pulsa «Para mi presentación» en los que quieras contar a tu clase.</p>
- <div class="pfacts">${s.facts.map(f=>{const on=sel.includes(f[0]);return `<article class="pfact ${on?'on':''}" data-f="${f[0]}"><h3>${esc(f[1])}</h3><p>${esc(f[2])}</p><div class="pfbtns"><button class="btn ghost small" data-act="projread" data-t="${esc(f[1]+'. '+f[2])}">🔊 Escuchar</button><button class="btn ${on?'primary':'ghost'} small" data-act="projfact" data-f="${f[0]}">${on?'✓ En mi presentación':'＋ Para mi presentación'}</button></div></article>`}).join('')}</div></section>
- <section class="pcard"><h2>2. Detective de datos 🔎</h2><p class="small">Te hago preguntas en voz alta. Tú buscas la respuesta en las tarjetas y me contestas hablando.</p><div id="detbox">${detHTML()}</div></section>
+ <section class="pcard"><h2>1. Lee el texto</h2><p class="small">Lee con atención. Después, toca las frases que quieras contar en tu presentación: se pondrán de color. Si vuelves a tocarlas, se quitan.</p>
+ <div class="pfbtns"><button class="btn ghost small" data-act="projread" data-t="${esc(s.para.flat().map(fid=>factOf(s.id,fid)[2]).join(' '))}">🔊 Escuchar el texto</button><button class="btn ghost small" data-act="projhush">⏹ Parar</button></div>
+ <div class="ptextbox">${s.para.map(g=>`<p class="ptext">${g.map(fid=>{const f=factOf(s.id,fid),on=sel.includes(fid);return `<span class="psent ${on?'on':''}" data-act="projfact" data-f="${fid}" role="button" tabindex="0">${esc(f[2])}</span>`}).join(' ')}</p>`).join('')}</div>
+ <p class="small">${sel.length?`Has elegido <b>${sel.length}</b> frase${sel.length>1?'s':''} para tu presentación.`:'Todavía no has elegido ninguna frase.'}</p></section>
+ <section class="pcard"><h2>2. Detective de datos 🔎</h2><p class="small">Te hago preguntas en voz alta. Tú buscas la respuesta en el texto y me contestas hablando.</p><div id="detbox">${detHTML()}</div></section>
  ${s.say?`<section class="pcard"><h2>Practica el saludo</h2><div class="chips">${s.say.map(t=>`<button class="chip" data-act="say" data-t="${esc(t)}">🔊 ${esc(t)}</button>`).join('')}</div></section>`:''}
  <section class="pcard"><h2>3. Tus ideas</h2><p class="small">Escribe con tus palabras. Se guarda solo y aparecerá en tu presentación.</p>${s.own.map(ownField).join('')}</section>
  <section class="pcard" id="pquiz"><h2>4. Comprueba lo que sabes ${P.done[s.id]?'<span class="okb">✓ Superada</span>':''}</h2>${quiz}</section>
  <div class="actions two">${V.ps>0?`<button class="btn ghost" data-act="projstop" data-i="${V.ps-1}">← Parada anterior</button>`:'<span></span>'}${V.ps<5?`<button class="btn primary" data-act="projstop" data-i="${V.ps+1}">Siguiente parada →</button>`:`<button class="btn primary" data-act="projpres">Ir a mi presentación</button>`}</div></main>`}
 function presSlides(){const P=PJ(),out=[{k:'intro',t:`¡Bienvenidos a ${PROJ.country}!`,ic:'✈️',lines:[P.own.intro||PRJ_OWN0[0][2].replace('[tu nombre]',D.name.trim()||'vuestra guía')]}];
- for(const id of P.order){const s=projStop(id),i=PROJ.stops.indexOf(s);const lines=(P.sel[id]||[]).map(f=>{const x=factOf(id,f);return x?`${x[1]}: ${x[2]}`:''}).filter(Boolean);
+ for(const id of P.order){const s=projStop(id),i=PROJ.stops.indexOf(s);const lines=(P.sel[id]||[]).map(f=>{const x=factOf(id,f);return x?x[2]:''}).filter(Boolean);
   for(const o of s.own){const v=P.own[o[0]];if(v&&v.trim())lines.push(o[3]?`Os recomiendo: ${v}`:v.trim())}
   out.push({k:id,t:`Parada ${String(i+1).padStart(2,'0')}: ${s.n}`,ic:s.ic,lines,pic:id==='p1'?MAP_USA:id==='p2'?flagUSA():''})}
  out.push({k:'bye',t:'¡Fin del viaje!',ic:'👋',lines:[P.own.bye||PRJ_OWN0[1][2]]});return out}
@@ -2638,7 +2641,7 @@ function renderProjPres(){const P=PJ();
  <p class="small">Ordena las paradas con las flechas como quieras contarlas. Dentro de cada parada puedes ordenar o quitar los datos. Para añadir más datos, entra en la parada.</p>
  <section class="pcard"><h2>✈️ Portada</h2>${ownField(PRJ_OWN0[0])}</section>
  ${P.order.map((id,oi)=>{const s=projStop(id),sel=P.sel[id]||[],own=s.own.filter(o=>(P.own[o[0]]||'').trim());return `<section class="pcard pslide"><div class="pshead"><h2>${s.ic} ${esc(s.n)}</h2><span><button class="mini" data-act="projmv" data-i="${oi}" data-d="-1" ${oi?'':'disabled'} aria-label="Subir parada">▲</button><button class="mini" data-act="projmv" data-i="${oi}" data-d="1" ${oi<P.order.length-1?'':'disabled'} aria-label="Bajar parada">▼</button></span></div>
-  ${sel.length?`<ol class="psel">${sel.map((f,fi)=>{const x=factOf(id,f);return `<li><span><b>${esc(x[1])}:</b> ${esc(x[2])}</span><span class="pfx"><button class="mini" data-act="projfmv" data-s="${id}" data-i="${fi}" data-d="-1" ${fi?'':'disabled'} aria-label="Subir">▲</button><button class="mini" data-act="projfmv" data-s="${id}" data-i="${fi}" data-d="1" ${fi<sel.length-1?'':'disabled'} aria-label="Bajar">▼</button><button class="mini del" data-act="projfdel" data-s="${id}" data-f="${f}" aria-label="Quitar">✕</button></span></li>`}).join('')}</ol>`:`<p class="small warn">Todavía no has elegido datos de esta parada.</p>`}
+  ${sel.length?`<ol class="psel">${sel.map((f,fi)=>{const x=factOf(id,f);return `<li><span>${esc(x[2])}</span><span class="pfx"><button class="mini" data-act="projfmv" data-s="${id}" data-i="${fi}" data-d="-1" ${fi?'':'disabled'} aria-label="Subir">▲</button><button class="mini" data-act="projfmv" data-s="${id}" data-i="${fi}" data-d="1" ${fi<sel.length-1?'':'disabled'} aria-label="Bajar">▼</button><button class="mini del" data-act="projfdel" data-s="${id}" data-f="${f}" aria-label="Quitar">✕</button></span></li>`}).join('')}</ol>`:`<p class="small warn">Todavía no has elegido datos de esta parada.</p>`}
   ${own.length?`<p class="pownv">${own.map(o=>`<b>${esc(o[1])}</b> ${esc(P.own[o[0]])}`).join('<br>')}</p>`:''}
   <button class="btn ghost small" data-act="projstop" data-i="${PROJ.stops.indexOf(s)}">Ir a la parada</button></section>`}).join('')}
  <section class="pcard"><h2>👋 Despedida</h2>${ownField(PRJ_OWN0[1])}</section>
@@ -2658,6 +2661,7 @@ const PROJ_ACTS={
  projstop:el=>{V.ps=+el.dataset.i;V.pq=null;V.det=null;go('projstop');window.scrollTo(0,0)},
  projfact:el=>{const P=PJ(),s=PROJ.stops[V.ps],a=P.sel[s.id]=P.sel[s.id]||[],f=el.dataset.f,i=a.indexOf(f);if(i>=0)a.splice(i,1);else a.push(f);save();const y=window.scrollY;renderProjStop();window.scrollTo(0,y)},
  projread:el=>speakES(el.dataset.t),
+ projhush:()=>{try{speechSynthesis.cancel()}catch(e){}},
  projpick:el=>{PJ().own[el.dataset.k]=el.dataset.v;save();const y=window.scrollY;render();window.scrollTo(0,y)},
  projquiz:()=>{const s=PROJ.stops[V.ps];V.pq={sid:s.id,i:0,ok:0,ans:null,qs:shuffle(s.quiz).map(([q,o])=>{const op=shuffle(o);return {q,o:op,a:op.indexOf(o[0])}})};renderProjStop();setTimeout(()=>{const e=$('#pquiz');if(e)e.scrollIntoView({behavior:'smooth',block:'center'})},50)},
  projans:el=>{const Q=V.pq;if(!Q||Q.ans!=null)return;Q.ans=+el.dataset.j;const ok=Q.ans===Q.qs[Q.i].a;if(ok)Q.ok++;try{sfx(ok?'ok':'bad')}catch(e){}const y=window.scrollY;renderProjStop();window.scrollTo(0,y)},
@@ -2682,7 +2686,7 @@ const DET={
 const detNorm=t=>noAcc(String(t).toLowerCase()).replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim();
 function detOk(heard,acc){const h=' '+detNorm(heard)+' ';return acc.some(a=>{const x=detNorm(a);return /^\d+$/.test(x)||x.length<=3?h.includes(' '+x+' '):h.includes(x)})}
 function detHTML(){const s=PROJ.stops[V.ps],X=V.det&&V.det.sid===s.id?V.det:null,hasSR=!!(window.SpeechRecognition||window.webkitSpeechRecognition);
- const steps=`<ol class="dsteps"><li><b>Escucha</b> la pregunta.</li><li>Piensa cuál es la <b>palabra importante</b>.</li><li><b>Busca</b> esa palabra en los títulos y textos de las tarjetas de arriba.</li><li><b>Lee</b> la tarjeta y <b>responde con tu voz</b>.</li></ol>`;
+ const steps=`<ol class="dsteps"><li><b>Escucha</b> la pregunta.</li><li>Piensa cuál es la <b>palabra importante</b>.</li><li><b>Busca</b> esa palabra en el texto de arriba.</li><li><b>Lee</b> la frase donde aparece y <b>responde con tu voz</b>.</li></ol>`;
  if(!X)return `${steps}<button class="btn primary" data-act="detgo">🔎 Empezar el detective</button>`;
  if(X.i>=X.qs.length)return `<p class="pqres">¡Detective terminado! Has encontrado <b>${X.ok} de ${X.qs.length}</b> respuestas${X.ok?` y ganas ${X.ok} estrella${X.ok>1?'s':''}`:''}.</p><button class="btn ghost" data-act="detgo">Jugar otra vez</button>`;
  const q=X.qs[X.i];
@@ -2693,17 +2697,17 @@ function detHTML(){const s=PROJ.stops[V.ps],X=V.det&&V.det.sid===s.id?V.det:null
   ${X.msg?`<p class="fb ${X.good?'ok':'bad'}">${X.msg}</p>`:''}
   ${X.done?`<button class="btn primary" data-act="detnext">${X.i+1<X.qs.length?'Siguiente pregunta':'Ver resultado'}</button>`:(X.tries?`<button class="btn ghost small" data-act="detskip">Ver la respuesta</button>`:'')}
   ${hasSR?'':'<p class="small">El micrófono no funciona en esta versión. En la app de la tablet sí podrás responder con la voz.</p>'}</div>`}
-function detMark(fid){document.querySelectorAll('.pfact').forEach(e=>e.classList.toggle('found',e.dataset.f===fid));const e=document.querySelector(`.pfact[data-f="${fid}"]`);if(e)e.scrollIntoView({behavior:'smooth',block:'center'})}
+function detMark(fid){document.querySelectorAll('.psent').forEach(e=>e.classList.toggle('found',e.dataset.f===fid));const e=document.querySelector(`.psent[data-f="${fid}"]`);if(e)e.scrollIntoView({behavior:'smooth',block:'center'})}
 function detRedraw(){const box=$('#detbox');if(box)box.innerHTML=detHTML()}
 function detCheck(heard){const X=V.det,q=X.qs[X.i],s=PROJ.stops[V.ps],f=factOf(s.id,q[3]);X.heard=heard;
- if(detOk(heard,q[2])){X.good=true;X.done=true;if(!X.tries){X.ok++;D.stars.proy=(D.stars.proy||0)+1;save()}X.msg=`¡Muy bien, detective! Lo encontraste en la tarjeta «${esc(f[1])}».`;try{sfx('ok')}catch(e){}speakES('¡Muy bien! Lo has encontrado.');detMark(q[3])}
+ if(detOk(heard,q[2])){X.good=true;X.done=true;if(!X.tries){X.ok++;D.stars.proy=(D.stars.proy||0)+1;save()}X.msg=`¡Muy bien, detective! Te marco en el texto la frase donde está la respuesta.`;try{sfx('ok')}catch(e){}speakES('¡Muy bien! Lo has encontrado.');detMark(q[3])}
  else{X.tries++;X.good=false;try{sfx('bad')}catch(e){}
-  if(X.tries===1){X.msg=`Casi. La palabra importante de la pregunta es «${esc(q[1])}». Busca esa palabra en las tarjetas.`;speakES(`Casi. La palabra importante es ${q[1]}. Búscala en las tarjetas.`)}
-  else{X.msg=`Mira la tarjeta «${esc(f[1])}» que he marcado. Léela con calma y vuelve a responder.`;speakES(`Lee la tarjeta ${f[1]} y vuelve a responder.`);setTimeout(()=>detMark(q[3]),60)}}
+  if(X.tries===1){X.msg=`Casi. La palabra importante de la pregunta es «${esc(q[1])}». Busca esa palabra en el texto.`;speakES(`Casi. La palabra importante es ${q[1]}. Búscala en el texto.`)}
+  else{X.msg=`Te he marcado en amarillo la frase donde está la respuesta. Léela con calma y vuelve a responder.`;speakES(`Lee la frase marcada en amarillo y vuelve a responder.`);setTimeout(()=>detMark(q[3]),60)}}
  detRedraw()}
 let DET_REC=null;
 Object.assign(PROJ_ACTS,{
- detgo:()=>{const s=PROJ.stops[V.ps];V.det={sid:s.id,i:0,ok:0,tries:0,qs:shuffle(DET[s.id]).slice(0,5)};detRedraw();speakES(V.det.qs[0][0]);document.querySelectorAll('.pfact.found').forEach(e=>e.classList.remove('found'))},
+ detgo:()=>{const s=PROJ.stops[V.ps];V.det={sid:s.id,i:0,ok:0,tries:0,qs:shuffle(DET[s.id]).slice(0,5)};detRedraw();speakES(V.det.qs[0][0]);document.querySelectorAll('.psent.found').forEach(e=>e.classList.remove('found'))},
  detsay:()=>speakES(V.det.qs[V.det.i][0]),
  detmic:()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;try{speechSynthesis.cancel()}catch(e){}
   try{DET_REC&&DET_REC.abort()}catch(e){}const r=DET_REC=new SR();r.lang='es-ES';r.interimResults=false;r.maxAlternatives=3;
@@ -2712,8 +2716,8 @@ Object.assign(PROJ_ACTS,{
   r.onend=()=>{if(V.det&&V.det.listen){V.det.listen=false;detRedraw()}};
   V.det.listen=true;V.det.msg='';detRedraw();try{r.start()}catch(e){V.det.listen=false;detRedraw()}},
  detchk:()=>{const v=($('#detin')||{}).value||'';if(v.trim())detCheck(v)},
- detskip:()=>{const X=V.det,q=X.qs[X.i],f=factOf(X.sid,q[3]);X.done=true;X.good=false;X.msg=`La respuesta está en la tarjeta «${esc(f[1])}»: ${esc(f[2])}`;detRedraw();detMark(q[3])},
- detnext:()=>{const X=V.det;X.i++;X.tries=0;X.done=false;X.msg='';X.heard='';X.good=false;detRedraw();document.querySelectorAll('.pfact.found').forEach(e=>e.classList.remove('found'));if(X.i<X.qs.length){speakES(X.qs[X.i][0]);const b=$('#detbox');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}}});
+ detskip:()=>{const X=V.det,q=X.qs[X.i],f=factOf(X.sid,q[3]);X.done=true;X.good=false;X.msg=`La respuesta está en esta frase: «${esc(f[2])}»`;detRedraw();detMark(q[3])},
+ detnext:()=>{const X=V.det;X.i++;X.tries=0;X.done=false;X.msg='';X.heard='';X.good=false;detRedraw();document.querySelectorAll('.psent.found').forEach(e=>e.classList.remove('found'));if(X.i<X.qs.length){speakES(X.qs[X.i][0]);const b=$('#detbox');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}}});
 
 function renderHome(){
  penaltyNotice();
