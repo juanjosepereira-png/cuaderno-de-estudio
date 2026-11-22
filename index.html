@@ -2933,6 +2933,7 @@ function start(m){
  else if(m==='path')pathStart();
  else if(m==='match')startMatch();
  else if(m==='trad')startTrad();
+ else if(m==='u2ficha'){V.sub='ingles';W={kind:'txt',title:'Ficha Unit 2 · Good Sports',items:u2Ficha(),i:0,score:0};resetW();go('write')}
  else if(m==='ficha'){W={kind:'op',title:'Ficha como el examen',items:fichaItems(),i:0,score:0};resetW();go('write')}
  else startWrite();
 }
@@ -2983,7 +2984,7 @@ const ISTAGES=[
  {k:'rw',n:'Reading & Writing',d:'Lee textos cortos, definiciones y dibujos, y escribe la palabra.'},
  {k:'u2pic',n:'Unit 2 · Sports: look and write',d:'Mira el dibujo y escribe la actividad (climb, dance, fish, ice skate…).',u2:1},
  {k:'u2you',n:'Unit 2 · You can…',d:'Completa las frases con la actividad correcta: You can swim in a swimming pool.',u2:1},
- {k:'u2mc',n:'Unit 2 · Inside or outside? Match',d:'¿Dentro o fuera? Relaciona cada lugar con lo que se puede hacer allí.',mc:true,u2:1},
+ {k:'u2mc',n:'Unit 2 · Inside or outside? Places',d:'Escribe INSIDE u OUTSIDE y la actividad que se hace en cada lugar.',u2:1},
  {k:'u2where',n:'Unit 2 · A place where…',d:'Escribe frases completas: A skatepark is a place where you can skateboard.',u2:1}];
 
 /* ===== Lengua: examen 12 nov (abreviaturas, enunciados, sujeto y predicado) ===== */
@@ -3127,10 +3128,16 @@ function u2MC(){const r=rnd(0,9);
  if(r<7){const pl=pick(U2PLACE),o=shuffle(U2A.filter(a=>a[0]!==pl[1])).slice(0,3).map(a=>a[0]),opts=shuffle([pl[1],...o]);return {q:`Match: ${capF(pl[0])} is a place where you can…`,opts,a:opts.indexOf(pl[1]),why:`${capF(pl[0])} (${U2ES[pl[0]]}) is a place where you can ${pl[1]}.`}}
  if(r<9){const a=pick(U2A),o=shuffle(U2A.filter(x=>x!==a)).slice(0,3),opts=shuffle([a,...o]).map(x=>x[0]);return {q:`What activity is it? ${a[2]}`,opts,a:opts.indexOf(a[0]),why:`«${a[0]}» significa «${a[1]}».`}}
  const a=pick(U2A),c=pick(U2CTX[a[0]]),o=shuffle(U2A.filter(x=>x!==a)).slice(0,3).map(x=>x[0]),opts=shuffle([a[0],...o]);return {q:`You can ___ ${c}`,opts,a:opts.indexOf(a[0]),why:`You can ${a[0]} ${c} («${a[0]}» = ${a[1]}).`}}
+
+function u2InOut(){const inside=Math.random()<.5,pl=pick(inside?U2IN:U2OUT),w=inside?'inside':'outside';return {sec:'Write INSIDE or OUTSIDE',p:`Write INSIDE or OUTSIDE.\nIn ${pl}: _____`,ans:[w],show:w.toUpperCase(),hint:'Pista: ¿tiene techo y paredes (inside) o está al aire libre (outside)?',exp:`${capF(pl)} es ${U2ES[pl]}: está ${inside?'dentro (INSIDE)':'fuera, al aire libre (OUTSIDE)'}.`}}
+function u2Match(){const pl=pTpl('u2match',U2PLACE,x=>x[0]),a=u2Of(pl[1]);return {sec:'Match the places with the activities',p:`Write the correct activity.\n(${U2BOX})\n${capF(pl[0])} is a place where you can _____ .`,ans:[pl[1]],show:pl[1],say:`${capF(pl[0])} is a place where you can ${pl[1]}.`,hint:`Pista: ${pl[0]} es ${U2ES[pl[0]]}. ¿Qué se hace allí?`,exp:`${capF(pl[0])} es ${U2ES[pl[0]]}: allí se puede ${a[1]} → ${pl[1]}.`}}
+function u2Ficha(){const pics=shuffle(U2A).slice(0,4).map(a=>{const it=u2Pic();return it}),you=Array.from({length:4},u2You),io=[u2InOut(),u2InOut()],m=[u2Match(),u2Match()],wh=Array.from({length:3},u2Where);
+ const sec=(n,t,arr)=>arr.map(x=>Object.assign(x,{sec:`${n} ${t}`}));
+ return [...sec('1.','Look at the picture and write the activity',pics),...sec('2.','Complete the sentences',you),...sec('3.','Write INSIDE or OUTSIDE',io),...sec('4.','Match the places',m),...sec('5.','Use «where» to write sentences',wh)]}
 function u2Write(){const r=rnd(0,9);return r<3?u2Pic():r<6?u2You():r<8?u2Where():(()=>{const inside=Math.random()<.5,pl=pick(inside?U2IN:U2OUT),w=inside?'inside':'outside';return {sec:'Write INSIDE or OUTSIDE',p:`Write INSIDE or OUTSIDE.\nIn ${pl.replace(/^an? /,'a ')}: _____`,ans:[w],show:w.toUpperCase(),hint:'Pista: ¿tiene techo y paredes (inside) o está al aire libre (outside)?',exp:`${capF(pl)} es ${U2ES[pl]}: está ${inside?'dentro (INSIDE)':'fuera, al aire libre (OUTSIDE)'}.`}})()}
 
 function pItem(k,used){
- if(k==='u2pic')return u2Pic();if(k==='u2you')return u2You();if(k==='u2where')return u2Where();if(k==='u2mc')return u2MC();if(k==='u2mix')return u2Write();
+ if(k==='u2pic')return u2Pic();if(k==='u2you')return u2You();if(k==='u2where')return u2Where();if(k==='u2mc')return Math.random()<.5?u2InOut():u2Match();if(k==='u2mix')return u2Write();
  if(k==='listen')return listenItem();
  if(k==='rw')return rwItem();
  if(k==='pic'){const w=pWord(k,used);return {p:'¿Qué adjetivo es? Escríbelo en inglés.',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en}}
@@ -3172,7 +3179,7 @@ function renderPath(){
  const M=V.sub==='mates',L=V.sub==='lengua',RV=M?'Ficha como el examen':L?'Repaso para el examen':'Repaso de la Unit 1';
  app.innerHTML=header(M?'Matemáticas':L?'Lengua':'Inglés','home')+`<main class="wrap">
  <section class="subj-head"><h1>${M?'Matemáticas':L?'Lengua':'Inglés · Unit 2 · Good Sports'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${L&&Date.now()<Date.parse('2026-11-13')?'<p class="exam">Examen el jueves 12 de noviembre: abreviaturas, enunciados y sujeto y predicado.</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-27')?'<p class="exam">Examen el jueves 26 de noviembre: vocabulario de la Unit 2 «Good Sports».</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
- ${V.sub==='ingles'?`<button class="pathgo ptestgo" data-act="prepgo"><span class="pgi">${ICON_EXAM}</span><span><b>Examen de prueba: Unit 2 «Good Sports»</b><span>10 preguntas de elegir y 5 de escribir con el vocabulario de la Unit 2. Te da una nota y te dice qué repasar.</span></span></button>`:''}
+ ${V.sub==='ingles'?`<button class="pathgo ptestgo" data-act="mode" data-m="u2ficha"><span class="pgi">${ICON_EXAM}</span><span><b>Ficha de la Unit 2 «Good Sports»</b><span>Como la ficha del cole: los 5 ejercicios, todo escribiendo. 15 preguntas distintas cada vez.</span></span></button>`:''}
  ${examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${STG()[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
  <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':L?'¡Has dominado todos los apartados! Ronda de repaso mezclada como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
