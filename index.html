@@ -2933,6 +2933,7 @@ function start(m){
  else if(m==='path')pathStart();
  else if(m==='match')startMatch();
  else if(m==='trad')startTrad();
+ else if(m==='uficha')startFicha();
  else if(m==='u2ficha'){V.sub='ingles';W={kind:'txt',title:'Ficha Unit 2 · Good Sports',items:u2Ficha(),i:0,score:0};resetW();go('write')}
  else if(m==='ficha'){W={kind:'op',title:'Ficha como el examen',items:fichaItems(),i:0,score:0};resetW();go('write')}
  else startWrite();
@@ -3082,6 +3083,20 @@ const LSTAGES=[
  {k:'verbo',n:'Busca el verbo',d:'Escribe el verbo: la palabra que indica la acción. ¡Todas las oraciones tienen uno!',mc:true},
  {k:'suj',n:'Sujeto y predicado',d:'Escribe el sujeto y el predicado. Localiza las oraciones en un texto.',mc:true},
  {k:'conc',n:'Concordancia',d:'Completa y reescribe oraciones para que sujeto y verbo concuerden.',mc:true}];
+/* Calendario de exámenes: al pasar la fecha («until»), desaparecen su aviso y su ficha */
+const EXAMS=[
+ {sub:'lengua',until:'2026-11-13',text:'Examen el jueves 12 de noviembre: abreviaturas, enunciados y sujeto y predicado.'},
+ {sub:'ingles',until:'2026-11-27',unit:'u2',text:'Examen el jueves 26 de noviembre: vocabulario de la Unit 2 «Good Sports».',ficha:'u2ficha',fichaT:'Ficha de la Unit 2 «Good Sports»',fichaD:'Como la ficha del cole: los 5 ejercicios, todo escribiendo. 15 preguntas distintas cada vez.'}];
+const examsNow=sub=>EXAMS.filter(e=>e.sub===sub&&Date.now()<Date.parse(e.until));
+const UNITS={u1:'Unit 1 · Back to school',u2:'Unit 2 · Good Sports'};
+function ingUnit(){const p=D.path||{st:0},S=ISTAGES;let st=p.st||0;if(!p.u2m)st=Math.max(st,S.findIndex(x=>x.u2));return S[Math.min(st,S.length-1)].u2?'u2':'u1'}
+const secW=(n,t,arr)=>arr.filter(Boolean).map(x=>Object.assign({},x,{sec:`${n} ${t}`}));
+function u1Ficha(){const prev=V.sub;V.sub='ingles';const g=(k,n)=>{const u=new Set();return Array.from({length:n},()=>pItem(k,u))};
+ try{return [...secW('1.','Look and write the adjective',g('pic',3)),...secW('2.','Complete the sentences',g('gap',3)),...secW('3.','Order the letters',g('sort',2)),...secW('4.','Correct the sentences',g('fix',2)),...secW('5.','Reading & Writing',Array.from({length:3},rwItem)),...secW('6.','Write the sentence in English',g('sent',2))]}finally{V.sub=prev}}
+function lFicha(){return [...secW('1.','Abreviaturas',[abrWrite('w'),abrWrite('w'),abrWrite('w'),abrWrite()]),...secW('2.','Enunciados',Array.from({length:3},enuW)),...secW('3.','Busca el verbo',Array.from({length:2},verboW)),...secW('4.','Sujeto y predicado',Array.from({length:3},sujW)),...secW('5.','Concordancia',Array.from({length:3},concW))]}
+const FICHA_NAME=()=>V.sub==='mates'?'Ficha de Matemáticas':V.sub==='lengua'?'Ficha de Lengua':'Ficha de la '+UNITS[ingUnit()].replace(' · ',' «')+'»';
+function startFicha(){if(V.sub==='mates'){W={kind:'op',title:'Ficha como el examen',items:fichaItems(),i:0,score:0}}
+ else W={kind:'txt',title:FICHA_NAME(),items:V.sub==='lengua'?lFicha():ingUnit()==='u2'?u2Ficha():u1Ficha(),i:0,score:0};resetW();go('write')}
 const MSTAGES=[
  {k:'leer',n:'Leer y escribir números',d:'Escribe los números con letras y con cifras, como en el ejercicio 1 del examen.'},
  {k:'des',n:'Descomponer números',d:'Según la posición (4 DM + 8 UM…) y según el valor (40.000 + 8.000…).'},
@@ -3178,8 +3193,8 @@ function renderPath(){
  const p=PTH(),st=p.st,done=st>=STG().length;
  const M=V.sub==='mates',L=V.sub==='lengua',RV=M?'Ficha como el examen':L?'Repaso para el examen':'Repaso de la Unit 1';
  app.innerHTML=header(M?'Matemáticas':L?'Lengua':'Inglés','home')+`<main class="wrap">
- <section class="subj-head"><h1>${M?'Matemáticas':L?'Lengua':'Inglés · Unit 2 · Good Sports'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${L&&Date.now()<Date.parse('2026-11-13')?'<p class="exam">Examen el jueves 12 de noviembre: abreviaturas, enunciados y sujeto y predicado.</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-27')?'<p class="exam">Examen el jueves 26 de noviembre: vocabulario de la Unit 2 «Good Sports».</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
- ${V.sub==='ingles'?`<button class="pathgo ptestgo" data-act="mode" data-m="u2ficha"><span class="pgi">${ICON_EXAM}</span><span><b>Ficha de la Unit 2 «Good Sports»</b><span>Como la ficha del cole: los 5 ejercicios, todo escribiendo. 15 preguntas distintas cada vez.</span></span></button>`:''}
+ <section class="subj-head"><h1>${M?'Matemáticas':L?'Lengua':'Inglés · '+UNITS[ingUnit()]}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${examsNow(V.sub).map(e=>`<p class="exam">${esc(e.text)}</p>`).join('')}</section>
+ <button class="pathgo ptestgo" data-act="mode" data-m="uficha"><span class="pgi">${ICON_EXAM}</span><span><b>${esc(FICHA_NAME())}</b><span>Todos los tipos de ejercicio de ${M||L?'lo que estás estudiando':'la unidad'}, como una ficha del cole y escribiendo. Cada ficha es distinta.</span></span></button>
  ${examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${STG()[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
  <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':L?'¡Has dominado todos los apartados! Ronda de repaso mezclada como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
@@ -3188,6 +3203,7 @@ function renderPath(){
 }
 function buildTest(){
  let qs=[];
+ if(V.sub==='ingles'&&ingUnit()==='u2')return Array.from({length:10},u2MC);
  if(V.sub==='lengua')return lMix(10);
  if(V.sub==='mates'){
   const geoQ=pool(MC_MATES.filter(r=>!r[6]),10).map(mcFromRow);
@@ -3466,6 +3482,7 @@ function listen(){
 /* ---------- escribir / operaciones ---------- */
 function startWrite(){
  const L=LV();
+ if(V.sub==='ingles'&&ingUnit()==='u2'){W={kind:'txt',items:Array.from({length:V.exam?5:8},u2Write),i:0,score:0};resetW();go('write');return}
  if(V.sub==='lengua'){const ks=['abrw','enu','verbo','suj','conc','abrw','suj','conc'];W={kind:'txt',items:shuffle(ks.map(k=>LW[k]())).slice(0,V.exam?5:8),i:0,score:0};resetW();go('write');return}
  if(V.sub==='mates'){
   const wt=D.tp.mates.filter(t=>t!=='geo'),tp=wt.length?wt:['mul','div'];
