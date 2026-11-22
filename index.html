@@ -324,6 +324,8 @@ button{font:inherit;color:inherit}
 .mini{min-width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-size:1.1rem;cursor:pointer;margin-left:6px}.mini:disabled{opacity:.35}.mini.del{color:var(--bad)}
 .psel{padding-left:1.4em;display:flex;flex-direction:column;gap:8px}.psel li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pfx{display:flex;flex:0 0 auto}.pownv{background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:12px;padding:10px 12px}.warn{color:var(--bad)}
 .ptextbox{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px 16px;margin:10px 0}.ptext{font-size:1.2rem;line-height:1.75;margin:10px 0}.psent{cursor:pointer;border-radius:6px;padding:1px 2px;transition:background .2s}.psent:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}.psent.on{background:color-mix(in srgb,var(--accent) 20%,transparent);box-shadow:inset 0 -3px 0 var(--accent)}.psent.found{background:#ffe27a;color:#222}
+.askbox .chip::before{display:none}.askbox .chip{padding-left:14px;margin:3px 2px}
+.askans{border:2px solid var(--accent);border-radius:16px;padding:12px 14px;margin-top:10px;background:color-mix(in srgb,var(--accent) 6%,var(--card))}.askt{font-size:1.25rem;line-height:1.55;margin:4px 0 10px}.punk{padding-left:1.2em}.punk li{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0}
 .pfact.found{border-color:#f0a500;box-shadow:0 0 0 4px #ffd34d88;animation:pfound 1s ease 2}@keyframes pfound{50%{transform:scale(1.02)}}
 .dsteps{margin:6px 0 12px;padding-left:1.4em;line-height:1.6}.detq{border:2px dashed var(--accent);border-radius:16px;padding:14px;margin-top:10px}.detqt{font-family:var(--f-display);font-size:1.4rem;font-weight:800;margin:4px 0 10px}.detty{display:flex;gap:8px;margin:10px 0}.detty input{flex:1;min-width:0;border:2px solid var(--line);border-radius:12px;padding:10px;font:inherit;font-size:1.1rem;background:var(--card);color:var(--ink)}
 .pshow{background:var(--card);border:3px solid var(--accent);border-radius:24px;padding:24px;min-height:50vh}.pshow h1{font-family:var(--f-display);font-size:2rem;margin:4px 0 14px}.pshow li{font-size:1.35rem;line-height:1.5;margin-bottom:10px}
@@ -2616,7 +2618,9 @@ function renderProjHome(){const P=PJ(),nd=Object.keys(P.done).length,nsel=Object
  <section class="projhero">${flagUSA()}<div><h1>Guía turística: ${PROJ.country}</h1><p>Explora, descubre, investiga y comparte. Recorre las 6 paradas, aprende, comprueba lo que sabes y prepara tu presentación.</p>
  <div class="bar"><i style="width:${Math.round(nd/6*100)}%"></i></div><p class="small">${nd} de 6 paradas superadas · ${nsel} datos elegidos para tu presentación</p></div></section>
  <section class="pstops">${PROJ.stops.map((s,i)=>{const n=(P.sel[s.id]||[]).length;return `<button class="pstop ${P.done[s.id]?'ok':''}" data-act="projstop" data-i="${i}"><span class="pnum">Parada ${String(i+1).padStart(2,'0')}</span><span class="pic">${s.ic}</span><b>${esc(s.n)}</b><span class="small">${P.done[s.id]?'✓ Superada':'Por descubrir'}${n?` · ${n} datos elegidos`:''}</span></button>`}).join('')}</section>
- <section class="actions two"><button class="btn primary" data-act="projpres">Mi presentación</button><button class="btn ghost" data-act="projshow">Ensayar la exposición</button></section></main>`}
+ <section class="actions two"><button class="btn primary" data-act="projpres">Mi presentación</button><button class="btn ghost" data-act="projshow">Ensayar la exposición</button></section>
+ <section class="pcard"><h2>🙋 Pregúntame</h2><div class="askbox">${askHTML()}</div></section>
+ ${(P.unk||[]).length?`<section class="pcard"><h2>Preguntas para mamá o papá</h2><p class="small">Estas no las sabía responder. Buscad juntos la respuesta.</p><ul class="punk">${P.unk.map((q,i)=>`<li><span>${esc(q)}</span><button class="mini del" data-act="askclr" data-i="${i}" aria-label="Quitar">✕</button></li>`).join('')}</ul></section>`:''}</main>`}
 function renderProjStop(){const P=PJ(),s=PROJ.stops[V.ps],sel=P.sel[s.id]||[],Q=V.pq&&V.pq.sid===s.id?V.pq:null;
  const quiz=Q?(Q.i<Q.qs.length?(()=>{const q=Q.qs[Q.i];return `<p class="pqq"><b>Pregunta ${Q.i+1} de ${Q.qs.length}:</b> ${esc(q.q)}</p><div class="opts">${q.o.map((o,j)=>`<button class="opt ${Q.ans!=null?(j===q.a?'right':j===Q.ans?'wrong':''):''}" data-act="projans" data-j="${j}" ${Q.ans!=null?'disabled':''}><span>${esc(o)}</span></button>`).join('')}</div>${Q.ans!=null?`<p class="fb ${Q.ans===q.a?'ok':'bad'}">${Q.ans===q.a?'¡Correcto!':'La respuesta correcta es: <b>'+esc(q.o[q.a])+'</b>'}</p><button class="btn primary" data-act="projqn">${Q.i+1<Q.qs.length?'Siguiente':'Ver resultado'}</button>`:''}`})():`<p class="pqres">Has acertado <b>${Q.ok} de ${Q.qs.length}</b>. ${Q.ok>=Q.qs.length-1?(Q.won?'¡Parada superada! Ganas 10 estrellas.':'¡Parada superada!'):'Vuelve a leer la información e inténtalo otra vez: necesitas fallar como mucho una.'}</p><button class="btn ghost" data-act="projquiz">Repetir preguntas</button>`):`<button class="btn primary" data-act="projquiz">Empezar las preguntas</button>`;
  app.innerHTML=header(`Parada ${String(V.ps+1).padStart(2,'0')}`,'projopen')+`<main class="wrap">
@@ -2627,6 +2631,7 @@ function renderProjStop(){const P=PJ(),s=PROJ.stops[V.ps],sel=P.sel[s.id]||[],Q=
  <div class="ptextbox">${s.para.map(g=>`<p class="ptext">${g.map(fid=>{const f=factOf(s.id,fid),on=sel.includes(fid);return `<span class="psent ${on?'on':''}" data-act="projfact" data-f="${fid}" role="button" tabindex="0">${esc(f[2])}</span>`}).join(' ')}</p>`).join('')}</div>
  <p class="small">${sel.length?`Has elegido <b>${sel.length}</b> frase${sel.length>1?'s':''} para tu presentación.`:'Todavía no has elegido ninguna frase.'}</p></section>
  <section class="pcard"><h2>2. Detective de datos 🔎</h2><p class="small">Te hago preguntas en voz alta. Tú buscas la respuesta en el texto y me contestas hablando.</p><div id="detbox">${detHTML()}</div></section>
+ <section class="pcard"><h2>🙋 Pregúntame</h2><div class="askbox">${askHTML()}</div></section>
  ${s.say?`<section class="pcard"><h2>Practica el saludo</h2><div class="chips">${s.say.map(t=>`<button class="chip" data-act="say" data-t="${esc(t)}">🔊 ${esc(t)}</button>`).join('')}</div></section>`:''}
  <section class="pcard"><h2>3. Tus ideas</h2><p class="small">Escribe con tus palabras. Se guarda solo y aparecerá en tu presentación.</p>${s.own.map(ownField).join('')}</section>
  <section class="pcard" id="pquiz"><h2>4. Comprueba lo que sabes ${P.done[s.id]?'<span class="okb">✓ Superada</span>':''}</h2>${quiz}</section>
@@ -2657,8 +2662,8 @@ function renderProjShow(){const sl=presSlides(),i=Math.min(V.pi||0,sl.length-1),
 let PTIMER=null;
 document.addEventListener('input',e=>{const k=e.target&&e.target.dataset&&e.target.dataset.own;if(!k)return;PJ().own[k]=e.target.value;save()});
 const PROJ_ACTS={
- projopen:()=>{V.pq=null;go('projhome')},
- projstop:el=>{V.ps=+el.dataset.i;V.pq=null;V.det=null;go('projstop');window.scrollTo(0,0)},
+ projopen:()=>{V.pq=null;V.ask=null;go('projhome')},
+ projstop:el=>{V.ps=+el.dataset.i;V.pq=null;V.det=null;V.ask=null;go('projstop');window.scrollTo(0,0)},
  projfact:el=>{const P=PJ(),s=PROJ.stops[V.ps],a=P.sel[s.id]=P.sel[s.id]||[],f=el.dataset.f,i=a.indexOf(f);if(i>=0)a.splice(i,1);else a.push(f);save();const y=window.scrollY;renderProjStop();window.scrollTo(0,y)},
  projread:el=>speakES(el.dataset.t),
  projhush:()=>{try{speechSynthesis.cancel()}catch(e){}},
@@ -2718,6 +2723,142 @@ Object.assign(PROJ_ACTS,{
  detchk:()=>{const v=($('#detin')||{}).value||'';if(v.trim())detCheck(v)},
  detskip:()=>{const X=V.det,q=X.qs[X.i],f=factOf(X.sid,q[3]);X.done=true;X.good=false;X.msg=`La respuesta está en esta frase: «${esc(f[2])}»`;detRedraw();detMark(q[3])},
  detnext:()=>{const X=V.det;X.i++;X.tries=0;X.done=false;X.msg='';X.heard='';X.good=false;detRedraw();document.querySelectorAll('.psent.found').forEach(e=>e.classList.remove('found'));if(X.i<X.qs.length){speakES(X.qs[X.i][0]);const b=$('#detbox');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})}}});
+
+/* ===== Pregúntame: diccionario explicado con voz ===== */
+const ASKD=[
+ [['estados unidos','ee uu','eeuu','usa'],'Estados Unidos es un país muy grande de América del Norte. Se llama así porque está formado por 50 estados que se unieron. EE. UU. se escribe con las letras dobles porque es una abreviatura en plural: Estados Unidos.'],
+ [['abreviatura'],'Una abreviatura es una forma corta de escribir una palabra, como pág. para página. ¡Lo estudiaste en Lengua!'],
+ [['pais'],'Un país es un territorio con sus propias leyes, su bandera, su gobierno y su gente. España es un país, y Estados Unidos también.'],
+ [['continente'],'Un continente es un trozo de tierra enorme donde hay muchos países. Por ejemplo, Europa, África, Asia, Oceanía y América.'],
+ [['capital'],'La capital es la ciudad más importante de un país, donde está el gobierno. La capital de España es Madrid y la de Estados Unidos es Washington D. C.'],
+ [['washington','d c','distrito de columbia'],'Washington D. C. es la capital de Estados Unidos. D. C. significa Distrito de Columbia. Allí están la Casa Blanca y el Capitolio.'],
+ [['estado','estados'],'En Estados Unidos, un estado es una parte del país con su propio gobierno, parecido a nuestras comunidades autónomas, como Canarias. Hay 50 estados.'],
+ [['presidente'],'El presidente es la persona que dirige el gobierno de un país. En Estados Unidos lo eligen los ciudadanos con su voto cada cuatro años.'],
+ [['casa blanca'],'La Casa Blanca es el edificio blanco donde vive y trabaja el presidente de Estados Unidos, en Washington D. C.'],
+ [['capitolio'],'El Capitolio es un gran edificio con una cúpula en Washington D. C. Allí se reúnen las personas que hacen las leyes del país.'],
+ [['vecino','vecinos','paises vecinos'],'Los países vecinos son los que están pegados a otro país, al lado, compartiendo frontera. Los vecinos de Estados Unidos son Canadá y México.'],
+ [['frontera'],'La frontera es la línea donde termina un país y empieza otro. No siempre se ve: muchas veces solo está dibujada en los mapas.'],
+ [['oceano','oceanos'],'Un océano es una enorme cantidad de agua salada, mucho más grande que un mar. El Atlántico es el océano que rodea Canarias.'],
+ [['millon','millones','poblacion','habitantes'],'Un millón es mil veces mil: un 1 con seis ceros. En Estados Unidos viven unos 340 millones de personas, ¡muchísima gente!'],
+ [['alaska'],'Alaska es el estado más grande de Estados Unidos. Está muy al norte, al lado de Canadá, y hace muchísimo frío.'],
+ [['hawai'],'Hawái es un estado formado por islas en mitad del océano Pacífico. Tiene volcanes y playas, ¡como Canarias!'],
+ [['bandera'],'Una bandera es una tela con colores y dibujos que representa a un país. La de Estados Unidos tiene barras rojas y blancas y estrellas blancas sobre azul.'],
+ [['barras y estrellas'],'Barras y estrellas es el nombre de la bandera de Estados Unidos. Barras son las franjas rojas y blancas, y estrellas son las 50 estrellas blancas.'],
+ [['franja','franjas'],'Una franja es una raya larga de color, como las 13 rayas rojas y blancas de la bandera de Estados Unidos.'],
+ [['colonia','colonias'],'Hace mucho tiempo, una colonia era un territorio que gobernaba un país lejano. Las 13 colonias eran de Inglaterra, hasta que se independizaron y formaron Estados Unidos.'],
+ [['independencia','independizaron','independiente'],'Independencia es cuando un país deja de depender de otro y empieza a gobernarse solo. Estados Unidos se independizó de Inglaterra en 1776.'],
+ [['moneda'],'La moneda es el dinero que se usa en un país. En España usamos el euro y en Estados Unidos, el dólar.'],
+ [['dolar','dolares'],'El dólar es el dinero de Estados Unidos. Su símbolo es este: $. Un dólar se divide en 100 centavos.'],
+ [['centavo','centavos'],'Un centavo es una moneda pequeñita: hacen falta 100 centavos para tener un dólar, igual que 100 céntimos hacen un euro.'],
+ [['billete','billetes'],'Un billete es dinero de papel. Los de Estados Unidos son casi todos de color verde.'],
+ [['idioma','idiomas','lengua'],'Un idioma es la lengua que habla la gente para entenderse, como el español o el inglés.'],
+ [['saludo','saludar','saluda'],'Saludar es decir algo amable al encontrarte con alguien. En Estados Unidos dicen Hello o Hi y se dan la mano.'],
+ [['how are you'],'How are you significa ¿cómo estás? Se contesta: I am fine, thank you. Es decir: estoy bien, gracias.'],
+ [['hello','hi'],'Hello y Hi significan hola en inglés. Hi es más informal, para amigos.'],
+ [['ciudad','ciudades'],'Una ciudad es un lugar donde vive mucha gente, con muchas calles, casas, tiendas y colegios. Telde y Las Palmas son ciudades.'],
+ [['rascacielos'],'Un rascacielos es un edificio altísimo, con muchísimos pisos. Se llama así porque parece que rasca el cielo.'],
+ [['nueva york'],'Nueva York es la ciudad de Estados Unidos donde vive más gente. Está llena de rascacielos, y allí están la Estatua de la Libertad y Times Square.'],
+ [['times square'],'Times Square es una plaza de Nueva York llena de pantallas gigantes con luces de colores. ¡Por la noche parece de día!'],
+ [['monumento','monumentos'],'Un monumento es una construcción o estatua importante que se hace para recordar algo o a alguien, y que va mucha gente a visitar.'],
+ [['estatua'],'Una estatua es una figura con forma de persona o animal, hecha de piedra, metal o madera.'],
+ [['estatua de la libertad','libertad'],'La Estatua de la Libertad es una estatua gigante en Nueva York. Representa a una mujer con una antorcha. Fue un regalo de Francia en 1886.'],
+ [['verde','por que es verde'],'La Estatua de la Libertad es verde porque está hecha de cobre. Al principio era marrón brillante, pero con el aire y la lluvia el cobre se volvió verde.'],
+ [['antorcha'],'Una antorcha es un palo con fuego en la punta que sirve para alumbrar. La Estatua de la Libertad levanta una antorcha con su mano derecha.'],
+ [['pedestal'],'Un pedestal es la base grande sobre la que se pone una estatua para que esté más alta.'],
+ [['turistico','turisticos','turista','turistas'],'Un lugar turístico es un sitio que mucha gente visita cuando va de viaje, porque es bonito o importante. Los turistas son esas personas que viajan.'],
+ [['guia','guia turistica'],'Un guía turístico es la persona que acompaña a los viajeros y les explica lo que ven. ¡En tu proyecto, tú eres la guía!'],
+ [['los angeles'],'Los Ángeles es una gran ciudad de California, en el oeste de Estados Unidos. Allí está Hollywood, el barrio del cine.'],
+ [['hollywood'],'Hollywood es un barrio de Los Ángeles donde se hacen muchísimas películas. En una colina hay un cartel gigante que pone HOLLYWOOD.'],
+ [['san francisco'],'San Francisco es una ciudad de California con muchas cuestas, famosa por el puente rojo Golden Gate y sus tranvías.'],
+ [['golden gate','puente'],'El Golden Gate es un puente muy largo de color rojo en San Francisco. Golden Gate significa puerta dorada.'],
+ [['tranvia','tranvias'],'Un tranvía es un tren pequeño que va por las calles de la ciudad sobre unos raíles.'],
+ [['rushmore','monte rushmore'],'El Monte Rushmore es una montaña donde tallaron en la roca las caras gigantes de cuatro presidentes de Estados Unidos.'],
+ [['tallar','talladas','tallado'],'Tallar es dar forma a la piedra o a la madera quitando trocitos con herramientas, como hace un escultor.'],
+ [['canon','gran canon'],'Un cañón es un valle muy profundo con paredes de roca, que un río ha ido excavando durante muchísimo tiempo. El Gran Cañón lo hizo el río Colorado.'],
+ [['excavando','excavar','excavo'],'Excavar es hacer un hueco o un agujero. El río Colorado excavó el Gran Cañón poco a poco, con su agua, durante millones de años.'],
+ [['valle'],'Un valle es una zona baja de tierra entre montañas.'],
+ [['catarata','cataratas','niagara'],'Una catarata es una cascada muy grande: un río que cae desde lo alto. Las del Niágara están entre Estados Unidos y Canadá.'],
+ [['geiser','geiseres','old faithful'],'Un géiser es un agujero en el suelo que, de vez en cuando, lanza hacia el cielo un chorro de agua caliente y vapor, porque bajo la tierra está muy caliente. El Old Faithful es el más famoso.'],
+ [['yellowstone','parque nacional'],'Yellowstone es un parque nacional, un lugar natural protegido para cuidar sus animales y paisajes. Tiene géiseres y osos.'],
+ [['misisipi','mississippi','rio'],'Un río es agua dulce que corre desde las montañas hasta el mar. El Misisipi es uno de los ríos más largos del mundo.'],
+ [['montanas rocosas','rocosas','cordillera'],'Las Montañas Rocosas son una cordillera, es decir, una fila larguísima de montañas, en el oeste de Estados Unidos.'],
+ [['volcan','volcanes'],'Un volcán es una montaña por la que puede salir lava, roca derretida muy caliente, desde dentro de la Tierra. Canarias y Hawái nacieron de volcanes.'],
+ [['paisaje','paisajes'],'Un paisaje es todo lo que ves de un lugar: montañas, ríos, playas, árboles…'],
+ [['cultura'],'La cultura es todo lo que hace especial a un pueblo: su forma de vestir, sus fiestas, su comida, su música y sus costumbres.'],
+ [['tradicion','tradiciones','tradicional'],'Una tradición es algo que la gente hace desde hace muchísimos años y pasa de abuelos a padres y a hijos, como una fiesta o una comida especial.'],
+ [['costumbre','costumbres'],'Una costumbre es algo que la gente de un lugar hace normalmente, como cenar temprano o dejar propina.'],
+ [['vestimenta','traje','trajes'],'La vestimenta es la ropa. Un traje típico o tradicional es la ropa especial de un lugar, como el traje de mago de Canarias.'],
+ [['vaquero','cowboy'],'Un vaquero, en inglés cowboy, es una persona que cuida vacas a caballo en el campo. Lleva sombrero, botas y pañuelo.'],
+ [['nativo','nativos','nativos americanos','indios'],'Los nativos americanos son los pueblos que vivían en América antes de que llegaran los europeos. Tienen sus propias lenguas y tradiciones.'],
+ [['flecos'],'Los flecos son tiras de tela o cuero que cuelgan del borde de la ropa y se mueven al andar.'],
+ [['cuentas'],'Las cuentas son bolitas de colores con un agujerito que se cosen a la ropa o se ensartan para hacer collares.'],
+ [['desfile','desfiles'],'Un desfile es cuando mucha gente pasa por la calle, en fila, con música, disfraces o carrozas, como en carnaval.'],
+ [['fuegos artificiales'],'Los fuegos artificiales son luces de colores que explotan en el cielo por la noche en las fiestas.'],
+ [['4 de julio','cuatro de julio'],'El 4 de julio es la fiesta más importante de Estados Unidos: celebran el día en que se independizaron, en 1776.'],
+ [['accion de gracias','thanksgiving'],'Acción de Gracias es una fiesta de noviembre en la que las familias se juntan a comer pavo y dar las gracias por las cosas buenas del año.'],
+ [['halloween'],'Halloween es la fiesta del 31 de octubre: los niños se disfrazan de cosas de miedo y piden caramelos por las casas.'],
+ [['truco o trato','trick or treat'],'Trick or treat significa truco o trato. Los niños lo dicen en Halloween: o les das caramelos, o te hacen una pequeña broma.'],
+ [['propina'],'La propina es un dinero extra que se da al camarero para darle las gracias por atenderte bien.'],
+ [['autobus amarillo','autobus'],'En Estados Unidos los niños van al colegio en un autobús escolar amarillo, que se ve muy bien desde lejos para que sea seguro.'],
+ [['jazz'],'El jazz es un tipo de música que nació en Estados Unidos, con trompetas, saxofones y piano, en la que los músicos inventan melodías mientras tocan.'],
+ [['blues'],'El blues es una música tranquila y un poco triste que nació en el sur de Estados Unidos. De ella salieron después el rock y otras músicas.'],
+ [['rock','rock and roll'],'El rock and roll es una música alegre y movida con guitarras eléctricas, que nació en Estados Unidos hace unos 70 años.'],
+ [['country'],'El country es la música del campo de Estados Unidos, con guitarras y violines. Es la que bailan los vaqueros.'],
+ [['hip hop','rap'],'El hip hop es un estilo de música y baile que nació en Nueva York. En él se canta hablando rápido y con ritmo: eso se llama rap.'],
+ [['line dance','baile en linea'],'El baile en línea es un baile de la música country en el que todos se ponen en filas y hacen los mismos pasos a la vez.'],
+ [['ingrediente','ingredientes'],'Los ingredientes son las cosas que se mezclan para hacer una comida, como la harina, los huevos o la leche.'],
+ [['hamburguesa'],'La hamburguesa es un filete redondo de carne picada dentro de un pan redondo, con queso, lechuga, tomate y kétchup.'],
+ [['perrito caliente','hot dog'],'Un perrito caliente, en inglés hot dog, es una salchicha dentro de un pan alargado.'],
+ [['beisbol'],'El béisbol es un deporte muy famoso en Estados Unidos: un jugador lanza una pelota y otro intenta golpearla con un bate y correr.'],
+ [['mostaza'],'La mostaza es una salsa amarilla un poco picante que se pone en los perritos calientes.'],
+ [['tortitas','pancakes'],'Las tortitas, en inglés pancakes, son como crepes gorditas y redondas que se desayunan con sirope.'],
+ [['sirope','sirope de arce','arce'],'El sirope de arce es un líquido muy dulce, parecido a la miel, que se saca de la savia de un árbol llamado arce. Se echa por encima de las tortitas.'],
+ [['canela'],'La canela es una especia marrón que huele muy bien y se pone en postres como la tarta de manzana o el arroz con leche.'],
+ [['especia','especias'],'Una especia es algo que se añade a la comida en poca cantidad para darle sabor u olor, como la canela o la pimienta.'],
+ [['arandanos','arandano'],'Los arándanos son unas frutas pequeñitas, redondas, azules o rojas. Con los rojos se hace la salsa del pavo de Acción de Gracias.'],
+ [['pure'],'El puré es comida triturada hasta quedar suave, como el puré de patatas.'],
+ [['pavo'],'El pavo es un ave grande, como un pollo enorme. En Acción de Gracias se come pavo asado.'],
+ [['plato tipico','tipico'],'Un plato típico es una comida muy conocida de un lugar, como las papas arrugadas con mojo en Canarias.'],
+ [['animal caracteristico','simbolo'],'Un símbolo es algo que representa a otra cosa. El animal símbolo de un país es el que lo representa, como el águila calva en Estados Unidos.'],
+ [['aguila','aguila calva','calva'],'El águila calva es un ave grande, símbolo de Estados Unidos. No es calva: tiene la cabeza cubierta de plumas blancas. Se llama así porque, en inglés antiguo, bald significaba blanco.'],
+ [['bisonte','bisontes'],'El bisonte es un animal grande y peludo, parecido a un toro con mucho pelo. Vive en las praderas.'],
+ [['mamifero','mamiferos'],'Un mamífero es un animal que, de pequeño, toma la leche de su madre. Los perros, los bisontes y las personas somos mamíferos.'],
+ [['pradera','praderas'],'Una pradera es un terreno enorme y llano cubierto de hierba, sin casi árboles.'],
+ [['astronauta','astronautas'],'Un astronauta es una persona que viaja al espacio en una nave espacial.'],
+ [['luna','armstrong','aldrin'],'En 1969, Neil Armstrong y Buzz Aldrin fueron las primeras personas en caminar por la Luna. Llegaron en una nave llamada Apolo 11.'],
+ [['secuoya','secuoyas'],'La secuoya es un árbol gigantesco que crece en California. Algunas miden más de 100 metros, ¡tanto como un edificio de 30 pisos!'],
+ [['varias horas','zona horaria','horas distintas','hora'],'Estados Unidos es tan ancho que, cuando en el este ya ha salido el sol, en el oeste todavía es de noche. Por eso tienen horas distintas: en Nueva York son las 12 y en Los Ángeles, las 9.'],
+ [['valle de la muerte','caluroso','calurosos'],'El Valle de la Muerte es un desierto de California donde hace muchísimo calor. Es uno de los lugares más calurosos del planeta.'],
+ [['desierto'],'Un desierto es un lugar donde casi nunca llueve, con mucha arena o piedras y muy pocas plantas.'],
+ [['disneyland','parque de atracciones'],'Un parque de atracciones es un lugar con montañas rusas y juegos. El primer Disneyland abrió en California en 1955.'],
+ [['curiosidad','curiosidades','curioso'],'Una curiosidad es un dato sorprendente o raro que te hace decir: ¡anda, no lo sabía!'],
+ [['exposicion','presentacion'],'Una exposición es cuando explicas un tema en voz alta delante de tu clase. Truco: mira a tus compañeros, habla despacio y cuéntalo con tus palabras.'],
+ [['mapa'],'Un mapa es un dibujo de la Tierra o de un lugar visto desde arriba, que sirve para saber dónde están las cosas.'],
+ [['localizacion','localizar'],'Localizar es encontrar dónde está algo. La localización de un país es el lugar del mapa donde se encuentra.']];
+function askFind(q){const n=' '+noAcc(String(q).toLowerCase()).replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim()+' ';let best=null,bl=0;
+ for(const e of ASKD)for(const k of e[0]){const kk=' '+k+' ',sc=k.length+(k==='verde'||k==='calva'?50:0);if(n.includes(kk)&&sc>bl){best=e;bl=sc}}return best}
+const ASK_SUG={p1:['capital','continente','frontera','estado','océano'],p2:['colonia','independencia','dólar','franja','idioma'],p3:['rascacielos','pedestal','géiser','cañón','catarata','tranvía'],p4:['tradición','vaquero','flecos','desfile','propina','jazz'],p5:['ingredientes','sirope de arce','arándanos','canela','béisbol'],p6:['mamífero','pradera','secuoya','astronauta','águila calva','varias horas']};
+function askHTML(){const X=V.ask||{},sid=V.view==='projstop'?PROJ.stops[V.ps].id:null,sug=sid?ASK_SUG[sid]:['Estados Unidos','abreviatura','exposición','guía turística','curiosidad'],hasSR=!!(window.SpeechRecognition||window.webkitSpeechRecognition);
+ return `<p class="small">¿Hay alguna palabra que no entiendes? Pregúntamela${hasSR?' con tu voz':''}, por ejemplo: «¿Qué es un géiser?». Te lo explico de forma sencilla y en voz alta.</p>
+ <div class="pfbtns">${hasSR?`<button class="btn primary" data-act="askmic" ${X.listen?'disabled':''}>${X.listen?'🎙️ Te escucho…':'🎤 Pregúntame'}</button>`:''}</div>
+ <div class="detty"><input id="askin" type="text" autocomplete="off" placeholder="${hasSR?'O escribe aquí tu pregunta':'Escribe aquí tu pregunta'}"><button class="btn ghost small" data-act="askgo">Preguntar</button></div>
+ <p class="small">Prueba con: ${sug.map(w=>`<button class="chip" data-act="askw" data-w="${esc(w)}">${esc(w)}</button>`).join(' ')}</p>
+ ${X.q?`<div class="askans"><p class="small">Has preguntado: «${esc(X.q)}»</p><p class="askt">${esc(X.a)}</p><button class="btn ghost small" data-act="asksay">🔊 Repetir</button></div>`:''}`}
+function askRedraw(){document.querySelectorAll('.askbox').forEach(b=>b.innerHTML=askHTML())}
+function askAnswer(q){const e=askFind(q),X=V.ask=V.ask||{};X.q=q;
+ if(e){X.a=e[1]}else{X.a='Esa pregunta todavía no la sé responder. La he guardado para que se la preguntes a mamá o a papá, o para buscarla juntos en un diccionario o en un libro.';const P=PJ();P.unk=P.unk||[];if(!P.unk.includes(q)&&P.unk.length<30){P.unk.push(q);save()}}
+ askRedraw();speakES(X.a)}
+let ASK_REC=null;
+Object.assign(PROJ_ACTS,{
+ askgo:()=>{const v=(($('.askbox #askin')||{}).value||'').trim();if(v)askAnswer(v)},
+ askw:el=>askAnswer('¿Qué es '+el.dataset.w+'?'),
+ asksay:()=>{if(V.ask&&V.ask.a)speakES(V.ask.a)},
+ askmic:()=>{const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;try{speechSynthesis.cancel()}catch(e){}try{ASK_REC&&ASK_REC.abort()}catch(e){}
+  const r=ASK_REC=new SR();r.lang='es-ES';r.interimResults=false;r.maxAlternatives=3;const X=V.ask=V.ask||{};
+  r.onresult=e=>{X.listen=false;const alts=[...e.results[0]].map(a=>a.transcript);askAnswer(alts.find(a=>askFind(a))||alts[0])};
+  r.onerror=e=>{X.listen=false;X.q='(no te he oído)';X.a=e.error==='not-allowed'?'Necesito permiso para usar el micrófono. Pídeselo a mamá o papá.':'No te he oído bien. Pulsa otra vez y habla cerca de la tablet.';askRedraw()};
+  r.onend=()=>{if(X.listen){X.listen=false;askRedraw()}};X.listen=true;askRedraw();try{r.start()}catch(e){X.listen=false;askRedraw()}},
+ askclr:el=>{const P=PJ();P.unk=(P.unk||[]).filter((_,i)=>i!==+el.dataset.i);save();renderProjHome()}});
 
 function renderHome(){
  penaltyNotice();
