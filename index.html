@@ -324,6 +324,7 @@ button{font:inherit;color:inherit}
 .mini{min-width:44px;height:44px;border-radius:12px;border:2px solid var(--line);background:var(--card);color:var(--ink);font-size:1.1rem;cursor:pointer;margin-left:6px}.mini:disabled{opacity:.35}.mini.del{color:var(--bad)}
 .psel{padding-left:1.4em;display:flex;flex-direction:column;gap:8px}.psel li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pfx{display:flex;flex:0 0 auto}.pownv{background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:12px;padding:10px 12px}.warn{color:var(--bad)}
 .ptextbox{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px 16px;margin:10px 0}.ptext{font-size:1.2rem;line-height:1.75;margin:10px 0}.psent{cursor:pointer;border-radius:6px;padding:1px 2px;transition:background .2s}.psent:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}.psent.on{background:color-mix(in srgb,var(--accent) 20%,transparent);box-shadow:inset 0 -3px 0 var(--accent)}.psent.found{background:#ffe27a;color:#222}
+.u2pic{font-size:6rem;line-height:1.1;text-align:center}
 .askbox .chip::before{display:none}.askbox .chip{padding-left:14px;margin:3px 2px}
 .askans{border:2px solid var(--accent);border-radius:16px;padding:12px 14px;margin-top:10px;background:color-mix(in srgb,var(--accent) 6%,var(--card))}.askt{font-size:1.25rem;line-height:1.55;margin:4px 0 10px}.punk{padding-left:1.2em}.punk li{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0}
 .pfact.found{border-color:#f0a500;box-shadow:0 0 0 4px #ffd34d88;animation:pfound 1s ease 2}@keyframes pfound{50%{transform:scale(1.02)}}
@@ -1995,12 +1996,12 @@ function lSent(){const w=pick(U1).en,c=pick(CTX.filter(x=>x[0]===w)),K=kidOf(),t
 const listenItem=()=>pick([lPic,lPic,lThink,lYN,lWho,lSent])();
 const rwItem=()=>pick([readWrite,readWrite,defWrite,defWrite,ynWrite])();
 function startPrep(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.sub='ingles';V.exam={part:1,s:0,n:0,sub:'ingles',sim:true,prep:true,miss:[]};V.mode='sim';lives=MAXL;V.locked=false;
- T={qs:[...Array.from({length:5},listenItem),...Array.from({length:5},readMC)],i:0,score:0,done:false};go('test')}
+ T={qs:Array.from({length:10},u2MC),i:0,score:0,done:false};go('test')}
 function startSim(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.exam={part:1,s:0,n:0,sub:V.sub,sim:true,miss:[]};V.mode='sim';lives=MAXL;V.locked=false;T={qs:buildTest().slice(0,10),i:0,score:0,done:false};go('test')}
 function startExam(){const m=$('#mdl');if(m)m.remove();D.sess=(D.sess||0)+1;V.exam={part:1,s:0,n:0,sub:V.sub};V.mode='exam';lives=MAXL;V.locked=false;T={qs:buildTest().slice(0,10),i:0,score:0,done:false};go('test')}
 function examStep(score,total){
  const E=V.exam;E.s+=score;E.n+=total;
- if(E.part===1){E.part=2;if(E.prep){W={kind:'txt',title:'Examen de prueba (2/2): Writing',items:[readWrite(),defWrite(),ynWrite(),defWrite(),readWrite()],i:0,score:0};resetW();go('write');return}startWrite();return}
+ if(E.part===1){E.part=2;if(E.prep){W={kind:'txt',title:'Examen de prueba (2/2): Writing',items:[u2Pic(),u2You(),u2Where(),u2Pic(),u2You()],i:0,score:0};resetW();go('write');return}startWrite();return}
  if(E.sim){const st=Math.round(E.s/2);D.stars[E.sub]=(D.stars[E.sub]||0)+st;V.examRes={s:E.s,n:E.n,pass:E.s/E.n>=EXAM_PASS,sim:true,prep:!!E.prep,stars:st,miss:[...new Set(E.miss)]};V.exam=null;save();go('examres');return}
  const pass=E.s/E.n>=EXAM_PASS;D.acc[E.sub]=[];
  let up=false;if(pass){D.stars[E.sub]=(D.stars[E.sub]||0)+EXAM_PRIZE;D.exams=D.exams||{};D.exams[E.sub]=(D.exams[E.sub]||0)+1;if(E.s/E.n*10>8&&DIF(E.sub)<MAXDIF){D.dif=D.dif||{};D.dif[E.sub]=DIF(E.sub)+1;up=true}}
@@ -2979,7 +2980,11 @@ const ISTAGES=[
  {k:'think',n:'What do you think of…?',d:'Lee y escribe el adjetivo que va.'},
  {k:'sent',n:'Frases enteras',d:'Escribe la frase entera en inglés.'},
  {k:'listen',n:'Listening',d:'Escucha y elige: el dibujo, quién es quién, sí o no, la frase que oyes.',mc:true},
- {k:'rw',n:'Reading & Writing',d:'Lee textos cortos, definiciones y dibujos, y escribe la palabra.'}];
+ {k:'rw',n:'Reading & Writing',d:'Lee textos cortos, definiciones y dibujos, y escribe la palabra.'},
+ {k:'u2pic',n:'Unit 2 · Sports: look and write',d:'Mira el dibujo y escribe la actividad (climb, dance, fish, ice skate…).',u2:1},
+ {k:'u2you',n:'Unit 2 · You can…',d:'Completa las frases con la actividad correcta: You can swim in a swimming pool.',u2:1},
+ {k:'u2mc',n:'Unit 2 · Inside or outside? Match',d:'¿Dentro o fuera? Relaciona cada lugar con lo que se puede hacer allí.',mc:true,u2:1},
+ {k:'u2where',n:'Unit 2 · A place where…',d:'Escribe frases completas: A skatepark is a place where you can skateboard.',u2:1}];
 
 /* ===== Lengua: examen 12 nov (abreviaturas, enunciados, sujeto y predicado) ===== */
 const ABR=[['adj.','adjetivo'],['v.','verbo'],['n.','nombre'],['Sr.','señor'],['Dra.','doctora'],['pág.','página'],['p. ej.','por ejemplo'],['avda.','avenida'],['etc.','etcétera'],['sig.','siguiente'],['izq.','izquierda'],['dcha.','derecha'],['Dir.','director'],['C/','calle'],['núm.','número'],['Pl.','plaza'],['C. P.','código postal'],['gta.','glorieta'],
@@ -3095,12 +3100,37 @@ const THINK=[["{N} loves {x}. What does {p} think of {x}? — {Pn} thinks {it} _
  ["{N} does the {x} homework in five minutes. What does {p} think of it? — {Pn} thinks it's ___.","easy",['Maths','English','Science','Spanish']],
  ["{N} falls asleep when {p} watches {x}. What does {p} think of {x}? — {Pn} thinks {it} ___.","boring",['television','the news','old films']]];
 const PL=x=>/s$/.test(x)&&!['tennis','Maths','the news'].includes(x);
-function PTH(){if(V.sub==='lengua'){D.lpath=D.lpath||{st:0,acc:{}};D.lpath.acc=D.lpath.acc||{};return D.lpath}if(V.sub==='mates'){D.mpath=D.mpath||{st:0,acc:{}};D.mpath.acc=D.mpath.acc||{};return D.mpath}D.path=D.path||{st:0,acc:{},wd:{},tu:{}};D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
+function PTH(){if(V.sub==='lengua'){D.lpath=D.lpath||{st:0,acc:{}};D.lpath.acc=D.lpath.acc||{};return D.lpath}if(V.sub==='mates'){D.mpath=D.mpath||{st:0,acc:{}};D.mpath.acc=D.mpath.acc||{};return D.mpath}D.path=D.path||{st:0,acc:{},wd:{},tu:{}};if(!D.path.u2m){const i=ISTAGES.findIndex(x=>x.u2);if(D.path.st<i){D.path.st=i;D.path.acc={}}D.path.u2m=1}D.path.acc=D.path.acc||{};D.path.wd=D.path.wd||{};D.path.tu=D.path.tu||{};return D.path}
 function pWord(st,used){const p=PTH();let dk=(p.wd[st]||[]).filter(x=>SHEET.includes(x));if(!dk.filter(x=>!used.has(x)).length)dk=wshuffle(U1.map(w=>w.en).filter(x=>!used.has(x)),en=>missW(en)).reverse().concat(dk);
  const i=dk.map((x,j)=>[x,j]).reverse().find(([x])=>!used.has(x));const en=i[0];dk.splice(i[1],1);p.wd[st]=dk;used.add(en);return U1by(en)}
 function pTpl(st,list,keyf){const p=PTH(),u=new Set(p.tu[st]||[]);let c=list.filter(x=>!u.has(keyf(x)));if(!c.length){list.forEach(x=>u.delete(keyf(x)));c=list}const x=pick(c);u.add(keyf(x));p.tu[st]=[...u];return x}
 const kidOf=()=>{const [n,g]=pick(KIDS),f=g==='f';return {n,f,fill:t=>t.replace(/\{N\}/g,n).replace(/\{P\}/g,f?"She's":"He's").replace(/\{Pn\}/g,f?'She':'He').replace(/\{p\}/g,f?'she':'he').replace(/\{his\}/g,f?'her':'his')}};
+/* ===== Unit 2 «Good Sports» ===== */
+const U2A=[['climb','escalar','🧗'],['dance','bailar','💃'],['fish','pescar','🎣'],['ice skate','patinar sobre hielo','⛸️'],['roller skate','patinar sobre ruedas','🛼'],['sail','navegar en velero','⛵'],['skateboard','montar en monopatín','🛹'],['swim','nadar','🏊']];
+const U2BOX='climb – dance – fish – ice skate – roller skate – sail – skateboard – swim';
+const U2CTX={swim:['in a swimming pool.','in the sea with goggles.'],'ice skate':['on a frozen lake.','at an ice rink.'],climb:['a mountain.','a climbing wall.','a tree.'],sail:['on a lake in a sailing boat.','on the sea in a boat with a big sail.'],dance:['to music.','in a dance studio.'],fish:['in a river with a fishing rod.','at a fishing pond.'],skateboard:['on a board with four wheels.','at a skatepark.'],'roller skate':['using boots with wheels.','at a roller rink.']};
+const U2PLACE=[['a swimming pool','swim'],['a dance studio','dance'],['a climbing wall','climb'],['an ice rink','ice skate'],['a skatepark','skateboard'],['a fishing pond','fish'],['a sailing school','sail'],['a roller rink','roller skate']];
+const U2IN=['a classroom','a sports hall','a gym','a dance studio','a library','a kitchen','a bedroom','a museum','a cinema','a bathroom'];
+const U2OUT=['a garden','a park','a beach','a mountain','a playground','a forest','a street','a river','a skatepark','a football field'];
+const U2ES={'a classroom':'una clase','a sports hall':'un pabellón de deportes','a gym':'un gimnasio','a dance studio':'una academia de baile','a library':'una biblioteca','a kitchen':'una cocina','a bedroom':'un dormitorio','a museum':'un museo','a cinema':'un cine','a bathroom':'un baño','a garden':'un jardín','a park':'un parque','a beach':'una playa','a mountain':'una montaña','a playground':'un patio de recreo','a forest':'un bosque','a street':'una calle','a river':'un río','a skatepark':'una pista de monopatín','a football field':'un campo de fútbol','a swimming pool':'una piscina','a climbing wall':'un rocódromo','an ice rink':'una pista de hielo','a fishing pond':'un estanque de pesca','a sailing school':'una escuela de vela','a roller rink':'una pista de patinaje'};
+const u2Of=en=>U2A.find(a=>a[0]===en);
+const capF=x=>x[0].toUpperCase()+x.slice(1);
+function u2Pic(){const a=pTpl('u2pic',U2A,x=>x[0]);return {sec:'Look at the picture and write the activity',p:`Look at the picture and write the activity.\n(${U2BOX})`,img:`<div class="u2pic" aria-hidden="true">${a[2]}</div><span class="imgcap">${esc(a[1])}</span>`,ans:[a[0]],show:a[0],say:a[0],hint:`Pista: empieza por «${a[0][0]}» y significa «${a[1]}».`,exp:`«${a[0]}» significa «${a[1]}».`}}
+function u2You(){const a=pTpl('u2you',U2A,x=>x[0]),c=pick(U2CTX[a[0]]),s=`You can ${a[0]} ${c}`;return {sec:'Complete the sentence',p:`Complete the sentence with the correct activity.\n(${U2BOX})\nYou can _____ ${c}`,ans:[a[0]],show:a[0],say:s,hint:`Pista: significa «${a[1]}».`,exp:`La frase completa es «${s}». «${a[0]}» significa «${a[1]}». Después de «can» va la actividad sin «to».`}}
+function u2Where(){const pl=pTpl('u2where',U2PLACE,x=>x[0]),act=pl[1],right=`where you can ${act}`,full=`${capF(pl[0])} is a place ${right}.`;
+ return {sec:'Use «where» to write a complete sentence',p:`Use «where» to write the end of the sentence.\n${capF(pl[0])} is a place _____ .`,ans:[right],show:right,say:full,
+  chk:raw=>{let a=raw.toLowerCase().replace(/[.,!?¡¿]/g,' ').replace(/\s+/g,' ').trim();const lead=(capF(pl[0])+' is a place ').toLowerCase();if(a.startsWith(lead))a=a.slice(lead.length);
+   if(a===right)return true;if(!a.startsWith('where'))return 'Empieza con «where»: where you can…';if(!a.startsWith('where you can'))return 'Después de «where» va «you can»: where you can…';return `Revisa la actividad: ¿qué se hace en ${U2ES[pl[0]]||pl[0]}?`},
+  hint:`Pista: «where you can» + lo que se hace en ${U2ES[pl[0]]||pl[0]}.`,exp:`${full} → «${pl[0]}» es ${U2ES[pl[0]]}, un sitio donde se puede ${u2Of(act)[1]}. La frase siempre es: is a place where you can + actividad.`}}
+function u2MC(){const r=rnd(0,9);
+ if(r<4){const inside=Math.random()<.5,pl=pick(inside?U2IN:U2OUT),right=inside?'INSIDE':'OUTSIDE';return {q:`INSIDE or OUTSIDE? ${capF(pl)}`,opts:['INSIDE','OUTSIDE'],a:inside?0:1,why:`${capF(pl)} es ${U2ES[pl]}: está ${inside?'dentro (INSIDE), con techo y paredes':'fuera (OUTSIDE), al aire libre'}.`}}
+ if(r<7){const pl=pick(U2PLACE),o=shuffle(U2A.filter(a=>a[0]!==pl[1])).slice(0,3).map(a=>a[0]),opts=shuffle([pl[1],...o]);return {q:`Match: ${capF(pl[0])} is a place where you can…`,opts,a:opts.indexOf(pl[1]),why:`${capF(pl[0])} (${U2ES[pl[0]]}) is a place where you can ${pl[1]}.`}}
+ if(r<9){const a=pick(U2A),o=shuffle(U2A.filter(x=>x!==a)).slice(0,3),opts=shuffle([a,...o]).map(x=>x[0]);return {q:`What activity is it? ${a[2]}`,opts,a:opts.indexOf(a[0]),why:`«${a[0]}» significa «${a[1]}».`}}
+ const a=pick(U2A),c=pick(U2CTX[a[0]]),o=shuffle(U2A.filter(x=>x!==a)).slice(0,3).map(x=>x[0]),opts=shuffle([a[0],...o]);return {q:`You can ___ ${c}`,opts,a:opts.indexOf(a[0]),why:`You can ${a[0]} ${c} («${a[0]}» = ${a[1]}).`}}
+function u2Write(){const r=rnd(0,9);return r<3?u2Pic():r<6?u2You():r<8?u2Where():(()=>{const inside=Math.random()<.5,pl=pick(inside?U2IN:U2OUT),w=inside?'inside':'outside';return {sec:'Write INSIDE or OUTSIDE',p:`Write INSIDE or OUTSIDE.\nIn ${pl.replace(/^an? /,'a ')}: _____`,ans:[w],show:w.toUpperCase(),hint:'Pista: ¿tiene techo y paredes (inside) o está al aire libre (outside)?',exp:`${capF(pl)} es ${U2ES[pl]}: está ${inside?'dentro (INSIDE)':'fuera, al aire libre (OUTSIDE)'}.`}})()}
+
 function pItem(k,used){
+ if(k==='u2pic')return u2Pic();if(k==='u2you')return u2You();if(k==='u2where')return u2Where();if(k==='u2mc')return u2MC();if(k==='u2mix')return u2Write();
  if(k==='listen')return listenItem();
  if(k==='rw')return rwItem();
  if(k==='pic'){const w=pWord(k,used);return {p:'¿Qué adjetivo es? Escríbelo en inglés.',img:`<div class="propimg pscene">${sceneOf(w.en)}</div><span class="imgcap">${esc(w.es)}</span>`,ans:[w.en],say:w.en,hint:`Pista: empieza por «${w.en[0]}» y tiene ${w.en.length} letras.`,w:w.en}}
@@ -3122,7 +3152,7 @@ function stageItem(k,used){if(V.sub==='mates')return mItems(k,1)[0];if(V.sub==='
 function pathStart(test){pathStart0(test);const p=PTH();if(V.ptest||p.st>=STG().length)return;
  const S=STG(),mc=!!S[p.st].mc,prev=S.map((x,i)=>i).filter(i=>i<p.st&&(V.sub==='lengua'?(V.view==='write'?!!LW[S[i].k]:!!LMC[S[i].k]):!!S[i].mc===mc));if(!prev.length)return;
  const list=V.view==='test'?T.qs:W.items,used=new Set(),pos=shuffle(list.map((_,i)=>i).slice(1)).slice(0,3);
- for(const i of pos){let it=null;try{it=stageItem(S[pick(prev)].k,used)}catch(e){}if(!it)continue;it=Object.assign({},it,{rev:true});if(V.view==='test')it.q='Repaso · '+it.q;else it.sec='Repaso · '+(it.sec||S[prev[0]].n);list[i]=it}}
+ for(const i of pos){let it=null;const ps=S[pick(prev)];try{it=stageItem(ps.k,used)}catch(e){}if(!it)continue;it=Object.assign({},it,{rev:true});if(V.view==='test')it.q='Repaso · '+it.q;else it.sec='Repaso · '+ps.n;list[i]=it}}
 function pathStart0(test){
  const p=PTH(),done=p.st>=STG().length,used=new Set();V.ptest=!!test&&!done&&p.ready===p.st;
  if(V.sub==='lengua'){const k=done?null:LSTAGES[p.st].k,ttl=done?'Repaso para el examen':(V.ptest?'Prueba: ':'')+LSTAGES[p.st].n;p.rc=(p.rc||0)+1;const wr=k==='abrw'||k==='abrmc'||V.ptest||p.rc%2===1;
@@ -3141,8 +3171,8 @@ function renderPath(){
  const p=PTH(),st=p.st,done=st>=STG().length;
  const M=V.sub==='mates',L=V.sub==='lengua',RV=M?'Ficha como el examen':L?'Repaso para el examen':'Repaso de la Unit 1';
  app.innerHTML=header(M?'Matemáticas':L?'Lengua':'Inglés','home')+`<main class="wrap">
- <section class="subj-head"><h1>${M?'Matemáticas':L?'Lengua':'Inglés · Unit 1'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${L&&Date.now()<Date.parse('2026-11-13')?'<p class="exam">Examen el jueves 12 de noviembre: abreviaturas, enunciados y sujeto y predicado.</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
- ${V.sub==='ingles'?`<button class="pathgo ptestgo" data-act="prepgo"><span class="pgi">${ICON_EXAM}</span><span><b>Examen de prueba: Listening y Reading &amp; Writing</b><span>5 de escuchar, 5 de leer y 5 de escribir, como el examen del jueves. Te da una nota y te dice qué repasar.</span></span></button>`:''}
+ <section class="subj-head"><h1>${M?'Matemáticas':L?'Lengua':'Inglés · Unit 2 · Good Sports'}</h1><p>Los ejercicios van en orden, como en ${M?'el examen':'el libro'}. Cuando aciertas más del 90 % de un apartado, pasas solo al siguiente.</p>${L&&Date.now()<Date.parse('2026-11-13')?'<p class="exam">Examen el jueves 12 de noviembre: abreviaturas, enunciados y sujeto y predicado.</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-27')?'<p class="exam">Examen el jueves 26 de noviembre: vocabulario de la Unit 2 «Good Sports».</p>':''}${V.sub==='ingles'&&Date.now()<Date.parse('2026-11-06')?'<p class="exam">Examen el jueves 5 de noviembre: Unit 1 · Listening y Reading &amp; Writing.</p>':''}</section>
+ ${V.sub==='ingles'?`<button class="pathgo ptestgo" data-act="prepgo"><span class="pgi">${ICON_EXAM}</span><span><b>Examen de prueba: Unit 2 «Good Sports»</b><span>10 preguntas de elegir y 5 de escribir con el vocabulario de la Unit 2. Te da una nota y te dice qué repasar.</span></span></button>`:''}
  ${examReady(V.sub)?`<button class="examban" data-act="examask">${ICON_EXAM}<span><b>¡Examen disponible!</b><span>Apruébalo y gana ${EXAM_PRIZE} estrellas</span></span></button>`:''}
  ${p.ready===st&&!done?`<button class="pathgo ptestgo" data-act="ptest"><span class="pgi">${ICON_EXAM}</span><span><b>Prueba: ${STG()[st].n}</b><span>¡Ya lo dominas! Saca ${PT_PASS} de 10 en la prueba para pasar al siguiente apartado.</span></span></button>`:''}
  <button class="pathgo" data-act="mode" data-m="path"><span class="pgi">${ICON.star}</span><span><b>${done?RV:'Continuar: '+STG()[st].n}</b><span>${done?(M?'¡Has dominado todos los apartados! Ahora te salen fichas completas como el examen.':L?'¡Has dominado todos los apartados! Ronda de repaso mezclada como el examen.':'¡Has dominado todos los apartados! Ronda de repaso mezclada.'):STG()[st].d+' Ronda de 10.'}</span></span></button>
