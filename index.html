@@ -325,6 +325,19 @@ button{font:inherit;color:inherit}
 .psel{padding-left:1.4em;display:flex;flex-direction:column;gap:8px}.psel li{display:flex;justify-content:space-between;gap:8px;align-items:center}.pfx{display:flex;flex:0 0 auto}.pownv{background:color-mix(in srgb,var(--accent) 7%,var(--card));border-radius:12px;padding:10px 12px}.warn{color:var(--bad)}
 .ptextbox{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:6px 16px;margin:10px 0}.ptext{font-size:1.2rem;line-height:1.75;margin:10px 0}.psent{cursor:pointer;border-radius:6px;padding:1px 2px;transition:background .2s}.psent:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}.psent.on{background:color-mix(in srgb,var(--accent) 20%,transparent);box-shadow:inset 0 -3px 0 var(--accent)}.psent.found{background:#ffe27a;color:#222}
 .u2pic{font-size:6rem;line-height:1.1;text-align:center}
+.wsheet{box-sizing:border-box;width:100%;background:#fff;color:#222;border-radius:18px;box-shadow:0 4px 18px #0002;padding:22px 22px 26px;font-family:'Andika',var(--f-body),sans-serif;max-width:900px;margin:0 auto}
+.shead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:10px}.shead>span{border:2.5px solid #333;border-radius:14px;padding:6px 14px;font-weight:800}.stag{font-size:.95rem;line-height:1.1}.sunit{font-size:1.4rem;border-radius:22px!important}.stitle{font-size:1.6rem;flex:1;text-align:center}.sws{border-style:dashed!important;font-size:1rem}
+.sname{font-size:1.1rem;margin:4px 0 14px}.sname u{text-decoration-thickness:1px;text-underline-offset:4px;padding:0 6px}
+.ssec{margin:18px 0}.ssec h3{display:flex;gap:10px;align-items:center;font-size:1.2rem;margin:0 0 8px;font-family:var(--f-display)}.snum{background:#333;color:#fff;border-radius:50%;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;flex:0 0 30px}
+.sbox{border:2px solid #333;border-radius:20px;padding:6px 14px;text-align:center;font-weight:700;font-size:1.1rem;margin:4px auto 10px;max-width:760px}
+.spics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}@media (max-width:640px){.spics{grid-template-columns:repeat(2,minmax(0,1fr))}}.spic .sin{width:100%;min-width:0;box-sizing:border-box}.spic label{min-width:0}.spic{border:2px solid #444;border-radius:16px;padding:8px;text-align:center}.spe{font-size:4.2rem;line-height:1.2}.spic label{display:flex;align-items:center;gap:4px;font-weight:700}
+.slist{padding-left:1.6em;margin:0;display:flex;flex-direction:column;gap:12px}.sli{font-size:1.18rem;line-height:2.1}.sline .spre{display:block;line-height:1.5;white-space:pre-line}
+.sin{border:none;border-bottom:2.5px solid #555;background:#f3f6ff;border-radius:6px 6px 0 0;font:inherit;font-size:1.15rem;color:#1a3fa0;padding:2px 8px;width:9.5em;max-width:100%;font-family:'Andika',sans-serif}.sin.wide{display:block;width:100%;box-sizing:border-box;margin-top:4px}.sin:focus{outline:3px solid #ffd34d;background:#fffbe6}.sin.sl{width:2.2em;text-align:center;font-weight:800;border:2.5px solid #555;border-radius:8px}
+.sin.ok{background:#e3f7ea;border-color:#2a9d5c;color:#17703f}.sin.bad{background:#fde7e7;border-color:#d14343;color:#a12b2b}
+.scirc{font:inherit;font-size:1.12rem;background:none;border:2.5px solid transparent;border-radius:50%;padding:0 10px;cursor:pointer;color:#222}.scirc.on{border-color:#1a3fa0;color:#1a3fa0;font-weight:800}.scirc.on.ok{border-color:#2a9d5c;color:#17703f}.scirc.on.bad{border-color:#d14343;color:#a12b2b}.sslash{color:#999}
+.sfix{display:inline-block;margin-left:8px;color:#17703f;font-weight:800;font-size:.95rem;background:#e3f7ea;border-radius:8px;padding:0 8px;line-height:1.6}
+.smatch>*{min-width:0}.smatch{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;align-items:start}@media (max-width:640px){.smatch{grid-template-columns:1fr}}.smatch ol,.sright{border:2px solid #444;border-radius:16px;padding:10px 14px 10px 2em;margin:0;font-size:1.12rem;line-height:2.1}.sright{list-style:none;padding-left:14px}
+.sfoot{margin-top:22px;text-align:center}.sbig{font-size:1.3rem;padding:14px 28px}.sscore{font-size:1.25rem}
 .askbox .chip::before{display:none}.askbox .chip{padding-left:14px;margin:3px 2px}
 .askans{border:2px solid var(--accent);border-radius:16px;padding:12px 14px;margin-top:10px;background:color-mix(in srgb,var(--accent) 6%,var(--card))}.askt{font-size:1.25rem;line-height:1.55;margin:4px 0 10px}.punk{padding-left:1.2em}.punk li{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0}
 .pfact.found{border-color:#f0a500;box-shadow:0 0 0 4px #ffd34d88;animation:pfound 1s ease 2}@keyframes pfound{50%{transform:scale(1.02)}}
@@ -2507,7 +2520,7 @@ let V={view:'intro',sub:null,mode:null,res:null},T,C,W;
 function go(view,sub){if(V.view==='parent'&&view!=='parent')V.pinOk=false;if(V.view==='prof'&&view!=='prof')V.profOk=false;if(CLEAN){try{CLEAN()}catch(e){}CLEAN=null}V.view=view;if(sub)V.sub=sub;render();window.scrollTo(0,0)}
 function render(){
  document.body.dataset.sub=['home','profile','stickers','prizes','video','game','intro','who','vales','parent','prof','projhome','projstop','projpres','projshow'].includes(V.view)?'':V.sub;applyFav();
- ({projhome:renderProjHome,projstop:renderProjStop,projpres:renderProjPres,projshow:renderProjShow,prof:renderProf,parent:renderParent,sgames:renderSGames,sgame:renderSG,vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
+ ({sheet:renderSheet,projhome:renderProjHome,projstop:renderProjStop,projpres:renderProjPres,projshow:renderProjShow,prof:renderProf,parent:renderParent,sgames:renderSGames,sgame:renderSG,vales:renderVales,examres:renderExamRes,intro:renderIntro,who:renderWho,prizes:renderPrizes,video:renderVideo,game:renderGame,home:renderHome,profile:renderProfile,stickers:renderStickers,subject:renderSubject,test:renderTest,cards:renderCards,write:renderWrite,match:renderMatch,over:renderOver,result:renderResult})[V.view]();
 }
 function header(title,back){
  const tot=totalStars();
@@ -2861,6 +2874,56 @@ Object.assign(PROJ_ACTS,{
   r.onend=()=>{if(X.listen){X.listen=false;askRedraw()}};X.listen=true;askRedraw();try{r.start()}catch(e){X.listen=false;askRedraw()}},
  askclr:el=>{const P=PJ();P.unk=(P.unk||[]).filter((_,i)=>i!==+el.dataset.i);save();renderProjHome()}});
 
+/* ===== Fichas interactivas en formato hoja (como Liveworksheets) ===== */
+const shN=x=>noAcc(String(x||'').toLowerCase()).replace(/[.,!?¡¿«»"]/g,' ').replace(/\s+/g,' ').trim();
+function shOk(it,v){if(it.kind==='circle')return v===it.a;if(it.kind==='match')return String(v||'').toUpperCase()===it.ans;if(v==null||!String(v).trim())return false;
+ if(it.chk){const r=it.chk(String(v));return r===true||r==='acc'}return (it.ans||[]).some(a=>shN(a)===shN(v))}
+function u2Sheet(){const sec=[],box=U2BOX;let id=0;const nid=()=>'s'+(id++);
+ sec.push({instr:'Look at the pictures and write the correct activity.',box,kind:'pics',items:shuffle(U2A).map(a=>({id:nid(),kind:'text',pic:a[2],ans:[a[0]],show:a[0]}))});
+ const yo=shuffle(U2A).slice(0,6).map(a=>{const c=pick(U2CTX[a[0]]);return {id:nid(),kind:'text',pre:'You can',post:c,ans:[a[0]],show:a[0]}});
+ sec.push({instr:'Complete the sentences with the correct activity.',box,kind:'gaps',items:yo});
+ const io=[...shuffle(U2IN).slice(0,3).map(p=>[p,0]),...shuffle(U2OUT).slice(0,3).map(p=>[p,1])];
+ sec.push({instr:'Circle INSIDE or OUTSIDE.',kind:'gaps',items:shuffle(io).map(([p,a])=>({id:nid(),kind:'circle',pre:`In ${p}:`,opts:['INSIDE','OUTSIDE'],a,show:a?'OUTSIDE':'INSIDE'}))});
+ const pl=shuffle(U2PLACE).slice(0,4),L='ABCD',right=shuffle(pl.map((p,i)=>i));
+ sec.push({instr:'Match the places with the correct descriptions. Write the letter.',kind:'match',items:pl.map((p,i)=>({id:nid(),kind:'match',txt:capF(p[0]),ans:L[right.indexOf(i)],show:L[right.indexOf(i)]})),right:right.map((i,k)=>`${L[k]}. is a place where you can ${pl[i][1]}.`)});
+ const wh=shuffle(U2PLACE).slice(0,4);
+ sec.push({instr:'Use where and the words in the box to write complete sentences.',box:wh.map(p=>p[1]).sort().join(' – '),kind:'gaps',items:wh.map(p=>{const r=`where you can ${p[1]}`;return {id:nid(),kind:'line',pre:`${capF(p[0])} is a place`,ans:[r],show:r+'.',chk:raw=>{let a=shN(raw);return a===shN(r)||a.endsWith(shN(r))}}})});
+ const pe=shuffle(U2ER.filter(e=>e[0]!=='play football')).slice(0,4);
+ sec.push({instr:'Write the word for the person.',box:pe.map(e=>e[1]).sort().join(' – '),kind:'gaps',items:pe.map(e=>{const q=e[0]==='fish'?'fishes':e[0]+'s';return {id:nid(),kind:'text',pre:`A person who ${q} is a`,post:'.',ans:[e[1]],show:e[1]}})});
+ const ad=shuffle(U2ADV).slice(0,4);
+ sec.push({instr:'Circle the correct word.',kind:'gaps',items:ad.map(a=>{const [n]=pick(KIDS),sn=pick(U2ADVS[a[1]]).split('___'),wrong=a[1]==='well'?'good':a[0],o=shuffle([a[1],wrong]);return {id:nid(),kind:'circle',pre:`${n} ${sn[0].trim()}`,opts:o,a:o.indexOf(a[1]),post:(sn[1]||'').trim(),show:a[1]}})});
+ const gb=shuffle(U2A.filter(x=>!/ /.test(x[0]))).slice(0,2).map((a,i)=>{const good=i===0,ing={swim:'swimming',climb:'climbing',dance:'dancing',fish:'fishing',sail:'sailing',skateboard:'skateboarding'}[a[0]],[n,g]=pick(KIDS);const o=['good','bad'];return {id:nid(),kind:'circle',pre:`${n} ${a[0]==='fish'?(good?'catches lots of fish':'never catches any fish'):a[0]+'s very '+(good?'well':'badly')}. ${g==='f'?'She':'He'}'s`,opts:o,a:good?0:1,post:`at ${ing}.`,show:good?'good':'bad'}});
+ const ww=[(()=>{const e=pick(U2ER.filter(x=>x[0]!=='play football')),q=e[0]==='fish'?'fishes':e[0]+'s';return {id:nid(),kind:'circle',pre:`A ${e[1]} is a person`,opts:['where','who'],a:1,post:`${q}.`,show:'who'}})(),(()=>{const p=pick(U2PLACE);return {id:nid(),kind:'circle',pre:`${capF(p[0])} is a place`,opts:['where','who'],a:0,post:`you can ${p[1]}.`,show:'where'}})()];
+ sec.push({instr:'Circle: good or bad? where or who?',kind:'gaps',items:shuffle([...gb,...ww])});
+ const ord=Array.from({length:2},()=>{const a=pick(U2A),[n]=pick(KIDS),r=`${n} wants to learn to ${a[0]}.`;return {id:nid(),kind:'line',pre:shuffle([n,'wants','to','learn','to',a[0]+'.']).join(' / '),ans:[r],show:r}});
+ sec.push({instr:'Order the words and write the sentence.',kind:'gaps',items:ord});
+ return {sub:'ingles',head:'ENGLISH 4th PRIMARY',unit:'Unit 2',title:'Good Sports',secs:sec};
+}
+function genSheet(items,head,unit,title,sub){const by=[];for(const it of items){const s=(it.sec||'').replace(/^\d+\.\s*/,'');let g=by.find(x=>x.instr===s);if(!g){g={instr:s,kind:'gaps',items:[]};by.push(g)}
+ g.items.push({id:'s'+by.length+'_'+g.items.length,kind:'line',pre:it.p,img:it.img||'',ans:it.ans,show:it.show||(it.ans||[])[0],chk:it.chk})}return {sub,head,unit,title,secs:by}}
+function startSheet(){let S;if(V.sub==='ingles')S=ingUnit()==='u2'?u2Sheet():genSheet(u1Ficha(),'ENGLISH 4th PRIMARY','Unit 1','Back to school','ingles');else S=genSheet(lFicha(),'LENGUA 4.º PRIMARIA','Repaso','Lengua','lengua');V.sheet={S,ans:{},checked:false};go('sheet');window.scrollTo(0,0)}
+function shItem(it,j,X){const v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'',fix=X.checked&&m==='bad'?`<span class="sfix">${esc(it.show)}</span>`:'';
+ const inp=w=>`<input class="sin ${w||''} ${m}" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off" autocapitalize="off" spellcheck="false" ${X.checked&&m==='ok'?'readonly':''}>`;
+ if(it.kind==='circle')return `<li class="sli">${esc(it.pre||'')} ${it.opts.map((o,k)=>`<button class="scirc ${v===k?'on':''} ${X.checked&&v===k?m:''}" data-act="shc" data-sid="${it.id}" data-k="${k}">${esc(o)}</button>`).join(' <span class="sslash">/</span> ')} ${esc(it.post||'')}${fix}</li>`;
+ if(it.kind==='line')return `<li class="sli sline">${it.img?`<div class="qimg">${it.img}</div>`:''}<span class="spre">${esc(it.pre||'')}</span>${inp('wide')}${fix}</li>`;
+ return `<li class="sli">${esc(it.pre||'')} ${inp()} ${esc(it.post||'')}${fix}</li>`}
+function renderSheet(){const X=V.sheet,S=X.S,today=new Date().toLocaleDateString('es-ES');let tot=0,ok=0;if(X.checked)for(const s of S.secs)for(const it of s.items){tot++;if(shOk(it,X.ans[it.id]))ok++}
+ app.innerHTML=header('Ficha','subject')+`<main class="wrap"><article class="wsheet">
+ <header class="shead"><span class="stag">${esc(S.head)}</span><span class="sunit">${esc(S.unit)}</span><span class="stitle">${esc(S.title)}</span><span class="sws">Worksheet</span></header>
+ <p class="sname">Name: <u>${esc(D.name||'')}</u> &nbsp;&nbsp; Date: <u>${today}</u></p>
+ ${S.secs.map((s,i)=>`<section class="ssec"><h3><span class="snum">${i+1}</span>${esc(s.instr)}</h3>${s.box?`<p class="sbox">${esc(s.box)}</p>`:''}
+  ${s.kind==='pics'?`<div class="spics">${s.items.map((it,j)=>{const v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'';return `<div class="spic"><div class="spe">${it.pic}</div><label>${j+1}. <input class="sin ${m}" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off" autocapitalize="off" spellcheck="false" ${X.checked&&m==='ok'?'readonly':''}></label>${X.checked&&m==='bad'?`<span class="sfix">${esc(it.show)}</span>`:''}</div>`}).join('')}</div>`
+  :s.kind==='match'?`<div class="smatch"><ol>${s.items.map(it=>{const v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'';return `<li>${esc(it.txt)} <input class="sin sl ${m}" maxlength="1" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off">${X.checked&&m==='bad'?`<span class="sfix">${it.show}</span>`:''}</li>`}).join('')}</ol><ul class="sright">${s.right.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`
+  :`<ol class="slist">${s.items.map((it,j)=>shItem(it,j,X)).join('')}</ol>`}</section>`).join('')}
+ <footer class="sfoot">${X.checked?`<p class="sscore">Has acertado <b>${ok} de ${tot}</b>. ${ok===tot?'¡Perfecto! 🌟':'Mira las correcciones en verde y vuelve a intentarlo.'}${X.won?` Ganas ${X.won} estrellas.`:''}</p><div class="actions two"><button class="btn ghost" data-act="shretry">Corregir mis fallos</button><button class="btn primary" data-act="shnew">Otra ficha</button></div>`:`<button class="btn primary sbig" data-act="shcheck">✓ Check my answers</button>`}</footer></article></main>`}
+document.addEventListener('input',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.sid&&V.sheet){V.sheet.ans[t.dataset.sid]=t.classList.contains('sl')?t.value.toUpperCase():t.value;if(t.classList.contains('sl'))t.value=t.value.toUpperCase()}});
+const SHEET_ACTS=({
+ shc:el=>{const X=V.sheet;if(X.checked){const it=X.S.secs.flatMap(s=>s.items).find(i=>i.id===el.dataset.sid);if(it&&shOk(it,X.ans[it.id]))return}X.ans[el.dataset.sid]=+el.dataset.k;document.querySelectorAll(`.scirc[data-sid="${el.dataset.sid}"]`).forEach(b=>b.classList.toggle('on',b===el))},
+ shcheck:()=>{const X=V.sheet;X.checked=true;let ok=0,tot=0;for(const s of X.S.secs)for(const it of s.items){tot++;if(shOk(it,X.ans[it.id]))ok++}
+  if(!X.won){X.won=Math.round(ok/2);D.stars[X.S.sub]=(D.stars[X.S.sub]||0)+X.won;save()}try{sfx(ok>=tot*.8?'ok':'bad')}catch(e){}renderSheet();const f=document.querySelector('.sfoot');if(f)f.scrollIntoView({behavior:'smooth'})},
+ shretry:()=>{const X=V.sheet;for(const s of X.S.secs)for(const it of s.items)if(!shOk(it,X.ans[it.id]))delete X.ans[it.id];X.checked=false;renderSheet();const b=document.querySelector('.sin:not([value]),.sin[value=""]');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})},
+ shnew:()=>startSheet()});
+
 function renderHome(){
  penaltyNotice();
  checkUnlocks();const n=D.name.trim(),tot=lifetime(),L=levelInfo(tot),done=D.daily===today(),got=Math.min(STICKERS.length,Math.floor(tot/ST_EVERY));
@@ -3098,7 +3161,7 @@ function u1Ficha(){const prev=V.sub;V.sub='ingles';const g=(k,n)=>{const u=new S
  try{return [...secW('1.','Look and write the adjective',g('pic',3)),...secW('2.','Complete the sentences',g('gap',3)),...secW('3.','Order the letters',g('sort',2)),...secW('4.','Correct the sentences',g('fix',2)),...secW('5.','Reading & Writing',Array.from({length:3},rwItem)),...secW('6.','Write the sentence in English',g('sent',2))]}finally{V.sub=prev}}
 function lFicha(){return [...secW('1.','Abreviaturas',[abrWrite('w'),abrWrite('w'),abrWrite('w'),abrWrite()]),...secW('2.','Enunciados',Array.from({length:3},enuW)),...secW('3.','Busca el verbo',Array.from({length:2},verboW)),...secW('4.','Sujeto y predicado',Array.from({length:3},sujW)),...secW('5.','Concordancia',Array.from({length:3},concW))]}
 const FICHA_NAME=()=>V.sub==='mates'?'Ficha de Matemáticas':V.sub==='lengua'?'Ficha de Lengua':'Ficha de la '+UNITS[ingUnit()].replace(' · ',' «')+'»';
-function startFicha(){if(V.sub==='mates'){W={kind:'op',title:'Ficha como el examen',items:fichaItems(),i:0,score:0}}
+function startFicha(){if(V.sub!=='mates'){startSheet();return}if(V.sub==='mates'){W={kind:'op',title:'Ficha como el examen',items:fichaItems(),i:0,score:0}}
  else W={kind:'txt',title:FICHA_NAME(),items:V.sub==='lengua'?lFicha():ingUnit()==='u2'?u2Ficha():u1Ficha(),i:0,score:0};resetW();go('write')}
 const MSTAGES=[
  {k:'leer',n:'Leer y escribir números',d:'Escribe los números con letras y con cifras, como en el ejercicio 1 del examen.'},
@@ -3774,7 +3837,7 @@ document.addEventListener('keydown',e=>{
  else if(e.key==='Tab'&&W.items[W.i].s===':'&&W.state==='ask'){e.preventDefault();W.field=W.field==='c'?'r':'c';updSheet()}
 });
 
-Object.assign(ACT,PROJ_ACTS);
+Object.assign(ACT,PROJ_ACTS,SHEET_ACTS);
 render();
 </script>
 
