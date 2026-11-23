@@ -337,6 +337,8 @@ button{font:inherit;color:inherit}
 .scirc{font:inherit;font-size:1.12rem;background:none;border:2.5px solid transparent;border-radius:50%;padding:0 10px;cursor:pointer;color:#222}.scirc.on{border-color:#1a3fa0;color:#1a3fa0;font-weight:800}.scirc.on.ok{border-color:#2a9d5c;color:#17703f}.scirc.on.bad{border-color:#d14343;color:#a12b2b}.sslash{color:#999}
 .sfix{display:inline-block;margin-left:8px;color:#17703f;font-weight:800;font-size:.95rem;background:#e3f7ea;border-radius:8px;padding:0 8px;line-height:1.6}
 .smatch>*{min-width:0}.smatch{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;align-items:start}@media (max-width:640px){.smatch{grid-template-columns:1fr}}.smatch ol,.sright{border:2px solid #444;border-radius:16px;padding:10px 14px 10px 2em;margin:0;font-size:1.12rem;line-height:2.1}.sright{list-style:none;padding-left:14px}
+.wsheet .u2pic{font-size:3.2rem;text-align:left}.sem{font-size:1.6rem;vertical-align:middle}.sbig2{font-size:2.4rem;border-radius:16px;padding:2px 10px}.sbig2.on{border-color:#1a3fa0}
+.sstory{border:2px solid #444;border-radius:16px;padding:12px 16px;font-size:1.18rem;line-height:2.3}.snon{list-style:none;padding-left:0}.stick{display:flex;justify-content:space-between;align-items:center;max-width:420px}.stbox{width:40px;height:40px;border:2.5px solid #555;border-radius:6px;background:#eef6ff;font-size:1.5rem;font-weight:800;color:#1a3fa0;cursor:pointer}.stbox.ok{border-color:#2a9d5c;color:#17703f;background:#e3f7ea}.stbox.bad{border-color:#d14343;color:#a12b2b;background:#fde7e7}
 .sfoot{margin-top:22px;text-align:center}.sbig{font-size:1.3rem;padding:14px 28px}.sscore{font-size:1.25rem}
 .askbox .chip::before{display:none}.askbox .chip{padding-left:14px;margin:3px 2px}
 .askans{border:2px solid var(--accent);border-radius:16px;padding:12px 14px;margin-top:10px;background:color-mix(in srgb,var(--accent) 6%,var(--card))}.askt{font-size:1.25rem;line-height:1.55;margin:4px 0 10px}.punk{padding-left:1.2em}.punk li{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:6px 0}
@@ -2876,7 +2878,7 @@ Object.assign(PROJ_ACTS,{
 
 /* ===== Fichas interactivas en formato hoja (como Liveworksheets) ===== */
 const shN=x=>noAcc(String(x||'').toLowerCase()).replace(/[.,!?¡¿«»"]/g,' ').replace(/\s+/g,' ').trim();
-function shOk(it,v){if(it.kind==='circle')return v===it.a;if(it.kind==='match')return String(v||'').toUpperCase()===it.ans;if(v==null||!String(v).trim())return false;
+function shOk(it,v,X){X=X||V.sheet;if(it.kind==='cw'){const c=X&&X.ans[it.id+'c'];if(c!==it.a)return false}if(it.kind==='circle'||it.kind==='lpick'||it.kind==='tick')return v===it.a;if(it.kind==='match')return String(v||'').toUpperCase()===it.ans;if(v==null||!String(v).trim())return false;
  if(it.chk){const r=it.chk(String(v));return r===true||r==='acc'}return (it.ans||[]).some(a=>shN(a)===shN(v))}
 function u2Sheet(){const sec=[],box=U2BOX;let id=0;const nid=()=>'s'+(id++);
  sec.push({instr:'Look at the pictures and write the correct activity.',box,kind:'pics',items:shuffle(U2A).map(a=>({id:nid(),kind:'text',pic:a[2],ans:[a[0]],show:a[0]}))});
@@ -2899,29 +2901,61 @@ function u2Sheet(){const sec=[],box=U2BOX;let id=0;const nid=()=>'s'+(id++);
  sec.push({instr:'Order the words and write the sentence.',kind:'gaps',items:ord});
  return {sub:'ingles',head:'ENGLISH 4th PRIMARY',unit:'Unit 2',title:'Good Sports',secs:sec};
 }
+/* Unit test (modelo de las fichas de la profesora) */
+const U2SUBJ=[['I',0],['You',0],['We',0],['They',0],['My parents',0],['My friends',0],['My brother',1],['My sister',1],['My friend',1],['She',1],['He',1],['Sam',1],['Lucía',1]];
+const U2LEARN=[['swim','🏊'],['climb','🧗'],['sail','⛵'],['fish','🎣'],['dance','💃'],['ice skate','⛸️'],['roller skate','🛼'],['skateboard','🛹'],['play basketball','🏀'],['play football','⚽'],['ride a bike','🚲'],['play tennis','🎾']];
+const U2CITY=[['lake','learn to sail'],['swimming pool','learn to swim'],['park','learn to skate'],['road','mustn\'t skate'],['movie theater','watch a movie'],['hospital','see a doctor'],['supermarket','shop'],['library','read books'],['ice rink','learn to ice skate']];
+const U2ADVQ=[['He plays football','good','well'],['I run','quickly','quick'],['She draws very','bad','badly'],['They sing very','loudly','loud'],['She does her homework','careful','carefully'],['The snail moves','slow','slowly'],['He talks','quietly','quiet'],['She dances','happily','happy'],['We swim very','well','good'],['He climbs','carefully','careful']];
+const U2ADVOK={well:1,quickly:1,badly:1,loudly:1,carefully:1,slowly:1,quietly:1,happily:1};
+const U2STORY=[
+ {g:'f',t:'{N} is phoning her grandma. "Hi Grandma! We\'re at the activity centre today and it\'s really {1}! This morning I\'m sailing on the {2} with my teacher. It\'s {3} today, so our boat is moving quickly. My brother is at the {4}. He\'s climbing very {5} because he doesn\'t want to fall. See you soon!"',a:['exciting','lake','windy','climbing wall','carefully'],x:['boring','bike','slowly'],ti:['A day at the activity centre','Grandma\'s new car','A boring Sunday'],tr:0},
+ {g:'m',t:'{N} is at the sports centre with his friends. "This is a place {1} you can do lots of sports! I want to learn to {2}, so I\'m in the swimming pool. My friend Ana is a very good {3}. She\'s skating {4} round the park on her roller skates. Her brother can\'t skate. He skates {5}, but he\'s very happy!"',a:['where','swim','skater','quickly','badly'],x:['who','fish','well'],ti:['Fun at the sports centre','A rainy day at home','The lost dog'],tr:0},
+ {t:'It\'s Saturday and {N} is at the lake. "I\'m learning to {1} in a small boat. My teacher is a {2} and he\'s very nice. My sister doesn\'t {3} to sail. She\'s at the {4} because she loves skateboarding. She can do it really {5}!"',a:['sail','sailor','want','skatepark','well'],x:['wants','good','swimmer'],ti:['Sailing on the lake','My new school','A day at the zoo'],tr:0}];
+function u2Test(){let id=0;const nid=()=>'t'+(id++),sec=[];
+ const subs=shuffle(U2SUBJ).slice(0,6);
+ sec.push({instr:'Circle and write.',kind:'gaps',items:subs.map(([s,third],i)=>{const neg=Math.random()<.4,a=pick(U2LEARN),o=neg?["don't want","doesn't want"]:['want','wants'],r=o[third];const op=shuffle(o.slice());return {id:nid(),kind:'cw',pre:s,opts:op,a:op.indexOf(r),mid:'to learn to',pic:a[1],ans:[a[0]],show:`${r} … ${a[0]}`}})});
+ const cy=shuffle(U2CITY).slice(0,5);
+ sec.push({instr:'Read and choose the correct word.',box:shuffle(cy.map(c=>c[0])).join(' – '),kind:'gaps',items:cy.map(c=>({id:nid(),kind:'text',pre:`A place where you ${c[1].startsWith('mustn')?'':'can '}${c[1]}.`,post:'',ans:[c[0],'a '+c[0],'the '+c[0]],show:c[0]}))});
+ const wl=shuffle(U2LEARN).slice(0,3);
+ sec.push({instr:'Write. Example: I want to learn to swim.',kind:'gaps',items:wl.map(a=>{const he=pick(['He','She']),r=`wants to learn to ${a[0]}`;return {id:nid(),kind:'line',img:`<div class="u2pic">${a[1]}</div>`,pre:`${he} _____ .`,ans:[r],show:r+'.',chk:raw=>{const v=shN(raw).replace(/^(he|she) /,'');return v===shN(r)}}})});
+ sec.push({instr:'Choose the correct answer.',kind:'gaps',items:shuffle(U2ADVQ).slice(0,5).map(q=>{const o=[q[1],q[2]],k=U2ADVOK[q[1]]?0:1;return {id:nid(),kind:'circle',pre:q[0],opts:o,a:k,post:'.',show:o[k]}})});
+ const ls=shuffle(U2LEARN.slice(0,8)).slice(0,4);
+ sec.push({instr:'Listen and choose. Pulsa 🔊 y rodea el dibujo correcto.',kind:'gaps',items:ls.map(a=>{const who=pick(["He's","She's","They're"]),say=`${who} learning to ${a[0]}.`,o=shuffle([a,...shuffle(U2LEARN.filter(x=>x!==a)).slice(0,2)]);return {id:nid(),kind:'lpick',say,opts:o.map(x=>x[1]),a:o.indexOf(a),show:`${a[1]} (${say})`}})});
+ const st=pick(U2STORY),[N]=pick(st.g?KIDS.filter(k=>k[1]===st.g):KIDS),box=shuffle([...st.a,...st.x]),gaps=st.a.map((w,i)=>({id:nid(),kind:'text',ans:[w],show:w}));
+ const parts=st.t.replace('{N}',N).split(/\{(\d)\}/);
+ sec.push({instr:'Read the story. Choose a word from the box. Write the correct word next to numbers 1–5.',box:box.join(' – '),kind:'story',parts,items:gaps});
+ const tio=shuffle(st.ti.slice());sec.push({instr:'Now choose the best name for the story. Tick one box.',kind:'gaps',items:[{id:nid(),kind:'tick',opts:tio,a:tio.indexOf(st.ti[st.tr]),show:st.ti[st.tr]}]});
+ return {sub:'ingles',head:'ENGLISH 4th PRIMARY',unit:'Unit 2',title:'Good Sports',ws:'Unit test',secs:sec};
+}
+
 function genSheet(items,head,unit,title,sub){const by=[];for(const it of items){const s=(it.sec||'').replace(/^\d+\.\s*/,'');let g=by.find(x=>x.instr===s);if(!g){g={instr:s,kind:'gaps',items:[]};by.push(g)}
  g.items.push({id:'s'+by.length+'_'+g.items.length,kind:'line',pre:it.p,img:it.img||'',ans:it.ans,show:it.show||(it.ans||[])[0],chk:it.chk})}return {sub,head,unit,title,secs:by}}
-function startSheet(){let S;if(V.sub==='ingles')S=ingUnit()==='u2'?u2Sheet():genSheet(u1Ficha(),'ENGLISH 4th PRIMARY','Unit 1','Back to school','ingles');else S=genSheet(lFicha(),'LENGUA 4.º PRIMARIA','Repaso','Lengua','lengua');V.sheet={S,ans:{},checked:false};go('sheet');window.scrollTo(0,0)}
+function startSheet(){let S;if(V.sub==='ingles')S=ingUnit()==='u2'?((V.shAlt=!V.shAlt)?u2Sheet():u2Test()):genSheet(u1Ficha(),'ENGLISH 4th PRIMARY','Unit 1','Back to school','ingles');else S=genSheet(lFicha(),'LENGUA 4.º PRIMARIA','Repaso','Lengua','lengua');V.sheet={S,ans:{},checked:false};go('sheet');window.scrollTo(0,0)}
 function shItem(it,j,X){const v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'',fix=X.checked&&m==='bad'?`<span class="sfix">${esc(it.show)}</span>`:'';
  const inp=w=>`<input class="sin ${w||''} ${m}" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off" autocapitalize="off" spellcheck="false" ${X.checked&&m==='ok'?'readonly':''}>`;
+ if(it.kind==='cw'){const c=X.ans[it.id+'c'],mc=X.checked?(c===it.a?'ok':'bad'):'';return `<li class="sli">${esc(it.pre)} ${it.opts.map((o,k)=>`<button class="scirc ${c===k?'on':''} ${X.checked&&c===k?mc:''}" data-act="shc" data-sid="${it.id}c" data-k="${k}">${esc(o)}</button>`).join(' <span class="sslash">/</span> ')} ${esc(it.mid)} <span class="sem">${it.pic}</span> ${inp()}${fix}</li>`}
+ if(it.kind==='lpick')return `<li class="sli"><button class="btn ghost small" data-act="shsay" data-t="${esc(it.say)}">🔊 Listen</button> ${it.opts.map((o,k)=>`<button class="scirc sbig2 ${v===k?'on':''} ${X.checked&&v===k?m:''}" data-act="shc" data-sid="${it.id}" data-k="${k}">${o}</button>`).join(' ')}${fix}</li>`;
+ if(it.kind==='tick')return it.opts.map((o,k)=>`<li class="sli stick"><span>${esc(o)}</span><button class="stbox ${v===k?'on':''} ${X.checked&&v===k?m:''}" data-act="shc" data-sid="${it.id}" data-k="${k}" aria-label="Tick">${v===k?'✓':''}</button></li>`).join('')+(fix?`<li class="sli">${fix}</li>`:'');
  if(it.kind==='circle')return `<li class="sli">${esc(it.pre||'')} ${it.opts.map((o,k)=>`<button class="scirc ${v===k?'on':''} ${X.checked&&v===k?m:''}" data-act="shc" data-sid="${it.id}" data-k="${k}">${esc(o)}</button>`).join(' <span class="sslash">/</span> ')} ${esc(it.post||'')}${fix}</li>`;
  if(it.kind==='line')return `<li class="sli sline">${it.img?`<div class="qimg">${it.img}</div>`:''}<span class="spre">${esc(it.pre||'')}</span>${inp('wide')}${fix}</li>`;
  return `<li class="sli">${esc(it.pre||'')} ${inp()} ${esc(it.post||'')}${fix}</li>`}
 function renderSheet(){const X=V.sheet,S=X.S,today=new Date().toLocaleDateString('es-ES');let tot=0,ok=0;if(X.checked)for(const s of S.secs)for(const it of s.items){tot++;if(shOk(it,X.ans[it.id]))ok++}
  app.innerHTML=header('Ficha','subject')+`<main class="wrap"><article class="wsheet">
- <header class="shead"><span class="stag">${esc(S.head)}</span><span class="sunit">${esc(S.unit)}</span><span class="stitle">${esc(S.title)}</span><span class="sws">Worksheet</span></header>
+ <header class="shead"><span class="stag">${esc(S.head)}</span><span class="sunit">${esc(S.unit)}</span><span class="stitle">${esc(S.title)}</span><span class="sws">${esc(S.ws||'Worksheet')}</span></header>
  <p class="sname">Name: <u>${esc(D.name||'')}</u> &nbsp;&nbsp; Date: <u>${today}</u></p>
  ${S.secs.map((s,i)=>`<section class="ssec"><h3><span class="snum">${i+1}</span>${esc(s.instr)}</h3>${s.box?`<p class="sbox">${esc(s.box)}</p>`:''}
   ${s.kind==='pics'?`<div class="spics">${s.items.map((it,j)=>{const v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'';return `<div class="spic"><div class="spe">${it.pic}</div><label>${j+1}. <input class="sin ${m}" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off" autocapitalize="off" spellcheck="false" ${X.checked&&m==='ok'?'readonly':''}></label>${X.checked&&m==='bad'?`<span class="sfix">${esc(it.show)}</span>`:''}</div>`}).join('')}</div>`
   :s.kind==='match'?`<div class="smatch"><ol>${s.items.map(it=>{const v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'';return `<li>${esc(it.txt)} <input class="sin sl ${m}" maxlength="1" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off">${X.checked&&m==='bad'?`<span class="sfix">${it.show}</span>`:''}</li>`}).join('')}</ol><ul class="sright">${s.right.map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>`
-  :`<ol class="slist">${s.items.map((it,j)=>shItem(it,j,X)).join('')}</ol>`}</section>`).join('')}
+  :s.kind==='story'?`<div class="sstory">${s.parts.map((p,k)=>k%2?(()=>{const it=s.items[+p-1],v=X.ans[it.id],m=X.checked?(shOk(it,v)?'ok':'bad'):'';return `(${p}) <input class="sin ${m}" data-sid="${it.id}" value="${esc(v||'')}" autocomplete="off" autocapitalize="off" spellcheck="false" ${X.checked&&m==='ok'?'readonly':''}>${X.checked&&m==='bad'?`<span class="sfix">${esc(it.show)}</span>`:''}`})():esc(p)).join('')}</div>`
+  :`<ol class="slist ${s.items[0]&&s.items[0].kind==='tick'?'snon':''}">${s.items.map((it,j)=>shItem(it,j,X)).join('')}</ol>`}</section>`).join('')}
  <footer class="sfoot">${X.checked?`<p class="sscore">Has acertado <b>${ok} de ${tot}</b>. ${ok===tot?'¡Perfecto! 🌟':'Mira las correcciones en verde y vuelve a intentarlo.'}${X.won?` Ganas ${X.won} estrellas.`:''}</p><div class="actions two"><button class="btn ghost" data-act="shretry">Corregir mis fallos</button><button class="btn primary" data-act="shnew">Otra ficha</button></div>`:`<button class="btn primary sbig" data-act="shcheck">✓ Check my answers</button>`}</footer></article></main>`}
 document.addEventListener('input',e=>{const t=e.target;if(t&&t.dataset&&t.dataset.sid&&V.sheet){V.sheet.ans[t.dataset.sid]=t.classList.contains('sl')?t.value.toUpperCase():t.value;if(t.classList.contains('sl'))t.value=t.value.toUpperCase()}});
 const SHEET_ACTS=({
- shc:el=>{const X=V.sheet;if(X.checked){const it=X.S.secs.flatMap(s=>s.items).find(i=>i.id===el.dataset.sid);if(it&&shOk(it,X.ans[it.id]))return}X.ans[el.dataset.sid]=+el.dataset.k;document.querySelectorAll(`.scirc[data-sid="${el.dataset.sid}"]`).forEach(b=>b.classList.toggle('on',b===el))},
+ shsay:el=>{try{speak(el.dataset.t)}catch(e){}},
+ shc:el=>{const X=V.sheet;if(X.checked){const it=X.S.secs.flatMap(s=>s.items).find(i=>i.id===el.dataset.sid);if(it&&shOk(it,X.ans[it.id]))return}X.ans[el.dataset.sid]=+el.dataset.k;document.querySelectorAll(`[data-act=shc][data-sid="${el.dataset.sid}"]`).forEach(b=>{b.classList.toggle('on',b===el);if(b.classList.contains('stbox'))b.textContent=b===el?'✓':''})},
  shcheck:()=>{const X=V.sheet;X.checked=true;let ok=0,tot=0;for(const s of X.S.secs)for(const it of s.items){tot++;if(shOk(it,X.ans[it.id]))ok++}
   if(!X.won){X.won=Math.round(ok/2);D.stars[X.S.sub]=(D.stars[X.S.sub]||0)+X.won;save()}try{sfx(ok>=tot*.8?'ok':'bad')}catch(e){}renderSheet();const f=document.querySelector('.sfoot');if(f)f.scrollIntoView({behavior:'smooth'})},
- shretry:()=>{const X=V.sheet;for(const s of X.S.secs)for(const it of s.items)if(!shOk(it,X.ans[it.id]))delete X.ans[it.id];X.checked=false;renderSheet();const b=document.querySelector('.sin:not([value]),.sin[value=""]');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})},
+ shretry:()=>{const X=V.sheet;for(const s of X.S.secs)for(const it of s.items)if(!shOk(it,X.ans[it.id])){if(it.kind==='cw'&&X.ans[it.id+'c']!==it.a)delete X.ans[it.id+'c'];if(!(it.kind==='cw'&&(it.ans||[]).some(a=>shN(a)===shN(X.ans[it.id]))))delete X.ans[it.id]}X.checked=false;renderSheet();const b=document.querySelector('.sin:not([value]),.sin[value=""]');if(b)b.scrollIntoView({behavior:'smooth',block:'center'})},
  shnew:()=>startSheet()});
 
 function renderHome(){
